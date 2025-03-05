@@ -13,7 +13,11 @@ class Category extends Model
     }
 
     public function users(){
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)
+            ->withPivot('limit','date');
     }
 
+    public function expenses(){
+        return $this->hasMany(Expense::class);
+    }
 }

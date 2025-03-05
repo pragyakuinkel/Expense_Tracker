@@ -23,6 +23,12 @@
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('expense.create')" :active="request()->routeIs('expense.create')">
+                            {{ __('Add Expense') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('forecast.forecast')" :active="request()->routeIs('forecast.forecast')">
+                            {{ __('Forecast') }}
+                        </x-nav-link>
                     @endif
                 </div>
             </div>

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Expense;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,5 +58,16 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function dashboard(){
+        $success=session()->get('success');
+
+        $months=Expense::where('user_id', Auth::id())->orderBy('date', 'desc')->get()
+            ->groupBy(function ($expense) {
+            return Carbon::parse($expense->date)->format('Y F');
+        });;
+
+        return view('dashboard', compact('success','months'));
     }
 }

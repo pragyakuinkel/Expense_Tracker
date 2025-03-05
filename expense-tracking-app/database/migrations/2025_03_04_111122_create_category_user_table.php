@@ -14,8 +14,10 @@ return new class extends Migration
         Schema::create('category_user', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('category_id')->constrained('categories');
+            $table->decimal('limit');
+            $table->date('date');
 
-            $table->primary(['user_id', 'category_id']);
+            $table->primary(['user_id', 'category_id','date']);
         });
     }
 

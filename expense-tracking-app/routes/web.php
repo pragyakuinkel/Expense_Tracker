@@ -3,16 +3,14 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EstimateController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -32,9 +30,17 @@ Route::post('/addIncome',[EstimateController::class, 'storeIncome'])->name('addI
 
 Route::get('/selectCategory',[EstimateController::class, 'selectCategory'])->name('selectCategory');
 
+Route::post('/addCategory',[EstimateController::class, 'showLimit'])->name('addCategory');
+
+Route::post('/addLimit',[EstimateController::class, 'storeLimit'])->name('addLimit');
+
 Route::middleware('auth','income','category')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/dashboard',[ProfileController::class,'dashboard'])->name('dashboard');
+
+    Route::resource('expense', ExpenseController::class);
+
+    Route::get('/expense/delete/{expense}', [ExpenseController::class, 'delete'])->name('expense.delete');
+
+    Route::get('/forecast/forecast/{date?}',[ForecastController::class, 'forecast'])->name('forecast.forecast');
 });
 require __DIR__.'/auth.php';
