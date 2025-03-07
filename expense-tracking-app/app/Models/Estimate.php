@@ -9,6 +9,7 @@ class Estimate extends Model
     protected $fillable=[
         'user_id',
         'amount',
+        'date',
     ];
 
     public function user(){

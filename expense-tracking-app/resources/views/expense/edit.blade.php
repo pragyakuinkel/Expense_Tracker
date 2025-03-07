@@ -12,40 +12,40 @@
                     <form action="{{route('expense.update',$expense)}}" method="post">
                         @csrf
                         @method('PUT')
-                        <label for="name">Category name:</label><br>
+                        <div>
+                            <x-input-label for="name" :value="__('Category')" />
+                            <select name="category" required class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#3268a8] focus:border-[#3268a8]">
+                                @foreach($categories as $category)
+                                    <option value="{{$category->id}}"
+                                    @if($expense->category_id == $category->id)
+                                        selected
+                                    @endif>
+                                        {{$category->name}}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('category')" class="mt-2" />
+                        </div>
 
-                        <select name="category">
-                            @foreach($categories as $category)
-                                <option value="{{$category->id}}"
-                                @if($expense->category_id == $category->id)
-                                    selected
-                                @endif
-                                >{{$category->name}}</option>
-                            @endforeach
-                        </select><br>
-                        @error('$category')
-                        <div>{{$message}}</div>
-                        @enderror
+                        <div class="mt-4">
+                            <x-input-label for="amount" :value="__('Amount')" />
+                            <x-text-input id="amount" class="block mt-1 w-full" type="number" step="any" name="amount" :value="old('amount',$expense->amount)" required />
+                            <x-input-error :messages="$errors->get('amount')" class="mt-2" />
+                        </div>
 
-                        <label for="amount">Amount:</label><br>
-                        <input type="number" step="any" name="amount" value="{{$expense->amount}}"><br>
-                        @error('amount')
-                        <div>{{$message}}</div>
-                        @enderror
+                        <div class="mt-4">
+                            <x-input-label for="description" :value="__('Description')" />
+                            <x-text-input id="description" class="block mt-1 w-full" type="text" name="description" :value="old('description',$expense->description)" />
+                            <x-input-error :messages="$errors->get('description')" class="mt-2" />
+                        </div>
 
-                        <label for="description">Description:</label><br>
-                        <input type="text" name="description" value="{{$expense->description}}"><br>
-                        @error('$description')
-                        <div>{{$message}}</div>
-                        @enderror
+                        <div class="mt-4">
+                            <x-input-label for="date" :value="__('Date')" />
+                            <input type="date" name="date" id="date" value="{{$expense->date}}" class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#3268a8] focus:border-[#3268a8]">
+                            <x-input-error :messages="$errors->get('date')" class="mt-2" />
+                        </div>
 
-                        <label for="date">Date:</label><br>
-                        <input type="date" name="date" value="{{$expense->date}}"><br>
-                        @error('$date')
-                        <div>{{$message}}</div>
-                        @enderror
-
-                        <button type="submit">Edit</button>
+                        <x-primary-button class="mt-4" type="submit">Add</x-primary-button>
                     </form>
                 </div>
             </div>

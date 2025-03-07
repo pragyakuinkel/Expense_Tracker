@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form action="{{route('category.store')}}" method="post">
+                    <form action="{{ route('category_user.store') }}" method="post">
                         @csrf
 
                         <div class="mt-4">
@@ -18,6 +18,15 @@
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
                         </div>
 
+                        <div class="mt-4">
+                            <x-input-label class="block w-full">
+                                Limit
+                            </x-input-label>
+                            <x-text-input type="number" step="any" name="limit" required class="block mt-1 w-full"/>
+                        </div>
+
+                        <x-input-error :messages="$error" class="mt-2" />
+
                         <x-primary-button class="mt-4">Add</x-primary-button>
                     </form>
                 </div>
@@ -25,4 +34,3 @@
         </div>
     </div>
 </x-app-layout>
-

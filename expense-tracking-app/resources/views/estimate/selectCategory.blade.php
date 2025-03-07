@@ -1,29 +1,32 @@
 <x-guest-layout>
     <div class="p-6">
-        <h2 class="text-lg font-medium dark:text-gray-100">
+
+        <x-heading>
             {{ __('Select Recurring Categories') }}
-        </h2>
+        </x-heading>
 
         <div class="mt-6 ">
             <form action="{{route('addCategory')}}" method="post">
                 @csrf
-                @foreach($categories as $category)
-                    <label>
-                        <input type="checkbox" name="categories[]" value="{{ $category->name }}">
-                        {{ $category->name }}
 
-                        <div class="predefined[]">
-                            <input type="hidden" name="predefined[]" value="{{$category->name}}">
-                        </div>
-                    </label>
-                @endforeach
+                <div class="grid grid-cols-2 gap-4">
+                    @foreach($categories as $category)
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" name="categories[]" value="{{ $category->name }}" class="rounded border-gray-300 text-[#3268a8] focus:ring-[#3268a8]">
+                            <span class="ms-2">{{ $category->name }}</span>
+                        </label>
+
+                        <input type="hidden" name="predefined[]" value="{{ $category->name }}">
+                    @endforeach
+                </div>
+
 
                 <ul id="categoryInfo" class="p-0">
 
                 </ul>
-                <div>
-                    <input type="text" name="new_categories" placeholder="More Category" id="category">
-                    <button type="button"  onclick="addCategory()">+</button>
+                <div class="flex">
+                    <input id="category" class="block mt-1 w-full" type="text" name="category" placeholder="More Category" />
+                    <button type="button"  onclick="addCategory()" class="ms-2 text-xl" style="color: #3268a8">+</button>
                 </div>
 
                 <div id="error">
@@ -34,7 +37,7 @@
 
                 </div>
 
-                <button type="submit">Add</button>
+                <x-primary-button type="submit" class="mt-4">Add</x-primary-button>
             </form>
         </div>
     </div>

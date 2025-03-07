@@ -12,10 +12,12 @@ class ForecastController extends Controller
 {
     public function forecast($date = null){
 
+        $success=session()->get('success');
+
         if($date == null){
             $date = Carbon::now();
         }else{
-            $date = Carbon::parse($date);
+            $date = Carbon::parse($date)->startOfMonth();
         }
 
         $forecasts=[];
@@ -29,8 +31,6 @@ class ForecastController extends Controller
                 ->whereMonth('date', $date->month)
                 ->whereYear('date', $date->year);
         }])->get();
-
-        $estimate=Estimate::where('user_id', Auth::id())->first();
 
         $expense=Expense::where('user_id', Auth::id())->whereMonth('date', $date->month)
             ->whereYear('date', $date->year)->sum('amount');
@@ -46,25 +46,39 @@ class ForecastController extends Controller
         }])->get();
 
         if($date->month>Carbon::now()->month){
-            foreach($lastCategories as $category){
+            $estimate=Estimate::where('user_id', Auth::id())->whereMonth('date', $date->copy()->subMonth())
+                ->whereYear('date', $date->copy()->subMonth()->year)->first();
+
+            $newCategories = $categories->filter(function($category) use ($lastCategories) {
+                return $lastCategories->contains('id', $category->id);
+            });//in both month
+
+            $categories = $categories->filter(function($category) use ($lastCategories) {
+                return !$lastCategories->contains('id', $category->id);
+            });//only current month
+
+            foreach($newCategories as $category){
                 foreach($category->users as $user){
                     $LastExpense=Expense::where('user_id', Auth::id())
                         ->where('category_id', $category->id)
                         ->whereMonth('date', $date->copy()->subMonth())
                         ->whereYear('date', $date->copy()->subMonth()->year)->sum('amount');
 
-                    $expensePercent=floatVal($LastExpense)/floatVal($estimate->amount)*100;
+                    $expensePercent=round(floatVal($LastExpense)/floatVal($estimate->amount)*100,2);
 
-                    $limit=(floatval($user->pivot->limit)+$expensePercent)/2;
+                    $limit=round((floatval($user->pivot->limit)+$expensePercent)/2, 2);
 
-                    $estimateExpense=floatVal($estimate->amount)*floatVal($limit)/100;
+                    $estimateExpense=round(floatVal($estimate->amount)*floatVal($limit)/100,2);
 
-                    $expensePercent=floatVal($expense)/floatVal($estimate->amount)*100;
+                    $expensePercent=round(floatVal($expense)/floatVal($estimate->amount)*100,2);
+
+                    $estimate=Estimate::where('user_id', Auth::id())->whereMonth('date', $date->month)
+                        ->whereYear('date', $date->year)->first();
 
                     $forecasts[]=['category'=>$category->name,'limit'=>$limit,'estimate'=>$estimateExpense,'expense'=>$expense,'expensePercent'=>$expensePercent];
                 }
             }
-        }else{
+
             foreach($categories as $category){
                 foreach($category->users as $user){
 
@@ -73,9 +87,30 @@ class ForecastController extends Controller
                         ->whereMonth('date', $date->month)
                         ->whereYear('date', $date->year)->sum('amount');
 
-                    $estimateExpense=floatVal($estimate->amount)*floatVal($user->pivot->limit)/100;
+                    $estimateExpense=round(floatVal($estimate->amount)*floatVal($user->pivot->limit)/100,2);
 
-                    $expensePercent=floatVal($expense)/floatVal($estimate->amount)*100;
+                    $expensePercent=round(floatVal($expense)/floatVal($estimate->amount)*100,2);
+
+                    $limit=$user->pivot->limit;
+
+                    $forecasts[]=['category'=>$category->name,'limit'=>$limit,'estimate'=>$estimateExpense,'expense'=>$expense,'expensePercent'=>$expensePercent];
+                }
+            }
+        }else{
+            $estimate=Estimate::where('user_id', Auth::id())->whereMonth('date', $date->month)
+                ->whereYear('date', $date->year)->first();
+
+            foreach($categories as $category){
+                foreach($category->users as $user){
+
+                    $expense=Expense::where('user_id', Auth::id())
+                        ->where('category_id', $category->id)
+                        ->whereMonth('date', $date->month)
+                        ->whereYear('date', $date->year)->sum('amount');
+
+                    $estimateExpense=round(floatVal($estimate->amount)*floatVal($user->pivot->limit)/100,2);
+
+                    $expensePercent=round(floatVal($expense)/floatVal($estimate->amount)*100,2);
 
                     $limit=$user->pivot->limit;
 
@@ -94,6 +129,6 @@ class ForecastController extends Controller
 
         $monthSelected=$date->format('F');
 
-        return view('forecast.forecast', compact('forecasts','estimate','expectedExpense','actualExpense','monthSelected'));
+        return view('forecast.forecast', compact('forecasts','estimate','expectedExpense','actualExpense','monthSelected','success'));
     }
 }

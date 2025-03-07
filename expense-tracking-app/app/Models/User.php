@@ -56,7 +56,7 @@ class User extends Authenticatable
     }
 
     public function categories(){
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Category::class)->withPivot('limit','date');
     }
 
     public function expenses(){

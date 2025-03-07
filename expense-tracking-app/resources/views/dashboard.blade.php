@@ -1,33 +1,59 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
+        <x-heading>
+            {{"Dashboard"}}
+        </x-heading>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <div>
-                        {{$success}}
-                    </div>
 
-                    <div>
+                    @if(session('success'))
+                        <x-success-message>
+                            {{ session('success') }}
+                        </x-success-message>
+                    @endif
+
+
+                    <div class="mt-3">
                         @forelse($months as $month => $expenses )
-                            <h2>{{$month}}</h2>
+                            <x-heading>
+                                {{$month}}
+                            </x-heading>
                             @foreach($expenses as $expense)
-                                <div>
-                                    {{ $expense->category->name }} <br> <small>- {{ $expense->amount }}</small><br>
+                                <div class="flex row justify-between mt-3">
+                                    <div>
+                                        <p class="font-medium">
+                                            {{ $expense->category->name }}
+                                        </p>
 
-                                    <a href="{{route('expense.edit',$expense)}}">Edit</a>
+                                        <small>- {{ $expense->amount }}</small>
 
-                                    <a href="{{route('expense.delete',$expense)}}">Delete</a>
+                                        <p>
+                                            {{$expense->description}}
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <a
+                                        class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
+                                        style='background-color:#3268a8'
+                                            href="{{route('expense.edit',$expense)}}">Edit</a>
+
+                                        <a
+                                            class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
+                                            style='background-color:#b50e0b'
+                                            href="{{route('expense.delete',$expense)}}">Delete</a>
+                                    </div>
                                 </div>
                             @endforeach
                             <hr>
                         @empty
-                            <p>No Expense Yet....</p>
+                            <x-empty-value>
+                                No Expense Yet....
+                            </x-empty-value>
                         @endforelse
                     </div>
 

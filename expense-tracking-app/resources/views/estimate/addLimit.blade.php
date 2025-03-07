@@ -1,29 +1,34 @@
 <x-guest-layout>
     <div class="p-6">
-        <h2 class="text-lg font-medium dark:text-gray-100">
+        <x-heading>
             {{ __('Add Limit') }}
-        </h2>
+        </x-heading>
 
-        <div class="mt-6 ">
+        <div class="mt-4 w-full">
             <form action="{{route('addLimit')}}" method="post">
                 @csrf
+
                 @foreach($categories as $category)
-                    <label>
-                        {{ $category }}
-                    </label>
-                        <input type="hidden" step="any" name="categories[]" value="{{$category}}"><br>
-                        <input type="number" step="any" name="limits[]" required><br>
+                    <div>
+                        <x-input-label class="block w-full">
+                            {{ $category }}
+                        </x-input-label>
+                        <x-text-input type="hidden" step="any" name="categories[]" value="{{$category}}"/>
+                        <x-text-input type="number" step="any" name="limits[]" required class="block mt-1 w-full"/>
+                    </div>
                 @endforeach
 
                 @foreach($new_categories as $category)
-                    <label>
-                        {{ $category }}
-                    </label>
-                        <input type="hidden" step="any" name="new_categories[]" value="{{$category}}"><br>
-                        <input type="number" step="any" name="new_limits[]" required><br>
+                    <div class="mt-4">
+                        <x-input-label class="block w-full">
+                            {{ $category }}
+                        </x-input-label>
+                        <x-text-input type="hidden" step="any" name="new_categories[]" value="{{$category}}"/>
+                        <x-text-input type="number" step="any" name="new_limits[]" class="block mt-1 w-full" required/>
+                    </div>
                 @endforeach
 
-                <button type="submit">Add</button>
+                <x-primary-button type="submit" class="mt-4">Add</x-primary-button>
             </form>
         </div>
     </div>

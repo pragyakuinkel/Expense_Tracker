@@ -19,6 +19,15 @@ class EstimateController extends Controller
         return view('estimate.income');
     }
 
+    public function editIncome($month){
+
+        $date=Carbon::parse($month);
+
+        $estimate=Estimate::where('user_id', Auth::id())->whereMonth('date', $date->month)
+            ->whereYear('date', $date->year)->first();
+
+        return view('estimate.edit-income', compact('estimate','month'));
+    }
     public function storeIncome(IncomeRequest $request){
 
         if($request->type == 'monthly'){
@@ -27,15 +36,35 @@ class EstimateController extends Controller
             $amount=$request->amount/12;
         }
 
-        Estimate::create([
-            'amount'=>$amount,
-            'user_id'=>Auth::id()
-        ]);
+        $month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-        return redirect()->route('dashboard')->with('success','Estimate created successfully');
+        foreach ($month as $m) {
+            Estimate::create([
+                'amount'=>$amount,
+                'user_id'=>Auth::id(),
+                'date'=>Carbon::parse($m)->format('Y-m-d')
+            ]);
+        }
+
+        return redirect()->route('dashboard');
 
     }
 
+    public function updateIncome(IncomeRequest $request,Estimate $estimate)
+    {
+
+        if($estimate){
+            $estimate->update([
+                'amount'=>$request->amount
+            ]);
+
+            session()->flash('success', 'Estimate updated successfully');
+
+            return redirect()->route('forecast.forecast');
+        }else{
+            return back();
+        }
+    }
     public function selectCategory()
     {
         $error= session()->get('error');
@@ -125,7 +154,7 @@ class EstimateController extends Controller
                         ]);
                     }
                 } else {
-                    $newCategory = Category::create(['name' => $new_categories[$i]]);
+                    $newCategory = Category::create(['name' => $new_categories[$i],'role_id'=>2]);
 
                     foreach ($month as $m) {
                         $date = Carbon::parse($m)->format('Y-m-d');
@@ -148,9 +177,12 @@ class EstimateController extends Controller
 
             return redirect()->route('dashboard');
         } catch (\Exception $e) {
+
             DB::rollBack();
+
             session()->flash('error', $e->getMessage());
-            return redirect()->route('estimate.selectCategory');
+
+            return redirect()->route('selectCategory');
         }
     }
 

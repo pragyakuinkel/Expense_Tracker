@@ -3,14 +3,6 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
-                    </a>
-                </div>
-
-                <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     @if(Auth::user()->roles()->first()->name === 'superAdmin')
                         <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
@@ -25,6 +17,9 @@
                         </x-nav-link>
                         <x-nav-link :href="route('expense.create')" :active="request()->routeIs('expense.create')">
                             {{ __('Add Expense') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('category_user.index')" :active="request()->routeIs('category_user.index')">
+                            {{ __('Manage Categories') }}
                         </x-nav-link>
                         <x-nav-link :href="route('forecast.forecast')" :active="request()->routeIs('forecast.forecast')">
                             {{ __('Forecast') }}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\FutureDate;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ExpenseRequest extends FormRequest
@@ -24,7 +25,7 @@ class ExpenseRequest extends FormRequest
         return [
             'category' => 'required',
             'amount' => 'required|numeric|min:1',
-            'date' => 'required|date',
+            'date' => ['required','date',new FutureDate],
             'description' => 'nullable|string',
         ];
     }

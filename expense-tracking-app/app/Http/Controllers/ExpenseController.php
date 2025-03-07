@@ -66,6 +66,10 @@ class ExpenseController extends Controller
     {
         $expense=Expense::find($expense->id);
 
+        if($expense->user_id !== Auth::id()){
+            abort(401);
+        }
+
         $categories=Category::whereHas('users', function($q){
             $q->where('user_id', auth()->id())
                 ->whereMonth('date', '=', Carbon::now());
@@ -94,6 +98,10 @@ class ExpenseController extends Controller
     }
 
     public function delete(Expense $expense){
+
+        if($expense->user_id !== Auth::id()){
+            abort(401);
+        }
 
         $expense=Expense::find($expense->id);
 

@@ -1,63 +1,84 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{$monthSelected}}
-        </h2>
+    <x-slot name="header" >
+
+        <div class="flex row justify-between">
+            <x-heading>
+                {{"Forecast"}}
+            </x-heading>
+
+            <a
+                class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
+                style='background-color:#3268a8'
+                href="{{route('editIncome',$monthSelected)}}">Edit Estimate {{$monthSelected}}</a>
+        </div>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+                    <x-heading>
+                        {{$monthSelected}}
+                    </x-heading>
+
+                    @if(session('success'))
+                        <x-success-message>
+                            {{ session('success') }}
+                        </x-success-message>
+                    @endif
+
+
                     @php
                         $months=['January','February','March','April',
                         'May','June','July','August','September','October',
                         'November','December'];
                     @endphp
 
-                    @for($i=0; $i<count($months);$i++)
-                        <a href="{{route('forecast.forecast',$months[$i])}}"
-                        @if($months[$i] === $monthSelected)
-                            style="font-weight: bolder"
-                        @endif
-                        >{{$months[$i]}}</a>
-                    @endfor
+                    <div class="flex gap-4 mt-3">
+                        @for($i=0; $i<count($months);$i++)
+                            <a href="{{route('forecast.forecast',$months[$i])}}"
+                               @if($months[$i] === $monthSelected)
+                                   style="font-weight: bolder;background-color: #2f4e73;color: white"
+                                @endif
+                            style="background-color: #3268a8;color: white"
+                            class="px-3 py-2 rounded mb-2"
+                            >{{$months[$i]}}</a>
+                        @endfor
+                    </div>
 
-                    <table class="w-full text-left">
+                    <hr>
+
+                    <table class="table-auto w-full border-collapse mt-3">
                         <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Predicted Expense %</th>
-                            <th>Predicted Expense</th>
-                            <th>Actual Expense %</th>
-                            <th>Actual Expense</th>
+                        <tr style="background-color: #3268a8;color: white">
+                            <th class="px-4 py-2 border">Category</th>
+                            <th class="px-4 py-2 border">Predicted Expense %</th>
+                            <th class="px-4 py-2 border">Predicted Expense</th>
+                            <th class="px-4 py-2 border">Actual Expense %</th>
+                            <th class="px-4 py-2 border">Actual Expense</th>
                         </tr>
                         </thead>
-                        <tbody class="text-center">
+                        <tbody>
                         @foreach($forecasts as $forecast)
-                           <td>
-                               <tr>
-                                   <td>{{$forecast['category']}}</td>
-                                   <td>{{$forecast['limit']}}%</td>
-                                   <td>Rs. {{$forecast['estimate']}}</td>
-                                   <td>{{$forecast['expensePercent']}}%</td>
-                                   <td>Rs.{{$forecast['expense']}}</td>
-                               </tr>
-                           </td>
-                        @endforeach
-                        <td>
                             <tr>
-                                <td></td>
-                                <td></td>
-                                <td>Rs. {{$expectedExpense}}</td>
-                                <td></td>
-                                <td>Rs.{{$actualExpense}}</td>
+                                <td class="border px-4 py-2">{{$forecast['category']}}</td>
+                                <td class="border px-4 py-2">{{$forecast['limit']}}%</td>
+                                <td class="border px-4 py-2">Rs. {{$forecast['estimate']}}</td>
+                                <td class="border px-4 py-2">{{$forecast['expensePercent']}}%</td>
+                                <td class="border px-4 py-2">Rs.{{$forecast['expense']}}</td>
                             </tr>
-                        </td>
+                        @endforeach
+                        <tr class="border px-4 py-2">
+                            <td class="border px-4 py-2"></td>
+                            <td class="border px-4 py-2"></td>
+                            <td class="border px-4 py-2">Rs. {{$expectedExpense}}</td>
+                            <td class="border px-4 py-2"></td>
+                            <td class="border px-4 py-2">Rs.{{$actualExpense}}</td>
+                        </tr>
                         </tbody>
                     </table>
 
-                    <p>Income: Rs.{{$estimate->amount}}</p>
+                    <p class="font-bold text-xl mt-4">Income: Rs.{{$estimate->amount}}</p>
                 </div>
             </div>
         </div>

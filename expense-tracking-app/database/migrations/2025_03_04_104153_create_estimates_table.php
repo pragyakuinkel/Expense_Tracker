@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('estimates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->unique();
+            $table->foreignId('user_id')->constrained('users');
             $table->decimal('amount');
+            $table->date('date');
             $table->timestamps();
         });
     }
