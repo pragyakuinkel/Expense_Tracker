@@ -44,7 +44,8 @@ class ForecastUpdate extends Command
                 $query->where('user_id', $user->id)
                     ->whereMonth('date', $date->month)
                     ->whereYear('date', $date->year);
-            }])->get();
+            }])
+                ->get();
 
             $lastCategories = Category::whereHas('users', function ($query) use ($user, $date) {
                 $query->where('user_id', $user->id)
@@ -59,8 +60,8 @@ class ForecastUpdate extends Command
             $estimate=Estimate::where('user_id', $user->id)->whereMonth('date', $date->copy()->subMonth())
                 ->whereYear('date', $date->copy()->subMonth()->year)->first();
 
-            $newCategories = $categories->filter(function($category) use ($lastCategories) {
-                return $lastCategories->contains('id', $category->id);
+            $newCategories = $lastCategories->filter(function($category) use ($categories) {
+                return $categories->contains('id', $category->id);
             });//in both month
 
             foreach($newCategories as $category){
