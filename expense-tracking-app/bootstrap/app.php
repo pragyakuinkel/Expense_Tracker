@@ -1,9 +1,11 @@
 <?php
 
+use App\Console\Commands\ForecastUpdate;
 use App\Http\Middleware\CheckCategory;
 use App\Http\Middleware\CheckIncome;
 use App\Http\Middleware\CheckUserRole;
 use App\Http\Middleware\CheckUserStatus;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -24,4 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
-    })->create();
+    })->withCommands([
+        ForecastUpdate::class,
+    ])->create();

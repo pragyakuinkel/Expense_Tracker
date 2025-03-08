@@ -2,13 +2,12 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Category;
-use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class CheckCategory
+class CheckUserRole
 {
     /**
      * Handle an incoming request.
@@ -17,14 +16,12 @@ class CheckCategory
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $categories = Category::whereHas('users', function ($query) {
-            $query->where('user_id', auth()->id())->whereMonth('date', Carbon::now())->whereYear('date', Carbon::now());
-        })->exists();
+        $user = Auth::user()->role->name;
 
-        if ($categories) {
+        if($user == "superAdmin"){
             return $next($request);
         }
 
-        return redirect()->route('selectCategory');
+        return back();
     }
 }
