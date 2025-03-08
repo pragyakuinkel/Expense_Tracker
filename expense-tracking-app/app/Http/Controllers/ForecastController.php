@@ -7,6 +7,7 @@ use App\Models\Estimate;
 use App\Models\Expense;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ForecastController extends Controller
 {

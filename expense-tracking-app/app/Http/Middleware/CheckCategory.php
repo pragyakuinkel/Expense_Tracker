@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Category;
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +18,7 @@ class CheckCategory
     public function handle(Request $request, Closure $next): Response
     {
         $categories = Category::whereHas('users', function ($query) {
-            $query->where('user_id', auth()->id());
+            $query->where('user_id', auth()->id())->whereMonth('date', Carbon::now())->whereYear('date', Carbon::now());
         })->exists();
 
         if ($categories) {

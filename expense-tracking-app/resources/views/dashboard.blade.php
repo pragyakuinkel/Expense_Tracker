@@ -16,7 +16,6 @@
                         </x-success-message>
                     @endif
 
-
                     <div class="mt-3">
                         @forelse($months as $month => $expenses )
                             <x-heading>

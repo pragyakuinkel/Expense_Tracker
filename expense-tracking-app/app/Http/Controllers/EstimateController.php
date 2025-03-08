@@ -119,7 +119,7 @@ class EstimateController extends Controller
 
                 if ($category) {
                     foreach ($month as $m) {
-                        $date = Carbon::parse($m)->format('Y-m-d');
+                        $date = Carbon::parse($m)->startOfMonth()->format('Y-m-d');
 
                         if(Carbon::now()->format('F') === $m){
                             $limit = $request->limits[$i];
@@ -140,7 +140,7 @@ class EstimateController extends Controller
 
                 if ($category) {
                     foreach ($month as $m) {
-                        $date = Carbon::parse($m)->format('Y-m-d');
+                        $date = Carbon::parse($m)->startOfMonth()->format('Y-m-d');
 
                         if(Carbon::now()->format('F') === $m){
                             $limit = $request->new_limits[$i];
@@ -157,7 +157,7 @@ class EstimateController extends Controller
                     $newCategory = Category::create(['name' => $new_categories[$i],'role_id'=>2]);
 
                     foreach ($month as $m) {
-                        $date = Carbon::parse($m)->format('Y-m-d');
+                        $date = Carbon::parse($m)->startOfMonth()->format('Y-m-d');
 
                         if(Carbon::now()->format('F') === $m){
                             $limit = $request->new_limits[$i];
