@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Expense;
+use App\Models\Income;
+use App\Models\Statement;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
@@ -62,80 +65,26 @@ class ProfileController extends Controller
     }
 
     public function dashboard(){
+
         $success=session()->get('success');
 
-        $months=Expense::where('user_id', Auth::id())->orderBy('date', 'desc')->get()
-            ->groupBy(function ($expense) {
-                return Carbon::parse($expense->date)->format('Y F');
-            });;
+        $income=Income::where('user_id',Auth::id())->get();
 
-        return view('dashboard', compact('success','months'));
-//1
-//        $data = new Collection([["id"=>1,"name"=>"ABC"]]);
-//
-//        $data=$data->map(function($item) {
-//            return ["label"=>$item["name"],
-//            'value'=>$item["id"]];
-//
-////            return $item->id;
-//        });
-//
-//        dd($data);
+        $expense=Expense::where('user_id',Auth::id())->get();
 
-//2
-//        $data = new Collection([
-//            ["id"=>1,"amount"=>10000,'VAT'=>113],
-//            ["id"=>2,"amount"=>2000,'VAT'=>213],
-//        ]);
-//
-//        $total = $data->reduce(function ($carry,$item) {
-//            return $carry + $item['amount'] + $item['VAT'];
-//        });
-//
-//        dd($total);
+        $months=collect($expense)->merge($income)->groupBy(function ($income) {
+            return Carbon::parse($income->date)->format('Y F');
+        });
 
-// 6
-//
-//        $result = $data->sum('amount');
-//
-//        dd($result);
+        $income=Income::where('user_id',Auth::id())
+            ->whereMonth('date', Carbon::now())->whereYear('date', Carbon::now())->sum('amount');
 
-//3
-//        $data=new Collection([
-//            ["name"=>"ABC","age"=>18],
-//            ["name"=>"BCD", "age"=>25],
-//        ]);
-//
-//        $keyed = $data->mapWithKeys(function ($item) {
-//            return [$item['name'] => $item['age']];
-//        });
-//
-//        dd($keyed);
+        $expense=Expense::where('user_id',Auth::id())
+            ->whereMonth('date', Carbon::now())->whereYear('date', Carbon::now())->sum('amount');
 
-//4
-//        $data=new Collection([
-//            ["id"=>1,"name"=>"ABC"],
-//            ["id"=>2,"name"=>"BCD"],
-//        ]);
-//
-//        $collection = $data->map(function ($item) {
-//            return strtolower($item['name']);
-//        });
-//
-//        $data->flatMap(function (array $values) {
-//            return array_map('strtolower', $values);
-//        });
+        $transaction[]=['income'=>$income,'expense'=>$expense,'left'=>floatval($income)-floatval($expense)];
 
-//        dd($collection);
+        return view('dashboard', compact('success','months','transaction'));
 
-//        $data=new Collection([
-//            ["id"=>"1","name"=>"ABC"],["age"=>20,"company"=>"DEF"]
-//        ]);
-//
-//        $collection=$data->flatMap(function ($values) {
-//            return array_map('strtolower',$values);
-//        });
-////
-//        dd($collection);
     }
 }

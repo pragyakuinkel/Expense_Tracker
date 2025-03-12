@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\CreateStatement;
 use Illuminate\Database\Eloquent\Model;
 
 class Expense extends Model
 {
+    use CreateStatement;
     protected $fillable=[
         'user_id',
         'description',

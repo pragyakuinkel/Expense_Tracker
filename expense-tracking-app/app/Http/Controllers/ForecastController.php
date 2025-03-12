@@ -7,7 +7,6 @@ use App\Models\Estimate;
 use App\Models\Expense;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class ForecastController extends Controller
 {
@@ -28,8 +27,7 @@ class ForecastController extends Controller
                 ->whereMonth('date', $date->month)
                 ->whereYear('date', $date->year);
         })->with(['users' => function ($query) use ($date) {
-            $query->where('user_id', Auth::id())
-                ->whereMonth('date', $date->month)
+            $query->whereMonth('date', $date->month)
                 ->whereYear('date', $date->year);
         }])->withSum(['expenses' => function ($query) use ($date) {
             $query->where('user_id', Auth::id())
@@ -55,16 +53,15 @@ class ForecastController extends Controller
             $estimate=Estimate::where('user_id', Auth::id())->whereMonth('date', $date->copy()->subMonth())
                 ->whereYear('date', $date->copy()->subMonth()->year)->first();
 
-//            dd($estimate);
-            $newCategories = $lastCategories->filter(function($category) use ($categories) {
+            $categories = $lastCategories->filter(function($category) use ($categories) {
                 return $categories->contains('id', $category->id);
             });//in both month but fetch before month
 
-            $categories = $categories->filter(function($category) use ($lastCategories) {
+            $newCategories = $categories->filter(function($category) use ($lastCategories) {
                 return !$lastCategories->contains('id', $category->id);
             });//only current month
 
-            foreach($newCategories as $category){
+            foreach($categories as $category){
                 foreach($category->users as $user){
 
                     $expense=Expense::where('user_id', Auth::id())
@@ -72,16 +69,8 @@ class ForecastController extends Controller
                         ->whereMonth('date', $date->month)
                         ->whereYear('date', $date->year)->sum('amount');
 
-//                    dd($expense);
+                    $expensePercent=round(floatVal($category->expenses_sum_amount)/floatVal($estimate->amount)*100,2);
 
-                    $LastExpense=Expense::where('user_id', Auth::id())
-                        ->where('category_id', $category->id)
-                        ->whereMonth('date', $date->copy()->subMonth())
-                        ->whereYear('date', $date->copy()->subMonth()->year)->sum('amount');
-
-                    $expensePercent=round(floatVal($LastExpense)/floatVal($estimate->amount)*100,2);
-
-//                    dd($category->id ,$user->pivot->limit,$user->pivot->date);
                     $limit=round((floatval($user->pivot->limit)+$expensePercent)/2, 2);
 
                     $estimateExpense=round(floatVal($estimate->amount)*floatVal($limit)/100,2);
@@ -95,11 +84,8 @@ class ForecastController extends Controller
                 }
             }
 
-//            dd($forecasts);
-
-            foreach($categories as $category){
+            foreach($newCategories as $category){
                 foreach($category->users as $user){
-
 
                     $estimateExpense=round(floatVal($estimate->amount)*floatVal($user->pivot->limit)/100,2);
 

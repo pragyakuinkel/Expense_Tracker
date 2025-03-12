@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EstimateController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ForecastController;
+use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserCategoryController;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +62,8 @@ Route::middleware(['auth','income','category'])->group(function () {
     Route::get('/editIncome/{date}',[EstimateController::class, 'editIncome'])->name('editIncome');
 
     Route::put('updateIncome/{estimate}', [EstimateController::class, 'updateIncome'])->name('updateIncome');
+
+    Route::resource('income', IncomeController::class);
 });
 
 require __DIR__.'/auth.php';

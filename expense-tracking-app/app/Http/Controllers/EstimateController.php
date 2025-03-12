@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Action;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
+use App\Http\Requests\EstimateRequest;
 use App\Http\Requests\IncomeRequest;
 use App\Models\Category;
 use App\Models\Estimate;
+use App\Models\Statement;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,32 +31,51 @@ class EstimateController extends Controller
 
         return view('estimate.edit-income', compact('estimate','month'));
     }
-    public function storeIncome(IncomeRequest $request){
+    public function storeIncome(Request $request){
 
-        if($request->type == 'monthly'){
-            $amount=$request->amount;
-        }else{
-            $amount=$request->amount/12;
+
+        DB::beginTransaction();
+
+        try {
+
+            if($request->type == 'monthly'){
+                $amount=$request->amount;
+            }else{
+                $amount=$request->amount/12;
+            }
+
+            $month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+            foreach ($month as $m) {
+                $estimate_created=Estimate::create([
+                    'amount' => $amount,
+                    'user_id' => Auth::id(),
+                    'date' => Carbon::parse($m)->format('Y-m-d')
+                ]);
+
+                Statement::create([
+                    'amount' => $amount,
+                    'user_id' => Auth::id(),
+                    'date' => Carbon::parse($m)->format('Y-m-d'),
+                    'statementable_id' => $estimate_created->id,
+                    'statementable_type' => 'expense',
+                    'action' => Action::Add
+                ]);
+
+            }
+            DB::commit();
+            return redirect()->route('dashboard');
+        }catch (\Exception $exception){
+            DB::rollBack();
+            dd($exception->getMessage());
         }
-
-        $month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-        foreach ($month as $m) {
-            Estimate::create([
-                'amount'=>$amount,
-                'user_id'=>Auth::id(),
-                'date'=>Carbon::parse($m)->format('Y-m-d')
-            ]);
-        }
-
-        return redirect()->route('dashboard');
-
     }
 
-    public function updateIncome(IncomeRequest $request,Estimate $estimate)
+    public function updateIncome(EstimateRequest $request,Estimate $estimate)
     {
 
         if($estimate){
+
             $estimate->update([
                 'amount'=>$request->amount
             ]);

@@ -26,6 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
-    })->withCommands([
-        ForecastUpdate::class,
-    ])->create();
+    })->withSchedule(function (Schedule $schedule) {
+        $schedule->call(ForecastUpdate::class)->lastDayOfMonth();
+    })
+
+    ->create();

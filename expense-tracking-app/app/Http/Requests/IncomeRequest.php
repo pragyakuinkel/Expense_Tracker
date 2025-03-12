@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\FutureDate;
 use Illuminate\Foundation\Http\FormRequest;
 
 class IncomeRequest extends FormRequest
@@ -23,6 +24,8 @@ class IncomeRequest extends FormRequest
     {
         return [
             'amount' => 'required|numeric|min:1',
+            'date' => ['required','date',new FutureDate],
+            'description' => 'nullable|string',
         ];
     }
 }

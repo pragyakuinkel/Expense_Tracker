@@ -18,6 +18,9 @@
                         <x-nav-link :href="route('expense.create')" :active="request()->routeIs('expense.create')">
                             {{ __('Add Expense') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('income.create')" :active="request()->routeIs('income.create')">
+                            {{ __('Add Income') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('category_user.index')" :active="request()->routeIs('category_user.index')">
                             {{ __('Manage Categories') }}
                         </x-nav-link>
