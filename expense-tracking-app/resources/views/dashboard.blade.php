@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
-                <div class="p-4 text-gray-900 text-center w-full">
+                <div class="p-4 text-gray-900 text-center w-fit">
                     @foreach($transaction as $item)
                         <div>
                             <span class="font-semibold text-lg">{{ $item['income'] }} - {{ $item['expense'] }} = {{ $item['left'] }}</span>

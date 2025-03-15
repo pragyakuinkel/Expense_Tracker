@@ -11,6 +11,9 @@
                         <x-nav-link :href="route('category.index')" :active="request()->routeIs('category.index')">
                             {{ __('Manage Category') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.user')" :active="request()->routeIs('admin.user')">
+                            {{ __('Manage User') }}
+                        </x-nav-link>
                     @else
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}

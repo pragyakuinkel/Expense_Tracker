@@ -48,7 +48,7 @@
 
                     <hr>
 
-                    <table class="table-auto w-full border-collapse mt-3">
+                    <table class="table-auto w-fit border-collapse mt-3">
                         <thead>
                         <tr style="background-color: #3268a8;color: white">
                             <th class="px-4 py-2 border">Category</th>

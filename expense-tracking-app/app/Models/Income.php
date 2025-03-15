@@ -2,19 +2,19 @@
 
 namespace App\Models;
 
-use App\Traits\CreateStatement;
 use Illuminate\Database\Eloquent\Model;
 
-class Estimate extends Model
+class Income extends Model
 {
-    use CreateStatement;
     protected $fillable=[
         'user_id',
+        'description',
         'amount',
-        'date',
+        'date'
     ];
 
     public function user(){
         return $this->belongsTo(User::class);
     }
+
 }

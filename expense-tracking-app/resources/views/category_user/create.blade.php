@@ -14,15 +14,15 @@
 
                         <div class="mt-4">
                             <x-input-label for="name" :value="__('Name')" />
-                            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" />
+                            <x-text-input id="name" class="block mt-1 w-fit" type="text" name="name" :value="old('name')" />
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
                         </div>
 
                         <div class="mt-4">
-                            <x-input-label class="block w-full">
+                            <x-input-label class="block w-fit">
                                 Limit
                             </x-input-label>
-                            <x-text-input type="number" step="any" name="limit" required class="block mt-1 w-full"/>
+                            <x-text-input type="number" step="any" name="limit" required class="block mt-1 w-fit"/>
                         </div>
 
                         <x-input-error :messages="$error" class="mt-2" />

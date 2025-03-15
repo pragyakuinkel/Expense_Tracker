@@ -4,27 +4,27 @@
             {{ __('Add Limit') }}
         </x-heading>
 
-        <div class="mt-4 w-full">
+        <div class="mt-4 w-fit">
             <form action="{{route('addLimit')}}" method="post">
                 @csrf
 
                 @foreach($categories as $category)
                     <div>
-                        <x-input-label class="block w-full">
+                        <x-input-label class="block w-fit">
                             {{ $category }}
                         </x-input-label>
                         <x-text-input type="hidden" step="any" name="categories[]" value="{{$category}}"/>
-                        <x-text-input type="number" step="any" name="limits[]" required class="block mt-1 w-full"/>
+                        <x-text-input type="number" step="any" name="limits[]" required class="block mt-1 w-fit"/>
                     </div>
                 @endforeach
 
                 @foreach($new_categories as $category)
                     <div class="mt-4">
-                        <x-input-label class="block w-full">
+                        <x-input-label class="block w-fit">
                             {{ $category }}
                         </x-input-label>
                         <x-text-input type="hidden" step="any" name="new_categories[]" value="{{$category}}"/>
-                        <x-text-input type="number" step="any" name="new_limits[]" class="block mt-1 w-full" required/>
+                        <x-text-input type="number" step="any" name="new_limits[]" class="block mt-1 w-fit" required/>
                     </div>
                 @endforeach
 

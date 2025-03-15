@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\CreateStatement;
+use App\Traits\CreateStatement;
 use Illuminate\Database\Eloquent\Model;
 
 class Expense extends Model

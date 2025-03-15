@@ -16,10 +16,12 @@ class CheckUserRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = Auth::user()->role->name;
-
-        if($user == "superAdmin"){
-            return $next($request);
+        foreach (Auth::user()->roles as $role) {
+            if ($role->name === 'superAdmin') {
+                return $next($request);
+            }else{
+                return back();
+            }
         }
 
         return back();

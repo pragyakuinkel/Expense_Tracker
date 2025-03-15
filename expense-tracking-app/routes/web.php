@@ -22,6 +22,10 @@ Route::middleware(['auth', 'verified','admin'])->group(function () {
 
     Route::get('/category/delete/{category}', [CategoryController::class, 'delete'])->name('category.delete');
 
+    Route::get('admin/user',[AdminController::class, 'users'])->name('admin.user');
+
+    Route::get('admin/category/{user}',[AdminController::class, 'category'])->name('admin.category');
+
 });
 
 Route::middleware('auth')->group(function () {
