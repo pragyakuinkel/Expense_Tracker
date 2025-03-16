@@ -19,20 +19,16 @@ class UserCategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::whereHas('users', function ($query) {
-            $query->where('user_id', Auth::id())->whereMonth('date', Carbon::now())
-                ->whereYear('date', Carbon::now());
-        })->with(['users' => function ($query){
-                $query->where('user_id', Auth::id())->whereMonth('date', Carbon::now())
-                    ->whereYear('date', Carbon::now());
-            }])->orderBy('created_at', 'desc')
-            ->get();
+        $categories = Auth::user()
+            ->categories()
+            ->orderBy('created_at','desc')->get()->groupBy(function ($category) {
+                return Carbon::parse($category->pivot->date)->format('Y F');
+            });
 
-        $date = Carbon::now()->format('Y F');
 
         $success=session()->get('success');
 
-        return view('category_user.index', compact('categories', 'success','date'));
+        return view('category_user.index', compact('categories', 'success'));
     }
 
 
@@ -42,6 +38,7 @@ class UserCategoryController extends Controller
     public function create()
     {
         $error=session()->get('error');
+
         return view('category_user.create', compact('error'));
     }
 

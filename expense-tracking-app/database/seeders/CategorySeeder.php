@@ -16,22 +16,22 @@ class CategorySeeder extends Seeder
     {
         Category::create([
             'name'=>"Gym",
-            'role_id'=>1
+            'user_id'=>1
         ]);Category::create([
             'name'=>"Food",
-            'role_id'=>1
+            'user_id'=>1
         ]);
         Category::create([
             'name'=>"Travel",
-            'role_id'=>1
+            'user_id'=>1
         ]);
         Category::create([
             'name'=>"Rent",
-            'role_id'=>1
+            'user_id'=>1
         ]);
         Category::create([
             'name'=>"Grocery",
-            'role_id'=>1
+            'user_id'=>1
         ]);
     }
 }

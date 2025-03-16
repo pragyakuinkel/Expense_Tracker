@@ -25,7 +25,7 @@
 
                 </ul>
                 <div class="flex">
-                    <input id="category" class="block mt-1 w-fit" type="text" name="category" placeholder="More Category" />
+                    <input id="category" class="block mt-1 w-full" type="text" name="category" placeholder="More Category"/>
                     <button type="button"  onclick="addCategory()" class="ms-2 text-xl" style="color: #3268a8">+</button>
                 </div>
 

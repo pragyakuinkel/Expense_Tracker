@@ -7,8 +7,10 @@ use App\Http\Requests\CategoryRequest;
 use App\Http\Requests\UpdateRequest;
 use App\Models\Category;
 use App\Models\User;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 
 class CategoryController extends Controller
 {
@@ -19,9 +21,7 @@ class CategoryController extends Controller
     {
         $success=session()->get('success');
 
-        if(Auth::user()->roles()->first()->name === 'superAdmin'){
-            $categories = Category::orderBy('id','desc')->paginate(10);
-        }
+        $categories = Category::withCount('users')->get();
 
         return view('category.index', compact('categories', 'success'));
     }
@@ -41,7 +41,7 @@ class CategoryController extends Controller
     {
         Category::create([
             'name'=>$request->name,
-            'role_id'=>Auth::user()->roles()->first()->id
+            'user_id'=>Auth::user()->id
         ]);
 
         session()->flash('success', 'Category created successfully');

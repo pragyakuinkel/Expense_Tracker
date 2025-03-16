@@ -7,8 +7,8 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="px-4 mb-4">
+            <div class="grid grid-cols-1 grid-cols-2 gap-4 align-middle">
+                <div class="px-4">
                     <div class="p-6 text-gray-900 bg-white rounded-lg shadow text-center h-full">
                         <x-heading>
                             Total number of users
@@ -19,7 +19,7 @@
                         </h1>
                     </div>
                 </div>
-                <div class="sm:w-1/2 md:w-1/3 px-4 mb-4">
+                <div class="px-4">
                     <div class="p-6 text-gray-900 bg-white rounded-lg shadow text-center h-full">
                         <x-heading>
                             Total number of Categories
@@ -30,7 +30,7 @@
                         </h1>
                     </div>
                 </div>
-                <div class="sm:w-1/2 md:w-1/3 px-4 mb-4">
+                <div class="px-4">
                     <div class="p-6 text-gray-900 bg-white rounded-lg shadow text-center h-full">
                         <x-heading>
                             Category with maximum expense
@@ -41,7 +41,7 @@
                         </h1>
                     </div>
                 </div>
-                <div class="sm:w-1/2 md:w-1/3 px-4 mb-4">
+                <div class="px-4">
                     <div class="p-6 text-gray-900 bg-white rounded-lg shadow text-center h-full">
                         <x-heading>
                             This Month Average User Income
@@ -52,16 +52,24 @@
                         </h1>
                     </div>
                 </div>
-                <div class="w-fit sm:w-1/2 md:w-1/3 px-4 mb-4">
-                    <div class="p-6 text-gray-900 bg-white rounded-lg shadow text-center h-full">
-                        Box 5
+            </div>
+            <div class="px-4 mt-4">
+                <div class="p-6 text-gray-900 bg-white rounded-lg shadow text-center h-full">
+                    <x-heading>
+                        Top 5 Categories with Maximum Expense
+                    </x-heading>
+
+                    <div class="space-y-4 mt-4">
+                        @foreach($max_spent_categories as $category)
+                            <div class="flex justify-between items-center">
+                                <div class="text-gray-800 font-semibold">{{ $category->name }}</div>
+                                <div class="text-green-600 font-semibold">Rs. {{ number_format($category->expenses_sum_amount ?? 0, 2) }}</div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
-                <div class="sm:w-1/2 md:w-1/3 px-4 mb-4">
-                    <div class="p-6 text-gray-900 bg-white rounded-lg shadow text-center h-full">
-                        Box 6
-                    </div>
-                </div>
+            </div>
+
             </div>
         </div>
     </div>

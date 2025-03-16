@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <table class="table-auto w-fit border-collapse mt-3">
+                    <table class="table-auto border-collapse mt-3 w-full" style="width:100%">
                         <thead>
                         <tr style="background-color: #3268a8;color: white">
                             <th class="px-4 py-2 border">Name</th>

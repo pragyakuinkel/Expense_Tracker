@@ -6,22 +6,18 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
-                <div class="p-4 text-gray-900 text-center w-fit">
-                    @foreach($transaction as $item)
-                        <div>
-                            <span class="font-semibold text-lg">{{ $item['income'] }} - {{ $item['expense'] }} = {{ $item['left'] }}</span>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </div>
 
-
-    <div>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-7xl sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg mb-6">
+                    <div class="p-4 text-gray-900 text-center w-full">
+                        @foreach($transaction as $item)
+                            <div>
+                                <span class="font-semibold text-lg">{{ number_format($item['income'],2) }} - {{ number_format($item['expense'],2) }} = {{ number_format($item['left'],2) }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
 
@@ -53,7 +49,7 @@
                                                 -
                                             @else
                                                    +
-                                            @endif Rs. {{ $transaction->amount }}</small>
+                                            @endif Rs. {{ number_format($transaction->amount,2) }}</small>
 
                                         <p>
                                             {{$transaction->description}}

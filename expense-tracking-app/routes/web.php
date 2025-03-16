@@ -28,13 +28,13 @@ Route::middleware(['auth', 'verified','admin'])->group(function () {
 
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth','user'])->group(function () {
     Route::get('/estimate/income',[EstimateController::class, 'income'])->name('estimate.income');
 
     Route::post('/addIncome',[EstimateController::class, 'storeIncome'])->name('addIncome');
 });
 
-Route::middleware(['auth','income'])->group(function(){
+Route::middleware(['auth','income','user'])->group(function(){
 
     Route::get('/selectCategory',[EstimateController::class, 'selectCategory'])->name('selectCategory');
 
@@ -43,7 +43,7 @@ Route::middleware(['auth','income'])->group(function(){
     Route::post('/addLimit',[EstimateController::class, 'storeLimit'])->name('addLimit');
 });
 
-Route::middleware(['auth','income','category'])->group(function () {
+Route::middleware(['auth','income','category','user'])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 

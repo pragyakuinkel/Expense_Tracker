@@ -21,13 +21,22 @@
                             {{ session('success') }}
                         </x-success-message>
                     @endif
-                        @forelse($categories as $category)
-                            <div class="flex row justify-between mt-3">
-                                <div class="font-medium">
-                                    {{$category->name}}
-                                </div>
-                                <div>
-                                    <a
+                    <table class="table-auto border-collapse mt-3 w-full" style="width:100%">
+                        <thead>
+                        <tr style="background-color: #3268a8;color: white">
+                            <th class="px-4 py-2 border">Category</th>
+                            <th class="px-4 py-2 border">Owner</th>
+                            <th class="px-4 py-2 border">No of Users.</th>
+                            <th class="px-4 py-2 border"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($categories as $category)
+                            <tr>
+                                <td class="border px-4 py-2">{{$category->name}}</td>
+                                <td class="border px-4 py-2">{{$category->user->name}}</td>
+                                <td class="border px-4 py-2">{{$category->users_count ?? 0}}</td>
+                                <td class="border px-4 py-2"><a
                                         class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
                                         style='background-color:#3268a8'
                                         href="{{route('category.edit',$category->id)}}">Edit</a>
@@ -35,18 +44,16 @@
                                     <a
                                         class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
                                         style='background-color:#b50e0b'
-                                        href="{{route('category.delete',$category)}}">Delete</a>
-                                </div>
-                            </div>
-                    @empty
-                            <x-empty-value>
-                                No Categories Yet....
-                            </x-empty-value>
-                    @endforelse
-                    {{$categories->links()}}
+                                        href="{{route('category.delete',$category)}}">Delete</a></td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+{{--                    {{$categories->links()}}--}}
                 </div>
 
             </div>
         </div>
     </div>
 </x-app-layout>
+

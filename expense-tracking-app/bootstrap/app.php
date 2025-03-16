@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Commands\ForecastUpdate;
+use App\Http\Middleware\CheckAdminUser;
 use App\Http\Middleware\CheckCategory;
 use App\Http\Middleware\CheckIncome;
 use App\Http\Middleware\CheckUserRole;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'category' => CheckCategory::class,
             'admin' => CheckUserRole::class,
             'status' => CheckUserStatus::class,
+            'user' => CheckAdminUser::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

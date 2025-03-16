@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Enum\Action;
 use App\Http\Requests\IncomeRequest;
-use App\Models\Expense;
 use App\Models\Income;
+use App\Models\Statement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class IncomeController extends Controller
 {
@@ -33,16 +35,35 @@ class IncomeController extends Controller
      */
     public function store(IncomeRequest $request)
     {
-        Income::create([
-            'description'=>$request->description,
-            'amount'=>$request->amount,
-            'user_id'=>auth()->id(),
-            'date'=>$request->date
-        ]);
+        DB::beginTransaction();
 
-        session()->flash('success', 'Income added successfully');
+        try{
+            $income= Income::create([
+                'description'=>$request->description,
+                'amount'=>$request->amount,
+                'user_id'=>auth()->id(),
+                'date'=>$request->date
+            ]);
 
-        return redirect(route('dashboard'));
+            Statement::create([
+                'amount' => $income->amount,
+                'user_id' => Auth::id(),
+                'date' => Carbon::parse($income->date)->format('Y-m-d'),
+                'statementable_id' => $income->id,
+                'statementable_type' => 'income',
+                'action' => Action::Add
+            ]);
+
+            DB::commit();
+
+            session()->flash('success', 'Income added successfully');
+
+            return redirect(route('dashboard'));
+        }catch (\Exception $exception){
+            DB::rollBack();
+        }
+
+
     }
 
     /**

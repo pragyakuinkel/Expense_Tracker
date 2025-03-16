@@ -15,11 +15,14 @@ class AdminController extends Controller
     public function dashboard(){
         $user_count = User::count();
         $category_count = Category::count();
+        $max_spent_categories = Category::withSum('expenses', 'amount')
+        ->orderBy('expenses_sum_amount','desc')->limit(5)
+        ->get();
         $max_spent = Category::withSum('expenses', 'amount')
-        ->orderByDesc('expenses_sum_amount')
+        ->orderBy('expenses_sum_amount','desc')
         ->first();
         $avg_income=Income::whereMonth('date',Carbon::now())->whereYear('date',Carbon::now())->avg('amount') ?? 0;
-        return view('admin.dashboard', compact('user_count', 'category_count','max_spent','avg_income'));
+        return view('admin.dashboard', compact('user_count', 'category_count','max_spent','avg_income','max_spent_categories'));
     }
 
     public function users(){

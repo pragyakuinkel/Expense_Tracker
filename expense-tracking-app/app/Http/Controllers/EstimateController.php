@@ -55,7 +55,7 @@ class EstimateController extends Controller
                     'user_id' => Auth::id(),
                     'date' => Carbon::parse($m)->format('Y-m-d'),
                     'statementable_id' => $estimate_created->id,
-                    'statementable_type' => 'expense',
+                    'statementable_type' => 'estimate',
                     'action' => Action::Add
                 ]);
 
@@ -72,14 +72,30 @@ class EstimateController extends Controller
     {
 
         if($estimate){
+            DB::beginTransaction();
 
-            $estimate->update([
-                'amount'=>$request->amount
-            ]);
+            try{
+                $estimate->update([
+                    'amount'=>$request->amount
+                ]);
 
-            session()->flash('success', 'Estimate updated successfully');
+                Statement::create([
+                    'amount' => $request->amount,
+                    'user_id' => Auth::id(),
+                    'date' => Carbon::parse($estimate->date)->format('Y-m-d'),
+                    'statementable_id' => $estimate->id,
+                    'statementable_type' => 'expense',
+                    'action' => Action::Update
+                ]);
 
-            return redirect()->route('forecast.forecast');
+                DB::commit();
+
+                session()->flash('success', 'Estimate updated successfully');
+
+                return redirect()->route('forecast.forecast');
+            }catch (\Exception $exception){
+                DB::rollBack();
+            }
         }else{
             return back();
         }
@@ -87,7 +103,7 @@ class EstimateController extends Controller
     public function selectCategory()
     {
         $error= session()->get('error');
-        $categories=Category::where('role_id',1)->get();
+        $categories=Category::where('user_id',1)->get();
 
         return view('estimate.selectCategory',compact('categories','error'));
     }
@@ -173,7 +189,7 @@ class EstimateController extends Controller
                         ]);
                     }
                 } else {
-                    $newCategory = Category::create(['name' => $new_categories[$i],'role_id'=>2]);
+                    $newCategory = Category::create(['name' => $new_categories[$i],'user_id'=>Auth::id()]);
 
                     foreach ($month as $m) {
                         $date = Carbon::parse($m)->startOfMonth()->format('Y-m-d');

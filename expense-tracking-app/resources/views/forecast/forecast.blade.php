@@ -48,7 +48,7 @@
 
                     <hr>
 
-                    <table class="table-auto w-fit border-collapse mt-3">
+                    <table class="table-auto border-collapse mt-3 w-full" style="width:100%">
                         <thead>
                         <tr style="background-color: #3268a8;color: white">
                             <th class="px-4 py-2 border">Category</th>
@@ -63,22 +63,22 @@
                             <tr>
                                 <td class="border px-4 py-2">{{$forecast['category']}}</td>
                                 <td class="border px-4 py-2">{{$forecast['limit']}}%</td>
-                                <td class="border px-4 py-2">Rs. {{$forecast['estimate']}}</td>
+                                <td class="border px-4 py-2">Rs. {{number_format($forecast['estimate'],2)}}</td>
                                 <td class="border px-4 py-2">{{$forecast['expensePercent']}}%</td>
-                                <td class="border px-4 py-2">Rs.{{$forecast['expense']}}</td>
+                                <td class="border px-4 py-2">Rs.{{number_format($forecast['expense'],2)}}</td>
                             </tr>
                         @endforeach
                         <tr class="border px-4 py-2">
                             <td class="border px-4 py-2"></td>
                             <td class="border px-4 py-2"></td>
-                            <td class="border px-4 py-2">Rs. {{$expectedExpense}}</td>
+                            <td class="border px-4 py-2">Rs. {{number_format($expectedExpense,2)}}</td>
                             <td class="border px-4 py-2"></td>
-                            <td class="border px-4 py-2">Rs.{{$actualExpense}}</td>
+                            <td class="border px-4 py-2">Rs.{{number_format($actualExpense,2)}}</td>
                         </tr>
                         </tbody>
                     </table>
 
-                    <p class="font-bold text-xl mt-4">Income: Rs.{{$estimate->amount}}</p>
+                    <p class="font-bold text-xl mt-4">Income: Rs.{{number_format($estimate->amount,2)}}</p>
                 </div>
             </div>
         </div>

@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\Action;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ExpenseRequest;
 use App\Models\Category;
 use App\Models\Expense;
+use App\Models\Statement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ExpenseController extends Controller
 {
@@ -38,17 +41,34 @@ class ExpenseController extends Controller
      */
     public function store(ExpenseRequest $request)
     {
-        Expense::create([
-            'description'=>$request->description,
-            'amount'=>$request->amount,
-            'category_id'=>$request->category,
-            'user_id'=>auth()->id(),
-            'date'=>$request->date
-        ]);
+        DB::beginTransaction();
+        try{
+            $expense = Expense::create([
+                'description'=>$request->description,
+                'amount'=>$request->amount,
+                'category_id'=>$request->category,
+                'user_id'=>auth()->id(),
+                'date'=>$request->date
+            ]);
 
-        session()->flash('success', 'Expense added successfully');
+            Statement::create([
+                'amount' => $request->amount,
+                'user_id' => Auth::id(),
+                'date' => Carbon::parse($request->date)->format('Y-m-d'),
+                'statementable_id' => $expense->id,
+                'statementable_type' => 'expense',
+                'action' => Action::Add
+            ]);
 
-        return redirect(route('dashboard'));
+            DB::commit();
+
+            session()->flash('success', 'Expense added successfully');
+
+            return redirect(route('dashboard'));
+        }catch (\Exception $exception){
+            DB::rollBack();
+        }
+
     }
 
     /**
@@ -83,18 +103,38 @@ class ExpenseController extends Controller
      */
     public function update(ExpenseRequest $request, Expense $expense)
     {
-        $expense=Expense::find($expense->id);
+        DB::beginTransaction();
 
-        $expense->update([
-            'description'=>$request->description,
-            'amount'=>$request->amount,
-            'category_id'=>$request->category,
-            'date'=>$request->date
-        ]);
+        try{
+            $expense=Expense::find($expense->id);
 
-        session()->flash('success', 'Expense updated successfully');
+            $expense->update([
+                'description'=>$request->description,
+                'amount'=>$request->amount,
+                'category_id'=>$request->category,
+                'date'=>$request->date
+            ]);
 
-        return redirect(route('dashboard'));
+            Statement::create([
+                'amount' => $request->amount,
+                'user_id' => Auth::id(),
+                'date' => Carbon::parse($request->date)->format('Y-m-d'),
+                'statementable_id' => $expense->id,
+                'statementable_type' => 'expense',
+                'action' => Action::Add
+            ]);
+
+            DB::commit();
+
+            session()->flash('success', 'Expense updated successfully');
+
+            return redirect(route('dashboard'));
+        }catch (\Exception $exception){
+            DB::rollBack();
+        }
+
+
+
     }
 
     public function delete(Expense $expense){
@@ -117,16 +157,34 @@ class ExpenseController extends Controller
      */
     public function destroy(Expense $expense)
     {
-        $expense=Expense::find($expense->id);
+        DB::beginTransaction();
 
-        if($expense){
-            $expense->delete();
+        try{
+            $expense=Expense::find($expense->id);
 
-            session()->flash('success', 'Expense deleted successfully');
+            Statement::create([
+                'amount' => $expense->amount,
+                'user_id' => Auth::id(),
+                'date' => Carbon::parse($expense->date)->format('Y-m-d'),
+                'statementable_id' => $expense->id,
+                'statementable_type' => 'expense',
+                'action' => Action::Delete
+            ]);
 
-            return redirect(route('dashboard'));
-        }else{
-            return redirect(route('dashboard'));
+            if($expense){
+                $expense->delete();
+
+                DB::commit();
+
+                session()->flash('success', 'Expense deleted successfully');
+
+                return redirect(route('dashboard'));
+            }else{
+                return redirect(route('dashboard'));
+            }
+        }catch (\Exception $exception){
+            DB::rollBack();
         }
+
     }
 }

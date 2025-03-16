@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->foreignId('role_id')->constrained('roles');
+            $table->foreignId('user_id')->constrained('users');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
