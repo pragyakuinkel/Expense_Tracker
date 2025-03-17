@@ -50,24 +50,37 @@ class UserCategoryController extends Controller
         DB::beginTransaction();
 
         try{
-            $category = Category::where('name', $request->name)->first();
+            $category = Category::withTrashed()->where('name', $request->name)->first();
 
-            if ($category) {
+            if($category){
+                $category->restore();
+
                 $category->users()->attach(Auth::id(), [
                     'limit' => $request->limit,
                     'date' => Carbon::now()->format('Y-m-d'),
                 ]);
             }else{
-                $category=Category::create([
-                    'name'=>$request->name,
-                    'role_id'=>2,
-                ]);
+                $category = Category::where('name', $request->name)->first();
 
-                $category->users()->attach(Auth::id(), [
-                    'limit' => $request->limit,
-                    'date' => Carbon::now()->format('Y-m-d'),
-                ]);
+
+                if ($category) {
+                    $category->users()->attach(Auth::id(), [
+                        'limit' => $request->limit,
+                        'date' => Carbon::now()->format('Y-m-d'),
+                    ]);
+                }else{
+                    $category=Category::create([
+                        'name'=>$request->name,
+                        'user_id'=>Auth::id(),
+                    ]);
+
+                    $category->users()->attach(Auth::id(), [
+                        'limit' => $request->limit,
+                        'date' => Carbon::now()->format('Y-m-d'),
+                    ]);
+                }
             }
+
             DB::commit();
 
             session()->flash('message', 'Category added successfully');

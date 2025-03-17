@@ -39,10 +39,17 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        Category::create([
-            'name'=>$request->name,
-            'user_id'=>Auth::user()->id
-        ]);
+        $category=Category::withTrashed()->where('name',$request->name)->first();
+
+        if($category != null){
+            $category->restore();
+        }else{
+
+            Category::create([
+                'name'=>$request->name,
+                'user_id'=>Auth::user()->id
+            ]);
+        }
 
         session()->flash('success', 'Category created successfully');
 
