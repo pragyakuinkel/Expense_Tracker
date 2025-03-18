@@ -17,7 +17,7 @@ class CheckUserStatus
     public function handle(Request $request, Closure $next): Response
     {
         if(Auth::check()){
-            return back();
+            to_route('login');
         }
         return $next($request);
     }

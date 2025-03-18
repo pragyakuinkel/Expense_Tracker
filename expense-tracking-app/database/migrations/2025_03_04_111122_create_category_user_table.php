@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('category_user', function (Blueprint $table) {
-            $table->foreignId('user_id');
-            $table->foreignId('category_id')->constrained()->onDelete('restrict');
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('category_id')->constrained('categories');
             $table->decimal('limit');
             $table->date('date');
 

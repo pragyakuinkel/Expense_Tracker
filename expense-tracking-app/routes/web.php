@@ -20,7 +20,7 @@ Route::middleware(['auth', 'verified','admin'])->group(function () {
 
     Route::resource('/category', CategoryController::class);
 
-    Route::get('/category/delete/{category}', [CategoryController::class, 'delete'])->name('category.delete');
+    Route::get('/category/delete/{id}', [CategoryController::class, 'delete'])->name('category.delete');
 
     Route::get('admin/user',[AdminController::class, 'users'])->name('admin.user');
 

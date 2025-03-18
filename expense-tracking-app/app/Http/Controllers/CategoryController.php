@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CategoryController extends Controller
@@ -21,7 +22,12 @@ class CategoryController extends Controller
     {
         $success=session()->get('success');
 
-        $categories = Category::withCount('users')->get();
+        $categories = Category::with('user')
+            ->leftJoin('category_user', 'categories.id', '=', 'category_user.category_id')
+            ->leftJoin('users', 'category_user.user_id', '=', 'users.id')
+            ->select('categories.id as id','categories.name','categories.user_id','users.name as username', DB::raw('COUNT(DISTINCT category_user.user_id) as users_count'))
+            ->groupBy('categories.id','categories.name','categories.user_id','users.name')
+            ->get();
 
         return view('category.index', compact('categories', 'success'));
     }
@@ -97,9 +103,9 @@ class CategoryController extends Controller
 
     public function delete(Category $category){
 
-        $category=Category::find($category->id);
+        $category=Category::where('id',$category->id)->first();
 
-        if($category){
+        if($category != null){
             return view('category.delete', compact('category'));
         }else{
             return redirect()->route('category.index');

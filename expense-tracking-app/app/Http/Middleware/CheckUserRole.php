@@ -20,10 +20,10 @@ class CheckUserRole
             if ($role->name === 'superAdmin') {
                 return $next($request);
             }else{
-                return back();
+                return to_route('dashboard');
             }
         }
 
-        return back();
+        return to_route('dashboard');
     }
 }
