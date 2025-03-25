@@ -14,6 +14,12 @@
                         <x-nav-link :href="route('admin.user')" :active="request()->routeIs('admin.user')">
                             {{ __('Manage User') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.permission')" :active="request()->routeIs('admin.permission')">
+                            {{ __('Permissions') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('role.index')" :active="request()->routeIs('role.index')">
+                            {{ __('Roles') }}
+                        </x-nav-link>
                     @else
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
@@ -27,9 +33,11 @@
                         <x-nav-link :href="route('category_user.index')" :active="request()->routeIs('category_user.index')">
                             {{ __('Manage Categories') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('forecast.forecast')" :active="request()->routeIs('forecast.forecast')">
-                            {{ __('Forecast') }}
-                        </x-nav-link>
+                        @if(Auth::user()->roles->hasPermission('forecast.forecast',Auth::user()->getRole()->id))
+                            <x-nav-link :href="route('forecast.forecast')" :active="request()->routeIs('forecast.forecast')">
+                                {{ __('Forecast') }}
+                            </x-nav-link>
+                        @endif
                     @endif
                 </div>
             </div>

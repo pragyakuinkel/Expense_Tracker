@@ -1,11 +1,10 @@
 <?php
 
 use App\Console\Commands\ForecastUpdate;
-use App\Http\Middleware\CheckAdminUser;
 use App\Http\Middleware\CheckCategory;
 use App\Http\Middleware\CheckIncome;
-use App\Http\Middleware\CheckUserRole;
 use App\Http\Middleware\CheckUserStatus;
+use App\Http\Middleware\CommonMidleware;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -18,13 +17,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+
         $middleware->alias([
+            'middle'=>CommonMidleware::class,
             'income' => CheckIncome::class,
             'category' => CheckCategory::class,
-            'admin' => CheckUserRole::class,
             'status' => CheckUserStatus::class,
-            'user' => CheckAdminUser::class,
         ]);
+
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

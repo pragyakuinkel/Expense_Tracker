@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enum\RoleName;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -17,16 +19,13 @@ class UserSeeder extends Seeder
             'name' => "admin",
             'email' => "admin@gmail.com",
             'password' => bcrypt("admin"),
-        ]);
-
-        $users->roles()->attach(1);
+        ])->roles()->sync(Role::where('name', RoleName::ADMIN)->first());
 
         $users = User::create([
             'name' => "pragya",
             'email' => "pragya@gmail.com",
             'password' => bcrypt("123456789"),
-        ]);
+        ])->roles()->sync(Role::where('name', RoleName::User)->first());
 
-        $users->roles()->attach(2);
     }
 }

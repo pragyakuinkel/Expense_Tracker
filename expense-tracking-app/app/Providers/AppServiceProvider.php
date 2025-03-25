@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Estimate;
+use App\Models\Expense;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,8 +23,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::enforceMorphMap([
-            'estimate' => 'App\Models\Estimate',
-            'expense' => 'App\Models\Expense',
+            'estimate' => Estimate::class,
+            'expense' => Expense::class,
         ]);
     }
 }

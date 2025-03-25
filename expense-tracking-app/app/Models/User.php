@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enum\RoleName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -47,6 +48,10 @@ class User extends Authenticatable
         ];
     }
 
+    protected $casts = [
+        'role' => RoleName::class,
+    ];
+
     public function roles(){
         return $this->belongsToMany(Role::class);
     }
@@ -66,5 +71,14 @@ class User extends Authenticatable
     public function statement()
     {
         $this->hasMany(Statement::class);
+    }
+
+    public function getRole(): Role
+    {
+        return Auth::user()->roles()->first();
+    }
+    public function hasRole(string $id): bool
+    {
+        return $this->roles()->where('id', $id)->exists();
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserCategoryController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,27 +15,41 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth', 'verified','admin'])->group(function () {
+Route::middleware([
+    'middle'
+])->group(function () {
 
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
     Route::resource('/category', CategoryController::class);
 
-    Route::get('/category/delete/{id}', [CategoryController::class, 'delete'])->name('category.delete');
+    Route::resource('/role', RoleController::class);
+
+    Route::get('/role/assignRole/{role}', [RoleController::class, 'assignRole'])->name('role.assignRole');
+
+    Route::get('/category/delete/{category}', [CategoryController::class, 'delete'])->name('category.delete');
 
     Route::get('admin/user',[AdminController::class, 'users'])->name('admin.user');
 
     Route::get('admin/category/{user}',[AdminController::class, 'category'])->name('admin.category');
 
+    Route::get('admin/permission/{roleId?}',[AdminController::class, 'permissions'])->name('admin.permission');
+
+    Route::put('admin/addPermission',[AdminController::class, 'addPermission'])->name('admin.addPermission');
 });
 
-Route::middleware(['auth','user'])->group(function () {
+Route::middleware([
+    'middle'
+])->group(function () {
     Route::get('/estimate/income',[EstimateController::class, 'income'])->name('estimate.income');
 
     Route::post('/addIncome',[EstimateController::class, 'storeIncome'])->name('addIncome');
 });
 
-Route::middleware(['auth','income','user'])->group(function(){
+Route::middleware([
+    'middle',
+    'income'
+])->group(function(){
 
     Route::get('/selectCategory',[EstimateController::class, 'selectCategory'])->name('selectCategory');
 
@@ -43,7 +58,10 @@ Route::middleware(['auth','income','user'])->group(function(){
     Route::post('/addLimit',[EstimateController::class, 'storeLimit'])->name('addLimit');
 });
 
-Route::middleware(['auth','income','category','user'])->group(function () {
+Route::middleware([
+    'middle',
+    'income','category'
+])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 

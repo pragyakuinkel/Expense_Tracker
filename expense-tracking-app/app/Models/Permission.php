@@ -10,6 +10,9 @@ class Permission extends Model
 
     protected $fillable = [
         'name',
+        'uri',
+        'group',
+        'slug',
     ];
 
     public function roles(){

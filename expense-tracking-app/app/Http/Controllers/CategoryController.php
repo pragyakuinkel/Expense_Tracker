@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Http\Requests\UpdateRequest;
 use App\Models\Category;
-use App\Models\User;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 
 class CategoryController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+//        $this->authorize('category.viewAny');
+
         $success=session()->get('success');
 
         $categories = Category::with('user')

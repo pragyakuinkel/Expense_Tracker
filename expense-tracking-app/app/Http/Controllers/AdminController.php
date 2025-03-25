@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Enum\RoleName;
 use App\Models\Category;
-use App\Models\Expense;
 use App\Models\Income;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Http\Request;
+
 
 class AdminController extends Controller
 {
+
     public function dashboard(){
+
         $user_count = User::count();
         $category_count = Category::count();
         $max_spent_categories = Category::withSum('expenses', 'amount')
@@ -41,5 +45,34 @@ class AdminController extends Controller
 
 
         return view('admin.category',compact('categories','user'));
+    }
+
+    public function permissions(string $roleId = null){
+
+//        $per = Permission::where('id',100)->firstOrFail();
+
+//        $per = Permission::findOrFail([10,11,12]);
+//
+//        dd($per);
+
+        if($roleId == null){
+            $roleId=Role::where('name',RoleName::User)->first()->id;
+        }
+
+        $permissions=Permission::get()->groupBy('group');
+
+        $roles=Role::where('name','!=',RoleName::ADMIN)->get();
+
+        $user= Role::find($roleId);
+
+        return view('admin.permission',compact('permissions','user','roles'));
+    }
+    public function addPermission(Request $request){
+
+        $user = Role::find($request->id);
+
+        $user->permissions()->sync($request->input('permissions', []));
+
+        return back();
     }
 }

@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\CategoryRequest;
 use App\Http\Requests\CheckCategoryUserDateRequest;
-use App\Http\Requests\UpdateRequest;
 use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Http\Request;

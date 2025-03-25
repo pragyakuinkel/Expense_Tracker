@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enum\Action;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\ExpenseRequest;
 use App\Models\Category;
 use App\Models\Expense;
 use App\Models\Statement;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -28,12 +26,12 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        $categories=Category::whereHas('users', function($q){
+        $categories = Category::whereHas('users', function ($q) {
             $q->where('user_id', auth()->id())
                 ->whereMonth('date', '=', Carbon::now());
         })->get();
-        $current=Carbon::now()->format('Y-m-d');
-        return view('expense.create', compact('categories','current'));
+        $current = Carbon::now()->format('Y-m-d');
+        return view('expense.create', compact('categories', 'current'));
     }
 
     /**
@@ -42,13 +40,13 @@ class ExpenseController extends Controller
     public function store(ExpenseRequest $request)
     {
         DB::beginTransaction();
-        try{
+        try {
             $expense = Expense::create([
-                'description'=>$request->description,
-                'amount'=>$request->amount,
-                'category_id'=>$request->category,
-                'user_id'=>auth()->id(),
-                'date'=>$request->date
+                'description' => $request->description,
+                'amount' => $request->amount,
+                'category_id' => $request->category,
+                'user_id' => auth()->id(),
+                'date' => $request->date
             ]);
 
             Statement::create([
@@ -65,7 +63,7 @@ class ExpenseController extends Controller
             session()->flash('success', 'Expense added successfully');
 
             return redirect(route('dashboard'));
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollBack();
         }
 
@@ -84,18 +82,18 @@ class ExpenseController extends Controller
      */
     public function edit(Expense $expense)
     {
-        $expense=Expense::find($expense->id);
+        $expense = Expense::find($expense->id);
 
-        if($expense->user_id !== Auth::id()){
+        if ($expense->user_id !== Auth::id()) {
             abort(401);
         }
 
-        $categories=Category::whereHas('users', function($q){
+        $categories = Category::whereHas('users', function ($q) {
             $q->where('user_id', auth()->id())
                 ->whereMonth('date', '=', Carbon::now());
         })->get();
 
-        return view('expense.edit', compact('expense','categories'));
+        return view('expense.edit', compact('expense', 'categories'));
     }
 
     /**
@@ -105,14 +103,14 @@ class ExpenseController extends Controller
     {
         DB::beginTransaction();
 
-        try{
-            $expense=Expense::find($expense->id);
+        try {
+            $expense = Expense::find($expense->id);
 
             $expense->update([
-                'description'=>$request->description,
-                'amount'=>$request->amount,
-                'category_id'=>$request->category,
-                'date'=>$request->date
+                'description' => $request->description,
+                'amount' => $request->amount,
+                'category_id' => $request->category,
+                'date' => $request->date
             ]);
 
             Statement::create([
@@ -129,29 +127,28 @@ class ExpenseController extends Controller
             session()->flash('success', 'Expense updated successfully');
 
             return redirect(route('dashboard'));
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollBack();
         }
 
 
+    }
+    public function delete(string $expense)
+    {
+
+        //first tries to find data of that id if not found throws ModelNotFoundException which if not done in a try catch block creates a 404 response
+        $expense = Expense::findOrFail($expense);
+        return view('expense.delete', compact('expense'));
+//        if ($expense->user_id !== Auth::id()) {
+//            abort(404);
+//        }
+//        $expense = Expense::find($expense);
+//        if (!$expense)
+//            return redirect(route('dashboard'));
+//        else
 
     }
 
-    public function delete(Expense $expense){
-
-        if($expense->user_id !== Auth::id()){
-            abort(401);
-        }
-
-        $expense=Expense::find($expense->id);
-
-        if($expense){
-            return view('expense.delete', compact('expense'));
-        }else{
-            return redirect(route('dashboard'));
-        }
-
-    }
     /**
      * Remove the specified resource from storage.
      */
@@ -159,8 +156,8 @@ class ExpenseController extends Controller
     {
         DB::beginTransaction();
 
-        try{
-            $expense=Expense::find($expense->id);
+        try {
+            $expense = Expense::find($expense->id);
 
             Statement::create([
                 'amount' => $expense->amount,
@@ -171,7 +168,7 @@ class ExpenseController extends Controller
                 'action' => Action::Delete
             ]);
 
-            if($expense){
+            if ($expense) {
                 $expense->delete();
 
                 DB::commit();
@@ -179,10 +176,10 @@ class ExpenseController extends Controller
                 session()->flash('success', 'Expense deleted successfully');
 
                 return redirect(route('dashboard'));
-            }else{
+            } else {
                 return redirect(route('dashboard'));
             }
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollBack();
         }
 

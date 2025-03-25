@@ -7,9 +7,8 @@ use App\Models\Estimate;
 use App\Models\Expense;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
-class ForecastController extends Controller
+class ForecastControllerBackUp extends Controller
 {
     public function forecast($date = null){
 
@@ -18,18 +17,6 @@ class ForecastController extends Controller
         $date = Carbon::parse($date)->startOfMonth();
 
         $forecasts=[];
-
-//        $categories =Category::leftJoin('category_user', 'categories.id', '=', 'category_user.category_id')
-//            ->leftJoin('users', 'category_user.user_id', '=', 'users.id')
-//            ->select('categories.id', DB::raw("CASE
-//                WHEN type = 'category_user.date' = '{$date->format('Y-m')}' AS 'current_month'
-//                WHEN type = 'category_user.date' = '{$date->copy()->subMonth()->format('Y-m')}' AS 'last_month'
-//                END"))
-//            ->withSum(['expenses' => function ($query) use ($date) {
-//                $query->where('user_id', Auth::id())
-//                    ->whereMonth('date', $date->month)
-//                    ->whereYear('date', $date->year);
-//            }], 'amount')->groupBy('categories.id', 'type')->get();
 
         $categories = Category::whereHas('users', function ($query) use ($date) {
             $query->where('user_id', Auth::id())

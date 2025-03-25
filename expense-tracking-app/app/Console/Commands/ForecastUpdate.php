@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Category;
 use App\Models\Estimate;
+use App\Models\Expense;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -74,11 +75,6 @@ class ForecastUpdate extends Command
                     $expensePercent=round(floatVal($LastExpense)/floatVal($estimate->amount)*100,2);
 
                     $limit=round((floatval($userInfo->pivot->limit)+$expensePercent)/2, 2);
-
-//            $category->users()->updateExistingPivot($userInfo->id, [
-//                'limit' => $limit,
-//                'date' => Carbon::now()->addMonth()->startOfMonth()
-//            ]);
 
                     DB::table('category_user')->where('user_id',$userInfo->id)->where('category_id',$category->id)->whereMonth('date',Carbon::now()->addMonth())->whereYear('date',Carbon::now()->addMonth())
                         ->update(['limit' => $limit]);
