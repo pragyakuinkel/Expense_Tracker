@@ -73,6 +73,8 @@ class AdminController extends Controller
 
         $user->permissions()->sync($request->input('permissions', []));
 
+        session()->flash('success','Permission updated successfully');
+
         return back();
     }
 }

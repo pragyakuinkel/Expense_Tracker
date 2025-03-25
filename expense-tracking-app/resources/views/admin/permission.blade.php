@@ -19,6 +19,12 @@
                         @endforeach
                     </div>
 
+                    @if(session('success'))
+                        <x-success-message>
+                            {{ session('success') }}
+                        </x-success-message>
+                    @endif
+
 
                     <form action="{{route('admin.addPermission')}}" method="POST" class="items-end">
                         @csrf

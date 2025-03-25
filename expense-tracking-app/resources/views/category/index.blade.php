@@ -27,7 +27,7 @@
                             <th class="px-4 py-2 border">Category</th>
                             <th class="px-4 py-2 border">Owner</th>
                             <th class="px-4 py-2 border">No of Users.</th>
-                            <th class="px-4 py-2 border"></th>
+                            <th class="px-4 py-2 border align-middle"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -38,14 +38,14 @@
                                     {{$category->user->name}}
                                 </td>
                                 <td class="border px-4 py-2">{{$category->users_count ?? 0}}</td>
-                                <td class="border px-4 py-2">
-                                    <a
-                                        class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
-                                        style='background-color:#3268a8'
-                                        href="{{route('category.edit',$category->id)}}">Edit</a>
+                                <td class="border px-4 py-2 flex justify-center items-center">
+{{--                                    <a--}}
+{{--                                        class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"--}}
+{{--                                        style='background-color:#3268a8'--}}
+{{--                                        href="{{route('category.edit',$category->id)}}">Edit</a>--}}
 
                                     <a
-                                        class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
+                                        class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white w-full"
                                         style='background-color:#b50e0b'
                                         href="{{route('category.delete',$category)}}">Delete</a>
                                 </td>

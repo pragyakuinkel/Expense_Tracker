@@ -15,25 +15,23 @@
                             <th class="px-4 py-2 border">Name</th>
                             <th class="px-4 py-2 border">Email</th>
                             <th class="px-4 py-2 border">Created Date</th>
+                            <th class="px-4 py-2 border"></th>
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($users as $user)
                             <tr>
                                 <td class="border px-4 py-2">
-                                    <a href="{{route('admin.category',$user)}}">
-                                        {{$user->name}}
-                                    </a>
+                                    {{$user->name}}
                                 </td>
                                 <td class="border px-4 py-2">
-                                    <a href="{{route('admin.category',$user)}}">
-                                        {{$user->email}}
-                                    </a>
+                                    {{$user->email}}
                                 </td>
                                 <td class="border px-4 py-2">
-                                    <a href="{{route('admin.category',$user)}}">
-                                        {{$user->updated_at}}
-                                    </a>
+                                    {{$user->updated_at}}
+                                </td>
+                                <td class="border px-4 py-2 flex justify-center items-center">
+                                    <a href="{{route('admin.category',$user)}}" style="color: green">View</a>
                                 </td>
                             </tr>
                         @endforeach

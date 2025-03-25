@@ -18,13 +18,13 @@
                     @endif
 
                     @foreach($users as $user)
-                        <div class="border px-4 py-2 flex justify-between">
+                        <div class="border px-4 py-2 flex ">
 
 
                             @if($user->hasRole($role->id))
-                                -
+                                <a href="{{route('role.removeRole',$user->getRole())}}">-</a>
                             @else
-                                +
+                                <a href="{{route('role.addRole',$user->getRole())}}">+</a>
                             @endif
 
                             {{$user->name}}

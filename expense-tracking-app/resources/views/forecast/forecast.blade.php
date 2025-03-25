@@ -78,7 +78,7 @@
                         </tbody>
                     </table>
 
-                    <p class="font-bold text-xl mt-4">Income: Rs.{{number_format($estimate->amount,2)}}</p>
+                    <p class="font-bold text-xl mt-4">Estimated Income: Rs.{{number_format($estimate->amount,2)}}</p>
                 </div>
             </div>
         </div>

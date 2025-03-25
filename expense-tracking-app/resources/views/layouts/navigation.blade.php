@@ -1,43 +1,66 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
+<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">\
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    @if(Auth::user()->roles()->first()->name === 'superAdmin')
+                    @if(Auth::user()->roles()->first()->name === 'superAdmin' || Auth::user()->hasPermission('admin.dashboard',Auth::user()->getRole()->id))
                         <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
+                    @endif
+
+                    @if(Auth::user()->roles()->first()->name === 'superAdmin' || Auth::user()->hasPermission('category.index',Auth::user()->getRole()->id))
                         <x-nav-link :href="route('category.index')" :active="request()->routeIs('category.index')">
                             {{ __('Manage Category') }}
                         </x-nav-link>
+                    @endif
+
+                    @if(Auth::user()->roles()->first()->name === 'superAdmin' || Auth::user()->hasPermission('admin.user',Auth::user()->getRole()->id))
                         <x-nav-link :href="route('admin.user')" :active="request()->routeIs('admin.user')">
                             {{ __('Manage User') }}
                         </x-nav-link>
+                    @endif
+
+                    @if(Auth::user()->roles()->first()->name === 'superAdmin' || Auth::user()->hasPermission('admin.permission',Auth::user()->getRole()->id))
                         <x-nav-link :href="route('admin.permission')" :active="request()->routeIs('admin.permission')">
                             {{ __('Permissions') }}
                         </x-nav-link>
+                    @endif
+
+                    @if(Auth::user()->roles()->first()->name === 'superAdmin' || Auth::user()->hasPermission('role.index',Auth::user()->getRole()->id))
                         <x-nav-link :href="route('role.index')" :active="request()->routeIs('role.index')">
                             {{ __('Roles') }}
                         </x-nav-link>
-                    @else
+                    @endif
+
+                    @if(Auth::user()->hasPermission('dashboard',Auth::user()->getRole()->id))
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                            {{ __('Dashboard') }}
+                            {{ __('Home') }}
                         </x-nav-link>
+                    @endif
+
+                    @if(Auth::user()->hasPermission('expense.create',Auth::user()->getRole()->id))
                         <x-nav-link :href="route('expense.create')" :active="request()->routeIs('expense.create')">
                             {{ __('Add Expense') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('income.create')" :active="request()->routeIs('income.create')">
-                            {{ __('Add Income') }}
-                        </x-nav-link>
+                    @endif
+
+                    @if(Auth::user()->hasPermission('income.create',Auth::user()->getRole()->id))
+                            <x-nav-link :href="route('income.create')" :active="request()->routeIs('income.create')">
+                                {{ __('Add Income') }}
+                            </x-nav-link>
+                    @endif
+
+                    @if(Auth::user()->hasPermission('category_user.index',Auth::user()->getRole()->id))
                         <x-nav-link :href="route('category_user.index')" :active="request()->routeIs('category_user.index')">
                             {{ __('Manage Categories') }}
                         </x-nav-link>
-                        @if(Auth::user()->roles->hasPermission('forecast.forecast',Auth::user()->getRole()->id))
-                            <x-nav-link :href="route('forecast.forecast')" :active="request()->routeIs('forecast.forecast')">
-                                {{ __('Forecast') }}
-                            </x-nav-link>
-                        @endif
+                    @endif
+
+                    @if(Auth::user()->hasPermission('forecast.forecast',Auth::user()->getRole()->id))
+                        <x-nav-link :href="route('forecast.forecast')" :active="request()->routeIs('forecast.forecast')">
+                            {{ __('Forecast') }}
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -58,11 +81,13 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
-                        </x-dropdown-link>
 
-                        <!-- Authentication -->
+                        @if(Auth::user()->hasPermission('profile.edit',Auth::user()->getRole()->id))
+                            <x-dropdown-link :href="route('profile.edit')">
+                                {{ __('Profile') }}
+                            </x-dropdown-link>
+                        @endif
+
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
 

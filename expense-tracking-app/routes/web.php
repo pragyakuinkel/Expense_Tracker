@@ -27,6 +27,10 @@ Route::middleware([
 
     Route::get('/role/assignRole/{role}', [RoleController::class, 'assignRole'])->name('role.assignRole');
 
+    Route::get('/role/removeRole/{role}/{user}', [RoleController::class, 'removeRole'])->name('role.removeRole');
+
+    Route::get('/role/addRole/{role}/{user}', [RoleController::class, 'addRole'])->name('role.addRole');
+
     Route::get('/category/delete/{category}', [CategoryController::class, 'delete'])->name('category.delete');
 
     Route::get('admin/user',[AdminController::class, 'users'])->name('admin.user');

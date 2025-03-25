@@ -81,4 +81,13 @@ class User extends Authenticatable
     {
         return $this->roles()->where('id', $id)->exists();
     }
+
+    public function hasPermission(string $permission, string $role): bool
+    {
+        $permissions = Permission::whereHas('roles', function ($q) use ($role) {
+            $q->where('id', $role);//
+        })->where('name', $permission)->exists();
+
+        return $permissions;
+    }
 }
