@@ -13,8 +13,10 @@
                         @csrf
 
                         <div>
-                            <x-input-label for="name" :value="__('Category')" />
-                            <select name="category" required class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#3268a8] focus:border-[#3268a8]" style="width:100%">
+                            <x-input-label for="name" :value="__('Category')"/>
+                            <select name="category" required
+                                    class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#3268a8] focus:border-[#3268a8]"
+                                    style="width:100%">
                                 @foreach($categories as $category)
                                     <option value="{{$category->id}}">{{$category->name}}</option>
                                 @endforeach
@@ -23,22 +25,28 @@
                         </div>
 
                         <div class="mt-4">
-                            <x-input-label for="amount" :value="__('Amount')" />
-                            <x-text-input id="amount" class="block mt-1 w-full" type="number" step="any" name="amount" :value="old('amount')" required style="width:100%"/>
+                            <x-input-label for="amount" :value="__('Amount')"/>
+                            <x-text-input id="amount" class="block mt-1 w-full" type="number" step="any" name="amount"
+                                          :value="old('amount')" required style="width:100%"/>
                             <x-input-error :messages="$errors->get('amount')" class="mt-2" style="width:100%"/>
                         </div>
 
                         <div class="mt-4">
-                            <x-input-label for="description" :value="__('Description')" />
-                            <x-text-input id="description" class="block mt-1 w-full" type="text" name="description" :value="old('description')" style="width:100%"/>
+                            <x-input-label for="description" :value="__('Description')"/>
+                            <x-text-input id="description" class="block mt-1 w-full" type="text" name="description"
+                                          :value="old('description')" style="width:100%"/>
                             <x-input-error :messages="$errors->get('description')" class="mt-2" style="width:100%"/>
                         </div>
 
                         <div class="mt-4">
-                            <x-input-label for="date" :value="__('Date')" />
-                            <input type="date" name="date" id="date" value="{{$current}}" class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#3268a8] focus:border-[#3268a8]" style="width:100%">
+                            <x-input-label for="date" :value="__('Date')"/>
+                            <input type="date" name="date" id="date" value="{{$current}}"
+                                   class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#3268a8] focus:border-[#3268a8]"
+                                   style="width:100%">
                             <x-input-error :messages="$errors->get('date')" class="mt-2" style="width:100%"/>
                         </div>
+
+                        <x-input-error :messages="session()->get('error')" class="mt-2"/>
 
                         <x-primary-button class="mt-4" type="submit">Add</x-primary-button>
                     </form>

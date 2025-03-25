@@ -6,6 +6,7 @@ use App\Http\Requests\RoleRequest;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class   RoleController extends Controller
 {
@@ -32,7 +33,7 @@ class   RoleController extends Controller
     public function store(RoleRequest $request)
     {
         Role::create([
-            'name'=>$request->name
+            'name' => $request->name
         ]);
 
         session()->flash('success', 'Role created successfully');
@@ -42,21 +43,29 @@ class   RoleController extends Controller
 
     public function assignRole(Role $role)
     {
-        $users = User::all();
+        $users = User::where('id', '!=', Auth::id())->get();
         return view('role.assignRole', compact('role', 'users'));
     }
 
-    public function removeRole(User $user)
+    public function removeRole(Role $role, User $user)
     {
 
+        $role->users()->detach($user);
 
         session()->flash('success', 'Role removed successfully');
+
+        return back();
     }
 
-    public function addRole(Role $role)
+    public function addRole(Role $role, User $user)
     {
+        $role->users()->attach($user);
+
         session()->flash('success', 'Role added successfully');
+
+        return back();
     }
+
     /**
      * Display the specified resource.
      */

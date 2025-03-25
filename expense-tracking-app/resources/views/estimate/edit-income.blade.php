@@ -12,10 +12,13 @@
                 @method('PUT')
 
                 <div class="mt-4">
-                <x-input-label for="number" :value="__('Income')" />
-                <x-text-input id="amount" class="block mt-1 w-full" type="number" step="any" name="amount" :value="old('amount',$estimate->amount)" required style="width:100%"/>
-                <x-input-error :messages="$errors->get('amount')" class="mt-2" />
+                    <x-input-label for="number" :value="__('Income')"/>
+                    <x-text-input id="amount" class="block mt-1 w-full" type="number" step="any" name="amount"
+                                  :value="old('amount',$estimate->amount)" required style="width:100%"/>
+                    <x-input-error :messages="$errors->get('amount')" class="mt-2"/>
                 </div>
+
+                <x-input-error :messages="session()->get('error')" class="mt-2"/>
 
                 <x-primary-button class="mt-4">
                     {{ __('Edit Income') }}

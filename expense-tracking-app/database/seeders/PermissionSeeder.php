@@ -29,8 +29,8 @@ class PermissionSeeder extends Seeder
 
         foreach ($routes as $folder => $folderRoute) {
             foreach ($folderRoute as $route) {
-                if($route['uri']=='login' || $route['uri']=='forgot-password' || $route['uri']=='reset-password' || $route['uri']=='verify-email' || $route['uri']=='verify-email/{id}/{hash}'|| $route['uri']=='storage/{path}'|| $route['uri']=='up'|| $route['uri']=='/' || $route['uri'] == 'register'|| $route['uri'] == 'reset-password/{token}
-                '|| $route['uri']=='confirm-password'|| $route['uri']=='reset-password/{token}
+                if ($route['uri'] == 'login' || $route['uri'] == 'forgot-password' || $route['uri'] == 'reset-password' || $route['uri'] == 'verify-email' || $route['uri'] == 'verify-email/{id}/{hash}' || $route['uri'] == 'storage/{path}' || $route['uri'] == 'up' || $route['uri'] == '/' || $route['uri'] == 'register' || $route['uri'] == 'reset-password/{token}
+                ' || $route['uri'] == 'confirm-password' || $route['uri'] == 'reset-password/{token}
                 ') {
                     break;
                 }

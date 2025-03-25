@@ -62,27 +62,28 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function dashboard(){
+    public function dashboard()
+    {
 
-        $success=session()->get('success');
+        $success = session()->get('success');
 
-        $income=Income::where('user_id',Auth::id())->get();
+        $income = Income::where('user_id', Auth::id())->get();
 
-        $expense=Expense::where('user_id',Auth::id())->get();
+        $expense = Expense::where('user_id', Auth::id())->get();
 
-        $months=collect($expense)->merge($income)->groupBy(function ($income) {
+        $months = collect($expense)->merge($income)->groupBy(function ($income) {
             return Carbon::parse($income->date)->format('Y F');
         });
 
-        $income=Income::where('user_id',Auth::id())
+        $income = Income::where('user_id', Auth::id())
             ->whereMonth('date', Carbon::now())->whereYear('date', Carbon::now())->sum('amount');
 
-        $expense=Expense::where('user_id',Auth::id())
+        $expense = Expense::where('user_id', Auth::id())
             ->whereMonth('date', Carbon::now())->whereYear('date', Carbon::now())->sum('amount');
 
-        $transaction[]=['income'=>$income,'expense'=>$expense,'left'=>floatval($income)-floatval($expense)];
+        $transaction[] = ['income' => $income, 'expense' => $expense, 'left' => floatval($income) - floatval($expense)];
 
-        return view('dashboard', compact('success','months','transaction'));
+        return view('dashboard', compact('success', 'months', 'transaction'));
 
     }
 }

@@ -16,6 +16,8 @@ Route::get('/', function () {
 });
 
 Route::middleware([
+    'auth',
+    'verified',
     'middle'
 ])->group(function () {
 
@@ -33,38 +35,45 @@ Route::middleware([
 
     Route::get('/category/delete/{category}', [CategoryController::class, 'delete'])->name('category.delete');
 
-    Route::get('admin/user',[AdminController::class, 'users'])->name('admin.user');
+    Route::get('admin/user', [AdminController::class, 'users'])->name('admin.user');
 
-    Route::get('admin/category/{user}',[AdminController::class, 'category'])->name('admin.category');
+    Route::get('admin/category/{user}', [AdminController::class, 'category'])->name('admin.category');
 
-    Route::get('admin/permission/{roleId?}',[AdminController::class, 'permissions'])->name('admin.permission');
+    Route::get('admin/permission/{roleId?}', [AdminController::class, 'permissions'])->name('admin.permission');
 
-    Route::put('admin/addPermission',[AdminController::class, 'addPermission'])->name('admin.addPermission');
+    Route::put('admin/addPermission', [AdminController::class, 'addPermission'])->name('admin.addPermission');
 });
 
 Route::middleware([
+    'auth',
+    'verified',
     'middle'
 ])->group(function () {
-    Route::get('/estimate/income',[EstimateController::class, 'income'])->name('estimate.income');
+    Route::get('/estimate/income', [EstimateController::class, 'income'])->name('estimate.income');
 
-    Route::post('/addIncome',[EstimateController::class, 'storeIncome'])->name('addIncome');
+    Route::post('/addIncome', [EstimateController::class, 'storeIncome'])->name('addIncome');
 });
 
 Route::middleware([
+    'auth',
+    'verified',
     'middle',
     'income'
-])->group(function(){
+])->group(function () {
 
-    Route::get('/selectCategory',[EstimateController::class, 'selectCategory'])->name('selectCategory');
+    Route::get('/selectCategory', [EstimateController::class, 'selectCategory'])->name('selectCategory');
 
-    Route::post('/addCategory',[EstimateController::class, 'showLimit'])->name('addCategory');
+    Route::post('/addCategory', [EstimateController::class, 'showLimit'])->name('addCategory');
 
-    Route::post('/addLimit',[EstimateController::class, 'storeLimit'])->name('addLimit');
+    Route::post('/addLimit', [EstimateController::class, 'storeLimit'])->name('addLimit');
 });
 
 Route::middleware([
+    'auth',
+    'verified',
     'middle',
-    'income','category'
+    'income',
+    'category'
 ])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -77,19 +86,19 @@ Route::middleware([
 
     Route::get('category_user/delete/{category}', [UserCategoryController::class, 'delete'])->name('category_user.delete');
 
-    Route::get('/dashboard',[ProfileController::class,'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
 
     Route::resource('expense', ExpenseController::class);
 
     Route::get('/expense/delete/{expense}', [ExpenseController::class, 'delete'])->name('expense.delete');
 
-    Route::get('/forecast/forecast/{date?}',[ForecastController::class, 'forecast'])->name('forecast.forecast');
+    Route::get('/forecast/forecast/{date?}', [ForecastController::class, 'forecast'])->name('forecast.forecast');
 
-    Route::get('/editIncome/{date}',[EstimateController::class, 'editIncome'])->name('editIncome');
+    Route::get('/editIncome/{date}', [EstimateController::class, 'editIncome'])->name('editIncome');
 
     Route::put('updateIncome/{estimate}', [EstimateController::class, 'updateIncome'])->name('updateIncome');
 
     Route::resource('income', IncomeController::class);
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

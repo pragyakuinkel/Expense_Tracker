@@ -4,7 +4,7 @@ use App\Console\Commands\ForecastUpdate;
 use App\Http\Middleware\CheckCategory;
 use App\Http\Middleware\CheckIncome;
 use App\Http\Middleware\CheckUserStatus;
-use App\Http\Middleware\CommonMidleware;
+use App\Http\Middleware\CommonMiddleware;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
 
         $middleware->alias([
-            'middle'=>CommonMidleware::class,
+            'middle'=>CommonMiddleware::class,
             'income' => CheckIncome::class,
             'category' => CheckCategory::class,
             'status' => CheckUserStatus::class,

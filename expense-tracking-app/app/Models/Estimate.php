@@ -8,13 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Estimate extends Model
 {
     use CreateStatement;
-    protected $fillable=[
+
+    protected $fillable = [
         'user_id',
         'amount',
         'date',
     ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

@@ -30,7 +30,9 @@ class ExpenseController extends Controller
             $q->where('user_id', auth()->id())
                 ->whereMonth('date', '=', Carbon::now());
         })->get();
+
         $current = Carbon::now()->format('Y-m-d');
+
         return view('expense.create', compact('categories', 'current'));
     }
 
@@ -65,6 +67,10 @@ class ExpenseController extends Controller
             return redirect(route('dashboard'));
         } catch (\Exception $exception) {
             DB::rollBack();
+
+            session()->flash('error', "Expense not added");
+
+            return back();
         }
 
     }
@@ -129,23 +135,21 @@ class ExpenseController extends Controller
             return redirect(route('dashboard'));
         } catch (\Exception $exception) {
             DB::rollBack();
+
+            session()->flash('error', "Expense not updated");
+
+            return back();
         }
 
 
     }
+
     public function delete(string $expense)
     {
-
         //first tries to find data of that id if not found throws ModelNotFoundException which if not done in a try catch block creates a 404 response
         $expense = Expense::findOrFail($expense);
+
         return view('expense.delete', compact('expense'));
-//        if ($expense->user_id !== Auth::id()) {
-//            abort(404);
-//        }
-//        $expense = Expense::find($expense);
-//        if (!$expense)
-//            return redirect(route('dashboard'));
-//        else
 
     }
 
@@ -181,6 +185,10 @@ class ExpenseController extends Controller
             }
         } catch (\Exception $exception) {
             DB::rollBack();
+
+            session()->flash('error', "Expense not deleted");
+
+            return back();
         }
 
     }

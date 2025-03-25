@@ -19,15 +19,14 @@ class CategoryController extends Controller
      */
     public function index()
     {
-//        $this->authorize('category.viewAny');
 
-        $success=session()->get('success');
+        $success = session()->get('success');
 
         $categories = Category::with('user')
             ->leftJoin('category_user', 'categories.id', '=', 'category_user.category_id')
             ->leftJoin('users', 'category_user.user_id', '=', 'users.id')
-            ->select('categories.id as id','categories.name','categories.user_id','users.name as username', DB::raw('COUNT(DISTINCT category_user.user_id) as users_count'))
-            ->groupBy('categories.id','categories.name','categories.user_id','users.name')
+            ->select('categories.id as id', 'categories.name', 'categories.user_id', 'users.name as username', DB::raw('COUNT(DISTINCT category_user.user_id) as users_count'))
+            ->groupBy('categories.id', 'categories.name', 'categories.user_id', 'users.name')
             ->get();
 
         return view('category.index', compact('categories', 'success'));
@@ -46,15 +45,15 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        $category=Category::withTrashed()->where('name',$request->name)->first();
+        $category = Category::withTrashed()->where('name', $request->name)->first();
 
-        if($category != null){
+        if ($category != null) {
             $category->restore();
-        }else{
+        } else {
 
             Category::create([
-                'name'=>$request->name,
-                'user_id'=>Auth::user()->id
+                'name' => $request->name,
+                'user_id' => Auth::user()->id
             ]);
         }
 
@@ -76,11 +75,11 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        $category=Category::find($category->id);
+        $category = Category::find($category->id);
 
-        if($category){
+        if ($category) {
             return view('category.edit', compact('category'));
-        }else{
+        } else {
             return redirect()->route('category.index');
         }
     }
@@ -90,42 +89,44 @@ class CategoryController extends Controller
      */
     public function update(UpdateRequest $request, Category $category)
     {
-        $category=Category::find($category->id);
-        if($category){
+        $category = Category::find($category->id);
+        if ($category) {
             $category->update([
-                'name'=>$request->name
+                'name' => $request->name
             ]);
             session()->flash('success', 'Category updated successfully');
             return redirect()->route('category.index');
-        }else{
+        } else {
             return redirect()->route('category.index');
         }
     }
 
-    public function delete(Category $category){
+    public function delete(Category $category)
+    {
 
-        $category=Category::where('id',$category->id)->first();
+        $category = Category::where('id', $category->id)->first();
 
-        if($category != null){
+        if ($category != null) {
             return view('category.delete', compact('category'));
-        }else{
+        } else {
             return redirect()->route('category.index');
         }
     }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Category $category)
     {
-        $category=Category::find($category->id);
+        $category = Category::find($category->id);
 
-        if($category){
+        if ($category) {
             $category->delete();
 
             session()->flash('success', 'Category deleted successfully');
 
             return redirect()->route('category.index');
-        }else{
+        } else {
             return redirect()->route('category.index');
         }
     }

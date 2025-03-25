@@ -15,23 +15,24 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         Category::create([
-            'name'=>"Gym",
-            'user_id'=>1
-        ]);Category::create([
-            'name'=>"Food",
-            'user_id'=>1
+            'name' => "Gym",
+            'user_id' => 1
         ]);
         Category::create([
-            'name'=>"Travel",
-            'user_id'=>1
+            'name' => "Food",
+            'user_id' => 1
         ]);
         Category::create([
-            'name'=>"Rent",
-            'user_id'=>1
+            'name' => "Travel",
+            'user_id' => 1
         ]);
         Category::create([
-            'name'=>"Grocery",
-            'user_id'=>1
+            'name' => "Rent",
+            'user_id' => 1
+        ]);
+        Category::create([
+            'name' => "Grocery",
+            'user_id' => 1
         ]);
     }
 }

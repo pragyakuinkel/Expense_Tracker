@@ -6,14 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Income extends Model
 {
-    protected $fillable=[
+    protected $fillable = [
         'user_id',
         'description',
         'amount',
         'date'
     ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 

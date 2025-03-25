@@ -58,25 +58,25 @@ class ForecastUpdate extends Command
                     ->whereYear('date', $date->copy()->subMonth()->year);
             }])->get();
 
-            $estimate=Estimate::where('user_id', $user->id)->whereMonth('date', $date->copy()->subMonth())
+            $estimate = Estimate::where('user_id', $user->id)->whereMonth('date', $date->copy()->subMonth())
                 ->whereYear('date', $date->copy()->subMonth()->year)->first();
 
-            $newCategories = $lastCategories->filter(function($category) use ($categories) {
+            $newCategories = $lastCategories->filter(function ($category) use ($categories) {
                 return $categories->contains('id', $category->id);
             });//in both month
 
-            foreach($newCategories as $category){
-                foreach($category->users as $userInfo){
-                    $LastExpense=Expense::where('user_id', $user->id)
+            foreach ($newCategories as $category) {
+                foreach ($category->users as $userInfo) {
+                    $LastExpense = Expense::where('user_id', $user->id)
                         ->where('category_id', $category->id)
                         ->whereMonth('date', $date->copy()->subMonth())
                         ->whereYear('date', $date->copy()->subMonth()->year)->sum('amount');
 
-                    $expensePercent=round(floatVal($LastExpense)/floatVal($estimate->amount)*100,2);
+                    $expensePercent = round(floatVal($LastExpense) / floatVal($estimate->amount) * 100, 2);
 
-                    $limit=round((floatval($userInfo->pivot->limit)+$expensePercent)/2, 2);
+                    $limit = round((floatval($userInfo->pivot->limit) + $expensePercent) / 2, 2);
 
-                    DB::table('category_user')->where('user_id',$userInfo->id)->where('category_id',$category->id)->whereMonth('date',Carbon::now()->addMonth())->whereYear('date',Carbon::now()->addMonth())
+                    DB::table('category_user')->where('user_id', $userInfo->id)->where('category_id', $category->id)->whereMonth('date', Carbon::now()->addMonth())->whereYear('date', Carbon::now()->addMonth())
                         ->update(['limit' => $limit]);
                 }
             }

@@ -22,15 +22,14 @@
 
 
                             @if($user->hasRole($role->id))
-                                <a href="{{route('role.removeRole',$user->getRole())}}">-</a>
+                                <a href="{{route('role.removeRole',['role' => $role, 'user' => $user])}}">-</a>
                             @else
-                                <a href="{{route('role.addRole',$user->getRole())}}">+</a>
+                                <a href="{{route('role.addRole',['role' => $role, 'user' => $user])}}">+</a>
                             @endif
 
                             {{$user->name}}
 
                         </div>
-
 
                     @endforeach
                 </div>

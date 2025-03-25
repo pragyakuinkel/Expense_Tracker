@@ -52,19 +52,23 @@ class User extends Authenticatable
         'role' => RoleName::class,
     ];
 
-    public function roles(){
+    public function roles()
+    {
         return $this->belongsToMany(Role::class);
     }
 
-    public function estimate(){
+    public function estimate()
+    {
         return $this->hasOne(Estimate::class);
     }
 
-    public function categories(){
-        return $this->belongsToMany(Category::class)->withPivot('limit','date');
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class)->withPivot('limit', 'date');
     }
 
-    public function expenses(){
+    public function expenses()
+    {
         return $this->hasMany(Expense::class);
     }
 
@@ -73,10 +77,11 @@ class User extends Authenticatable
         $this->hasMany(Statement::class);
     }
 
-    public function getRole(): Role
+    public function getRole()
     {
         return Auth::user()->roles()->first();
     }
+
     public function hasRole(string $id): bool
     {
         return $this->roles()->where('id', $id)->exists();

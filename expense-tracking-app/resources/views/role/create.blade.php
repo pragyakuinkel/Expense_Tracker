@@ -13,9 +13,10 @@
                         @csrf
 
                         <div class="mt-4">
-                            <x-input-label for="name" :value="__('Name')" />
-                            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" style="width:100%"/>
-                            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                            <x-input-label for="name" :value="__('Name')"/>
+                            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name"
+                                          :value="old('name')" style="width:100%"/>
+                            <x-input-error :messages="$errors->get('name')" class="mt-2"/>
                         </div>
 
                         <x-primary-button class="mt-4">Add</x-primary-button>

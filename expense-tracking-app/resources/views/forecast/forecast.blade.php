@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="header" >
+    <x-slot name="header">
 
         <div class="flex row justify-between">
             <x-heading>
@@ -39,9 +39,9 @@
                             <a href="{{route('forecast.forecast',$months[$i])}}"
                                @if($months[$i] === $monthSelected)
                                    style="font-weight: bolder;background-color: #2f4e73;color: white"
-                                @endif
-                            style="background-color: #3268a8;color: white"
-                            class="px-3 py-2 rounded mb-2"
+                               @endif
+                               style="background-color: #3268a8;color: white"
+                               class="px-3 py-2 rounded mb-2"
                             >{{$months[$i]}}</a>
                         @endfor
                     </div>

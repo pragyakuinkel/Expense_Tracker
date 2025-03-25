@@ -8,27 +8,27 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class CommonMidleware
+class CommonMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
 
         $role = Auth::user()->getRole();
 
-        if($role->name == RoleName::ADMIN->value){
+        if ($role->name == RoleName::ADMIN->value) {
             return $next($request);
         }
 
-        $hasPermission = $role->hasPermission($request->route()->getName(),$role->id);
+        $hasPermission = $role->hasPermission($request->route()->getName(), $role->id);
 
         if ($hasPermission) {
             return $next($request);
-        }else{
+        } else {
             abort(401);
         }
     }

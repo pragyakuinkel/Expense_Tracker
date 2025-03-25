@@ -13,19 +13,21 @@
                         @csrf
 
                         <div class="mt-4">
-                            <x-input-label for="name" :value="__('Name')" />
-                            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" style="width:100%"/>
-                            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                            <x-input-label for="name" :value="__('Name')"/>
+                            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name"
+                                          :value="old('name')" style="width:100%"/>
+                            <x-input-error :messages="$errors->get('name')" class="mt-2"/>
                         </div>
 
                         <div class="mt-4">
                             <x-input-label class="block w-full">
                                 Limit
                             </x-input-label>
-                            <x-text-input type="number" step="any" name="limit" required class="block mt-1 w-full" style="width:100%"/>
+                            <x-text-input type="number" step="any" name="limit" required class="block mt-1 w-full"
+                                          style="width:100%"/>
                         </div>
 
-                        <x-input-error :messages="$error" class="mt-2" />
+                        <x-input-error :messages="$error" class="mt-2"/>
 
                         <x-primary-button class="mt-4">Add</x-primary-button>
                     </form>

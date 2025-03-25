@@ -12,7 +12,8 @@
                 <div class="grid grid-cols-2 gap-4">
                     @foreach($categories as $category)
                         <label class="flex items-center space-x-2">
-                            <input type="checkbox" name="categories[]" value="{{ $category->name }}" class="rounded border-gray-300 text-[#3268a8] focus:ring-[#3268a8]">
+                            <input type="checkbox" name="categories[]" value="{{ $category->name }}"
+                                   class="rounded border-gray-300 text-[#3268a8] focus:ring-[#3268a8]">
                             <span class="ms-2">{{ $category->name }}</span>
                         </label>
 
@@ -25,8 +26,9 @@
 
                 </ul>
                 <div class="flex">
-                    <input id="category" class="block mt-1 w-full" type="text" name="category" placeholder="More Category"/>
-                    <button type="button"  onclick="addCategory()" class="ms-2 text-xl" style="color: #3268a8">+</button>
+                    <input id="category" class="block mt-1 w-full" type="text" name="category"
+                           placeholder="More Category"/>
+                    <button type="button" onclick="addCategory()" class="ms-2 text-xl" style="color: #3268a8">+</button>
                 </div>
 
                 <div id="error">
@@ -37,12 +39,14 @@
 
                 </div>
 
+                <x-input-error :messages="session()->get('error')" class="mt-2"/>
+
                 <x-primary-button type="submit" class="mt-4">Add</x-primary-button>
             </form>
         </div>
     </div>
     <script>
-        let catArr=[];
+        let catArr = [];
 
         let predefined = [];
         let predefinedInputs = document.querySelectorAll('input[name="predefined[]"]');
@@ -50,20 +54,20 @@
         for (let i = 0; i < predefinedInputs.length; i++) {
             predefined.push(predefinedInputs[i].value);
         }
+        nh65gtvfrec4dw
 
-        console.log(predefined)
-        function addCategory(){
-            let category=document.getElementById('category').value;
+        function addCategory() {
+            let category = document.getElementById('category').value;
 
-            if(category === ''){
-               return document.getElementById('error').innerHTML="Category Cant be empty"
-            }else{
+            if (category === '') {
+                return document.getElementById('error').innerHTML = "Category Cant be empty"
+            } else {
                 if (catArr.includes(category)) {
                     document.getElementById('category').value = '';
                     return document.getElementById('error').innerHTML = "Category Already Added";
                 }
 
-                if(predefined.includes(category)){
+                if (predefined.includes(category)) {
                     document.getElementById('category').value = '';
                     return document.getElementById('error').innerHTML = "Check in the Category Checkbox";
                 }

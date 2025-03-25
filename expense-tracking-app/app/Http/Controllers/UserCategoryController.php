@@ -18,12 +18,12 @@ class UserCategoryController extends Controller
     {
         $categories = Auth::user()
             ->categories()
-            ->orderBy('created_at','desc')->get()->groupBy(function ($category) {
+            ->orderBy('created_at', 'desc')->get()->groupBy(function ($category) {
                 return Carbon::parse($category->pivot->date)->format('Y F');
             });
 
 
-        $success=session()->get('success');
+        $success = session()->get('success');
 
         return view('category_user.index', compact('categories', 'success'));
     }
@@ -34,7 +34,7 @@ class UserCategoryController extends Controller
      */
     public function create()
     {
-        $error=session()->get('error');
+        $error = session()->get('error');
 
         return view('category_user.create', compact('error'));
     }
@@ -46,17 +46,17 @@ class UserCategoryController extends Controller
     {
         DB::beginTransaction();
 
-        try{
+        try {
             $category = Category::withTrashed()->where('name', $request->name)->first();
 
-            if($category){
+            if ($category) {
                 $category->restore();
 
                 $category->users()->attach(Auth::id(), [
                     'limit' => $request->limit,
                     'date' => Carbon::now()->format('Y-m-d'),
                 ]);
-            }else{
+            } else {
                 $category = Category::where('name', $request->name)->first();
 
 
@@ -65,10 +65,10 @@ class UserCategoryController extends Controller
                         'limit' => $request->limit,
                         'date' => Carbon::now()->format('Y-m-d'),
                     ]);
-                }else{
-                    $category=Category::create([
-                        'name'=>$request->name,
-                        'user_id'=>Auth::id(),
+                } else {
+                    $category = Category::create([
+                        'name' => $request->name,
+                        'user_id' => Auth::id(),
                     ]);
 
                     $category->users()->attach(Auth::id(), [
@@ -84,10 +84,10 @@ class UserCategoryController extends Controller
 
             return redirect()->route('category_user.index');
 
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollBack();
 
-            session()->flash('error', $exception->getMessage());
+            session()->flash('error', "Category not added");
 
             return redirect()->back();
         }
@@ -106,13 +106,13 @@ class UserCategoryController extends Controller
      */
     public function edit($id)
     {
-        $error=session()->get('error');
+        $error = session()->get('error');
 
-        $category=Category::find($id);
+        $category = Category::find($id);
 
         if ($category) {
             return view('category_user.edit', compact('category', 'error'));
-        }else{
+        } else {
             return redirect()->route('category_user.index');
         }
     }
@@ -162,17 +162,19 @@ class UserCategoryController extends Controller
 //        }
     }
 
-    public function delete(Category $category){
+    public function delete(Category $category)
+    {
         return view('category_user.delete', compact('category'));
     }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy($id)
     {
-        $category=Category::find($id);
+        $category = Category::find($id);
 
-        try{
+        try {
             $category->users()
                 ->where('user_id', Auth::id())
                 ->wherePivot('date', '>=', Carbon::now()->startOfMonth())
@@ -182,7 +184,10 @@ class UserCategoryController extends Controller
             session()->flash('success', 'Category deleted successfully');
 
             return redirect()->route('category_user.index');
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
+
+            session()->flash('error', "Category not deleted");
+
             return back();
         }
     }

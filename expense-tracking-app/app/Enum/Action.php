@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum Action: String
+enum Action: string
 {
     case Add = 'add';
 

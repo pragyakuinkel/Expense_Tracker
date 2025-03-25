@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enum\RoleName;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Role;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -29,9 +31,20 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if(Auth::user()->roles()->first()->name == 'superAdmin'){
+        if (Auth::user()->getRole() == null) {
+            Auth::guard('web')->logout();
+
+            $request->session()->invalidate();
+
+            $request->session()->regenerateToken();
+
+            session()->flash('no_role', "You don't have permission to access any page");
+
+            return redirect('/login');
+
+        } else if (Auth::user()->hasRole(Role::where('name', RoleName::ADMIN)->first()->id)) {
             return redirect()->route('admin.dashboard');
-        }else{
+        } else {
             return redirect()->intended(route('dashboard', absolute: false));
         }
     }

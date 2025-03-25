@@ -1,4 +1,5 @@
 <x-app-layout>
+
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard') }}
@@ -63,14 +64,15 @@
                         @foreach($max_spent_categories as $category)
                             <div class="flex justify-between items-center">
                                 <div class="text-gray-800 font-semibold">{{ $category->name }}</div>
-                                <div class="text-green-600 font-semibold">Rs. {{ number_format($category->expenses_sum_amount ?? 0, 2) }}</div>
+                                <div class="text-green-600 font-semibold">
+                                    Rs. {{ number_format($category->expenses_sum_amount ?? 0, 2) }}</div>
                             </div>
                         @endforeach
                     </div>
                 </div>
             </div>
 
-            </div>
         </div>
     </div>
+
 </x-app-layout>

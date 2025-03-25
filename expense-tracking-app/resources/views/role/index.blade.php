@@ -29,7 +29,6 @@
                             <a href="{{route('role.assignRole',$role)}}" style="color: green">View</a>
                         </div>
 
-
                     @endforeach
                 </div>
 

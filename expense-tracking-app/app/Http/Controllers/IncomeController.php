@@ -26,7 +26,7 @@ class IncomeController extends Controller
      */
     public function create()
     {
-        $current=Carbon::now()->format('Y-m-d');
+        $current = Carbon::now()->format('Y-m-d');
         return view('income.create', compact('current'));
     }
 
@@ -37,12 +37,12 @@ class IncomeController extends Controller
     {
         DB::beginTransaction();
 
-        try{
-            $income= Income::create([
-                'description'=>$request->description,
-                'amount'=>$request->amount,
-                'user_id'=>auth()->id(),
-                'date'=>$request->date
+        try {
+            $income = Income::create([
+                'description' => $request->description,
+                'amount' => $request->amount,
+                'user_id' => auth()->id(),
+                'date' => $request->date
             ]);
 
             Statement::create([
@@ -59,8 +59,12 @@ class IncomeController extends Controller
             session()->flash('success', 'Income added successfully');
 
             return redirect(route('dashboard'));
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollBack();
+
+            session()->flash('error', "Income not added");
+
+            return back();
         }
 
 

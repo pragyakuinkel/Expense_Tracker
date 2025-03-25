@@ -13,16 +13,14 @@ class CheckIncome
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $estimate=Estimate::where('user_id',$request->user()->id)
-//            ->whereMonth('date',Carbon::now())
-//                ->whereYear('date',Carbon::now())
+        $estimate = Estimate::where('user_id', $request->user()->id)
             ->first();
 
-        if($estimate){
+        if ($estimate) {
             return $next($request);
         }
 

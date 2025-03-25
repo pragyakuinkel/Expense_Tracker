@@ -1,4 +1,5 @@
 <x-app-layout>
+
     <x-slot name="header">
         <x-heading>
             {{ __('Assign Permission to ') }} {{$user->name}}
@@ -12,7 +13,8 @@
 
                     <div class="flex gap-4 mt-3">
                         @foreach($roles as $role)
-                            <a href="{{route('admin.permission',$role->id)}}"  style="background-color: #3268a8;color: white"
+                            <a href="{{route('admin.permission',$role->id)}}"
+                               style="background-color: #3268a8;color: white"
                                class="px-3 py-2 rounded mb-2">
                                 {{$role->name}}
                             </a>
@@ -37,7 +39,9 @@
                             <thead>
                             <tr style="background-color: #3268a8; color: white">
                                 <th class="px-4 py-2 border" style="width: 30%">Group</th>
-                                <th class="px-4 py-2 border" style="width: 62%"><input type="checkbox" id="select-all">  Routes Name</th>
+                                <th class="px-4 py-2 border" style="width: 62%"><input type="checkbox" id="select-all">
+                                    Routes Name
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
@@ -64,7 +68,9 @@
                         </table>
 
                         <div class="mt-4">
-                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md">Save Changes</button>
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md">Save
+                                Changes
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -81,13 +87,13 @@
             const groupWiseRoute = document.querySelectorAll(".group-checkbox");
             const permissionRoute = document.querySelectorAll(".permission-checkbox");
 
-            selectAllRoute.addEventListener("change", function (){
+            selectAllRoute.addEventListener("change", function () {
                 permissionRoute.forEach(checkbox => checkbox.checked = this.checked)
                 groupWiseRoute.forEach(checkbox => checkbox.checked = this.checked)
             });
 
             groupWiseRoute.forEach(groupWiseRoute => {
-                groupWiseRoute.addEventListener("change", function (){
+                groupWiseRoute.addEventListener("change", function () {
                     const groupName = this.dataset.group;
                     const groupPermissions = document.querySelectorAll(`.group-${groupName}`);
                     groupPermissions.forEach(checkbox => checkbox.checked = this.checked);

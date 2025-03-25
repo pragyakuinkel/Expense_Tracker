@@ -39,10 +39,10 @@
                                 </td>
                                 <td class="border px-4 py-2">{{$category->users_count ?? 0}}</td>
                                 <td class="border px-4 py-2 flex justify-center items-center">
-{{--                                    <a--}}
-{{--                                        class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"--}}
-{{--                                        style='background-color:#3268a8'--}}
-{{--                                        href="{{route('category.edit',$category->id)}}">Edit</a>--}}
+                                    {{--                                    <a--}}
+                                    {{--                                        class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"--}}
+                                    {{--                                        style='background-color:#3268a8'--}}
+                                    {{--                                        href="{{route('category.edit',$category->id)}}">Edit</a>--}}
 
                                     <a
                                         class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white w-full"

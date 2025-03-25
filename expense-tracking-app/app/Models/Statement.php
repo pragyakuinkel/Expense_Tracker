@@ -17,11 +17,13 @@ class Statement extends Model
         'action'
     ];
 
-    public function statementable(){
+    public function statementable()
+    {
         return $this->morphTo();
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

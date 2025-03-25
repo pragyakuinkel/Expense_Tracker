@@ -1,4 +1,5 @@
 <x-app-layout>
+
     <x-slot name="header">
         <div class="flex row justify-between">
             <x-heading>
@@ -21,9 +22,9 @@
                                 </div>
                             </div>
                         @empty
-                                <x-empty-value>
-                                    No Categories Yet....
-                                </x-empty-value>
+                            <x-empty-value>
+                                No Categories Yet....
+                            </x-empty-value>
                         @endforelse
                         <hr>
                     @endforeach
@@ -31,4 +32,5 @@
             </div>
         </div>
     </div>
+    
 </x-app-layout>

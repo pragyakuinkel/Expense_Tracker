@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-//    const ROLE_ADMIN = 1;
-//    const ROLE_USER = 2;
     protected $fillable = [
         'name',
     ];
@@ -16,15 +14,19 @@ class Role extends Model
     protected $casts = [
         'role' => RoleName::class,
     ];
-    public function users(){
+
+    public function users()
+    {
         return $this->belongsToMany(User::class);
     }
 
-    public function permissions(){
+    public function permissions()
+    {
         return $this->belongsToMany(Permission::class);
     }
 
-    public function categories(){
+    public function categories()
+    {
         return $this->belongsToMany(Category::class);
     }
 
@@ -36,11 +38,12 @@ class Role extends Model
 
         return $permissions;
     }
+
     public function hasPermissionGroup(string $permission, string $role): bool
     {
         $totalPermission = Permission::where('group', $permission)->count();
 
-        $permissions =Permission::whereHas('roles', function ($q) use ($role) {
+        $permissions = Permission::whereHas('roles', function ($q) use ($role) {
             $q->where('id', $role);
         })->where('group', $permission)->count();
 
