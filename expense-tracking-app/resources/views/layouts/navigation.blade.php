@@ -51,12 +51,12 @@
                         </x-nav-link>
                     @endif
 
-{{--                    @if(Auth::user()->hasPermission('category_user.categoryShow',Auth::user()->getRole()->id))--}}
+                    @if(Auth::user()->hasPermission('category_user.monthlyCategory',Auth::user()->getRole()->id))
                         <x-nav-link :href="route('category_user.monthlyCategory')"
                                     :active="request()->routeIs('category_user.monthlyCategory')">
                             {{ __('Manage Categories') }}
                         </x-nav-link>
-{{--                    @endif--}}
+                    @endif
 
                     @if(Auth::user()->hasPermission('forecast.forecast',Auth::user()->getRole()->id))
                         <x-nav-link :href="route('forecast.forecast')"

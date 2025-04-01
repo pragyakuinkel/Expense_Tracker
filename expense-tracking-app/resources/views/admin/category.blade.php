@@ -18,7 +18,7 @@
                         @forelse($allCategories as $category)
                             <div class="flex row justify-between mt-3">
                                 <div class="font-medium">
-                                    {{$category->name}} {{$category->expenses_sum_amount}}
+                                    {{$category->name}}
                                 </div>
                             </div>
                         @empty

@@ -15,23 +15,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('category_user/monthlyCategory/{month?}', [UserCategoryController::class, 'monthlyCategory'])->name('category_user.monthlyCategory');
+
 Route::get('/role/select', [RoleController::class, 'select'])->name('role.select');
 
 Route::post('/role/assignRoleSelect', [RoleController::class, 'assignRoleSelect'])->name('role.assignRoleSelect');
 
-Route::get('/income/delete/{income}', [IncomeController::class, 'delete'])->name('income.delete');
-
-
 Route::middleware([
     'auth',
-    'verified',
-//    'chooseRole',
-//    'middle',
+    'chooseRole',
+    'middle',
     'income',
     'category'
 ])->group(function () {
-
-    Route::get('category_user/monthlyCategory/{month?}', [UserCategoryController::class, 'monthlyCategory'])->name('category_user.monthlyCategory');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 
@@ -56,11 +52,13 @@ Route::middleware([
     Route::put('/estimate/updateIncome/{estimate}', [EstimateController::class, 'updateIncome'])->name('estimate.updateIncome');
 
     Route::resource('income', IncomeController::class);
+
+    Route::get('/income/delete/{income}', [IncomeController::class, 'delete'])->name('income.delete');
+
 });
 
 Route::middleware([
     'auth',
-    'verified',
     'middle'
 ])->group(function () {
 
@@ -89,9 +87,7 @@ Route::middleware([
 
 Route::middleware([
     'auth',
-    'verified',
     'chooseRole',
-    'middle'
 ])->group(function () {
     Route::get('/estimate/income', [EstimateController::class, 'income'])->name('estimate.income');
 
@@ -100,7 +96,6 @@ Route::middleware([
 
 Route::middleware([
     'auth',
-    'verified',
     'chooseRole',
     'middle',
     'income'
@@ -111,14 +106,6 @@ Route::middleware([
     Route::post('/estimate/addCategory', [EstimateController::class, 'showLimit'])->name('estimate.addCategory');
 
     Route::post('/estimate/addLimit', [EstimateController::class, 'storeLimit'])->name('estimate.addLimit');
-});
-
-Route::middleware([
-    'auth',
-    'verified',
-])->group(function () {
-
-    Route::get('/role/select', [RoleController::class, 'select'])->name('role.select');
 });
 
 

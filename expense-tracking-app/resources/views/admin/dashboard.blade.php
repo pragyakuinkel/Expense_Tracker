@@ -61,7 +61,7 @@
                         </h2>
 
                         <h1 class="text-xl mt-2">
-                            {{$avg_income}}
+                            {{number_format($avg_income,2)}}
                         </h1>
                     </div>
                 </div>

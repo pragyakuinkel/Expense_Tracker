@@ -10,6 +10,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 
 class AdminController extends Controller
@@ -17,7 +18,6 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-
         $user_count = User::count();
 
         $category_count = Category::count();
@@ -47,7 +47,6 @@ class AdminController extends Controller
     public function category(User $user)
     {
         $categories = $user->categories()
-            ->withSum('expenses', 'amount')
             ->orderBy('created_at', 'desc')
             ->get()
             ->groupBy(function ($category) {

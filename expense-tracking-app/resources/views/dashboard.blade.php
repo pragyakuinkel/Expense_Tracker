@@ -85,7 +85,7 @@
                                 @endforeach
                             @empty
                                 <x-empty-value>
-                                    No Expense Yet....
+                                    No Transactions Yet....
                                 </x-empty-value>
                             @endforelse
                         </div>
