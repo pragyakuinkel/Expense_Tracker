@@ -1,9 +1,9 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <x-heading>
             {{ __('Manage User') }}
-        </h2>
+        </x-heading>
     </x-slot>
 
     <div class="py-12">
@@ -15,6 +15,7 @@
                         <tr style="background-color: #3268a8;color: white">
                             <th class="px-4 py-2 border">Name</th>
                             <th class="px-4 py-2 border">Email</th>
+                            <th class="px-4 py-2 border">Username</th>
                             <th class="px-4 py-2 border">Created Date</th>
                             <th class="px-4 py-2 border"></th>
                         </tr>
@@ -27,6 +28,9 @@
                                 </td>
                                 <td class="border px-4 py-2">
                                     {{$user->email}}
+                                </td>
+                                <td class="border px-4 py-2">
+                                    {{$user->username}}
                                 </td>
                                 <td class="border px-4 py-2">
                                     {{$user->updated_at}}

@@ -9,7 +9,7 @@
             <a
                 class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
                 style='background-color:#3268a8'
-                href="{{route('editIncome',$monthSelected)}}">Edit Estimate {{$monthSelected}}</a>
+                href="{{route('estimate.editIncome',$monthSelected)}}">Edit Estimate {{$monthSelected}}</a>
         </div>
     </x-slot>
 

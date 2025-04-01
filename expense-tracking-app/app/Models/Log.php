@@ -4,20 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Statement extends Model
+class Log extends Model
 {
-    protected $table = 'statements';
+    protected $table = 'logs';
 
     protected $fillable = [
         'amount',
-        'statementable_id',
-        'statementable_type',
+        'logable_id',
+        'logable_type',
         'user_id',
         'date',
         'action'
     ];
 
-    public function statementable()
+    public function logable()
     {
         return $this->morphTo();
     }

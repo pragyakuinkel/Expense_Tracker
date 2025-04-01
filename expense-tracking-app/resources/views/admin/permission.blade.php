@@ -32,9 +32,6 @@
                         @csrf
                         @method('PUT')
 
-                        <input type="hidden" value="{{$user->id}}" name="id">
-                        <x-primary-button class="mt-4">Update</x-primary-button>
-
                         <table class="table-auto border-collapse mt-3 w-full mb-3" style="width: 100%">
                             <thead>
                             <tr style="background-color: #3268a8; color: white">
@@ -67,11 +64,8 @@
                             </tbody>
                         </table>
 
-                        <div class="mt-4">
-                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md">Save
-                                Changes
-                            </button>
-                        </div>
+                        <input type="hidden" value="{{$user->id}}" name="id">
+                        <x-primary-button class="mt-4">Update</x-primary-button>
                     </form>
                 </div>
             </div>

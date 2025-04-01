@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">\
+<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
@@ -51,12 +51,12 @@
                         </x-nav-link>
                     @endif
 
-                    @if(Auth::user()->hasPermission('category_user.index',Auth::user()->getRole()->id))
-                        <x-nav-link :href="route('category_user.index')"
-                                    :active="request()->routeIs('category_user.index')">
+{{--                    @if(Auth::user()->hasPermission('category_user.categoryShow',Auth::user()->getRole()->id))--}}
+                        <x-nav-link :href="route('category_user.monthlyCategory')"
+                                    :active="request()->routeIs('category_user.monthlyCategory')">
                             {{ __('Manage Categories') }}
                         </x-nav-link>
-                    @endif
+{{--                    @endif--}}
 
                     @if(Auth::user()->hasPermission('forecast.forecast',Auth::user()->getRole()->id))
                         <x-nav-link :href="route('forecast.forecast')"

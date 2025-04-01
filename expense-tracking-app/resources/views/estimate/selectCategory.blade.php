@@ -6,7 +6,7 @@
         </x-heading>
 
         <div class="mt-6 ">
-            <form action="{{route('addCategory')}}" method="post">
+            <form action="{{route('estimate.addCategory')}}" method="post">
                 @csrf
 
                 <div class="grid grid-cols-2 gap-4">
@@ -27,19 +27,17 @@
                 </ul>
                 <div class="flex">
                     <input id="category" class="block mt-1 w-full" type="text" name="category"
-                           placeholder="More Category"/>
+                           placeholder="More Category" style="width: 80%"/>
                     <button type="button" onclick="addCategory()" class="ms-2 text-xl" style="color: #3268a8">+</button>
                 </div>
 
-                <div id="error">
+                <div id="error" style="font-size: small;color: red">
                     {{$error}}
                 </div>
 
                 <div id="new_categories[]">
 
                 </div>
-
-                <x-input-error :messages="session()->get('error')" class="mt-2"/>
 
                 <x-primary-button type="submit" class="mt-4">Add</x-primary-button>
             </form>

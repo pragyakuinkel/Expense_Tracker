@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Permission;
-use App\Models\Role;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -34,7 +33,7 @@ class PermissionSeeder extends Seeder
                 ') {
                     break;
                 }
-                Permission::create([
+                Permission::firstOrCreate([
                     'name' => $route['name'],
                     'uri' => $route['uri'],
                     'group' => $folder,

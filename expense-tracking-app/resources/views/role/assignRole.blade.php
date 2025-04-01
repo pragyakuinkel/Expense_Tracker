@@ -17,21 +17,30 @@
                         </x-success-message>
                     @endif
 
-                    @foreach($users as $user)
-                        <div class="border px-4 py-2 flex ">
+                        @foreach($users as $user)
+                            <div class="border-b px-4 py-3 flex items-center justify-between">
+                                <div class="flex-grow text-sm text-gray-800">
+                                    {{$user->username}}
+                                </div>
+
+                                <div class="flex items-center space-x-3">
+                                    @if($user->hasRole($role->id))
+                                        <a href="{{ route('role.removeRole', ['role' => $role, 'user' => $user]) }}"
+                                           class="text-red-600 hover:text-red-800 font-semibold">
+                                            Remove
+                                        </a>
+                                    @else
+                                        <a href="{{ route('role.addRole', ['role' => $role, 'user' => $user]) }}"
+                                           class="text-green-600 hover:text-green-800 font-semibold">
+                                            Add
+                                        </a>
+                                    @endif
+                                </div>
 
 
-                            @if($user->hasRole($role->id))
-                                <a href="{{route('role.removeRole',['role' => $role, 'user' => $user])}}">-</a>
-                            @else
-                                <a href="{{route('role.addRole',['role' => $role, 'user' => $user])}}">+</a>
-                            @endif
 
-                            {{$user->name}}
-
-                        </div>
-
-                    @endforeach
+                            </div>
+                        @endforeach
                 </div>
 
             </div>

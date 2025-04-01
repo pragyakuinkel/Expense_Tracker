@@ -22,6 +22,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'username',
         'password',
     ];
 
@@ -74,12 +75,12 @@ class User extends Authenticatable
 
     public function statement()
     {
-        $this->hasMany(Statement::class);
+        $this->hasMany(Log::class);
     }
 
     public function getRole()
     {
-        return Auth::user()->roles()->first();
+        return $this->roles()->where('id', session('role'))->first();
     }
 
     public function hasRole(string $id): bool
@@ -90,7 +91,7 @@ class User extends Authenticatable
     public function hasPermission(string $permission, string $role): bool
     {
         $permissions = Permission::whereHas('roles', function ($q) use ($role) {
-            $q->where('id', $role);//
+            $q->where('id', $role);
         })->where('name', $permission)->exists();
 
         return $permissions;

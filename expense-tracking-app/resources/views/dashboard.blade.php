@@ -57,15 +57,28 @@
                                         </div>
 
                                         <div>
-                                            <a
-                                                class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
-                                                style='background-color:#3268a8'
-                                                href="{{route('expense.edit',$transaction)}}">Edit</a>
+                                            @if($transaction->category)
+                                                <a
+                                                    class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
+                                                    style='background-color:#3268a8'
+                                                    href="{{route('expense.edit',$transaction)}}">Edit</a>
 
-                                            <a
-                                                class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
-                                                style='background-color:#b50e0b'
-                                                href="{{route('expense.delete',$transaction)}}">Delete</a>
+                                                <a
+                                                    class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
+                                                    style='background-color:#b50e0b'
+                                                    href="{{route('expense.delete',$transaction)}}">Delete</a>
+                                            @else
+                                                <a
+                                                    class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
+                                                    style='background-color:#3268a8'
+                                                    href="{{route('income.edit',$transaction)}}">Edit</a>
+
+                                                <a
+                                                    class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
+                                                    style='background-color:#b50e0b'
+                                                    href="{{route('income.delete',$transaction)}}">Delete</a>
+                                            @endif
+
                                         </div>
                                     </div>
                                     <hr class="mt-4">

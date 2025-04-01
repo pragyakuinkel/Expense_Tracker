@@ -1,56 +1,43 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Expense') }}
-        </h2>
+        <x-heading>
+            {{ __('Edit Income') }}
+        </x-heading>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form action="{{route('expense.update',$expense)}}" method="post">
+                    <form action="{{route('income.update',$income)}}" method="post">
                         @csrf
                         @method('PUT')
-                        <div>
-                            <x-input-label for="name" :value="__('Category')"/>
-                            <select name="category" required
-                                    class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#3268a8] focus:border-[#3268a8]">
-                                @foreach($categories as $category)
-                                    <option value="{{$category->id}}"
-                                            @if($expense->category_id == $category->id)
-                                                selected
-                                        @endif>
-                                        {{$category->name}}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <x-input-error :messages="$errors->get('category')" class="mt-2"/>
-                        </div>
 
                         <div class="mt-4">
                             <x-input-label for="amount" :value="__('Amount')"/>
                             <x-text-input id="amount" class="block mt-1 w-full" type="number" step="any" name="amount"
-                                          :value="old('amount',$expense->amount)" required style="width:100%"/>
+                                          :value="old('amount',$income->amount)" required style="width:100%"/>
                             <x-input-error :messages="$errors->get('amount')" class="mt-2"/>
                         </div>
 
                         <div class="mt-4">
                             <x-input-label for="description" :value="__('Description')"/>
                             <x-text-input id="description" class="block mt-1 w-full" type="text" name="description"
-                                          :value="old('description',$expense->description)" style="width:100%"/>
+                                          :value="old('amount',$income->description)" style="width:100%"/>
                             <x-input-error :messages="$errors->get('description')" class="mt-2"/>
                         </div>
 
                         <div class="mt-4">
                             <x-input-label for="date" :value="__('Date')"/>
-                            <input type="date" name="date" id="date" value="{{$expense->date}}"
+                            <input type="date" name="date" id="date" value="{{$income->date}}"
                                    class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#3268a8] focus:border-[#3268a8]"
                                    style="width:100%">
                             <x-input-error :messages="$errors->get('date')" class="mt-2"/>
                         </div>
 
-                        <x-primary-button class="mt-4" type="submit">Add</x-primary-button>
+                        <x-input-error :messages="session()->get('error')" class="mt-2"/>
+
+                        <x-primary-button class="mt-4" type="submit">Edit</x-primary-button>
                     </form>
                 </div>
             </div>

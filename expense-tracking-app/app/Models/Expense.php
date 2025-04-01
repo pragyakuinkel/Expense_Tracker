@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use App\Traits\CreateStatement;
+use App\Traits\CreateLog;
 use Illuminate\Database\Eloquent\Model;
 
 class Expense extends Model
 {
-    use CreateStatement;
+    use CreateLog;
 
     protected $fillable = [
         'user_id',

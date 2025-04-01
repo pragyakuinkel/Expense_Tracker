@@ -82,7 +82,7 @@ class UserCategoryController extends Controller
 
             session()->flash('message', 'Category added successfully');
 
-            return redirect()->route('category_user.index');
+            return redirect()->route('category_user.monthlyCategory');
 
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -96,9 +96,30 @@ class UserCategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $month)
     {
-        //
+    }
+
+    public function monthlyCategory($month = null){
+
+
+        if($month == null){
+            $month = Carbon::now()->format('F');
+        }
+
+        $monthSelected = $month;
+
+        $success = session()->get('success');
+
+        $date = date_parse(Carbon::now()->year . " " . $month);
+
+        $categories = Auth::user()
+            ->categories()
+            ->whereMonth('date', $date['month'])
+            ->whereYear('date', $date['year'])
+            ->orderBy('created_at', 'desc')->get();
+
+        return view('category_user.monthlyCategory', compact('categories', 'success','monthSelected'));
     }
 
     /**

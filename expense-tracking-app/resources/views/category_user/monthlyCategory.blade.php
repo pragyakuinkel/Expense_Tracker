@@ -23,9 +23,25 @@
                         </x-success-message>
                     @endif
 
-                    @foreach ($categories as $month => $allCategories)
-                        <x-heading>{{$month}}</x-heading>
-                        @foreach($allCategories as $category)
+                    @php
+                        $months=['January','February','March','April',
+                        'May','June','July','August','September','October',
+                        'November','December'];
+                    @endphp
+
+                    <div class="flex gap-4 mt-3">
+                        @for($i=0; $i<count($months);$i++)
+                            <a href="{{route('category_user.monthlyCategory',$months[$i])}}"
+                               @if($months[$i] === $monthSelected)
+                                   style="font-weight: bolder;background-color: #2f4e73;color: white"
+                               @endif
+                               style="background-color: #3268a8;color: white"
+                               class="px-3 py-2 rounded mb-2"
+                            >{{$months[$i]}}</a>
+                        @endfor
+                    </div>
+
+                    @foreach ($categories as $category)
                             <div class="flex row justify-between mt-3">
                                 <div class="font-medium">
                                     {{$category->name}}
@@ -42,7 +58,6 @@
                                 {{--                                    href="{{route('category_user.delete',$category)}}">Delete</a>--}}
                                 {{--                                </div>--}}
                             </div>
-                        @endforeach
                     @endforeach
                 </div>
 

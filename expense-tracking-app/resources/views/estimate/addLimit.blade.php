@@ -5,7 +5,7 @@
         </x-heading>
 
         <div class="mt-4 w-full">
-            <form action="{{route('addLimit')}}" method="post">
+            <form action="{{route('estimate.addLimit')}}" method="post">
                 @csrf
 
                 @foreach($categories as $category)

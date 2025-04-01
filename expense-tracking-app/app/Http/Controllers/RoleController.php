@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enum\RoleName;
 use App\Http\Requests\RoleRequest;
 use App\Models\Role;
 use App\Models\User;
@@ -15,7 +16,8 @@ class   RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::all();
+        $roles =  Role::where('name', '!=', RoleName::ADMIN)->get();
+
         return view('role.index', compact('roles'));
     }
 
@@ -64,6 +66,28 @@ class   RoleController extends Controller
         session()->flash('success', 'Role added successfully');
 
         return back();
+    }
+
+    public function select(){
+
+        $roles = Role::whereHas('users',function($query){
+            $query->where('id',Auth::id());
+        })->get();
+
+        if($roles->count() <= 1){
+            foreach($roles as $role){
+                session(['role' => $role->id]);
+                return redirect()->route('dashboard');
+            }
+        }
+        return view('role.select', compact('roles'));
+    }
+
+    public function assignRoleSelect(Request $request){
+
+        session(['role' => $request->role]);
+
+        return redirect()->route('dashboard');
     }
 
     /**

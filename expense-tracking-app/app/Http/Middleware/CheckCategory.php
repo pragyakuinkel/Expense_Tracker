@@ -25,6 +25,6 @@ class CheckCategory
             return $next($request);
         }
 
-        return redirect()->route('selectCategory');
+        return redirect()->route('estimate.selectCategory');
     }
 }

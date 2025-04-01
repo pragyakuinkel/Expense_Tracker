@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Enum\Action;
 use App\Http\Requests\IncomeRequest;
 use App\Models\Income;
-use App\Models\Statement;
-use Illuminate\Http\Request;
+use App\Models\Log;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -45,12 +44,12 @@ class IncomeController extends Controller
                 'date' => $request->date
             ]);
 
-            Statement::create([
+            Log::create([
                 'amount' => $income->amount,
                 'user_id' => Auth::id(),
                 'date' => Carbon::parse($income->date)->format('Y-m-d'),
-                'statementable_id' => $income->id,
-                'statementable_type' => 'income',
+                'logable_id' => $income->id,
+                'logable_type' => 'income',
                 'action' => Action::Add
             ]);
 
@@ -81,24 +80,96 @@ class IncomeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Income $income)
     {
-        //
+        $income = Income::findOrFail($income->id);
+
+        return view('income.edit', compact('income'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(IncomeRequest $request, income $income)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+
+            $income->update([
+                'description' => $request->description,
+                'amount' => $request->amount,
+            ]);
+
+            Log::create([
+                'amount' => $request->amount,
+                'user_id' => Auth::id(),
+                'date' => Carbon::parse($request->date)->format('Y-m-d'),
+                'logable_id' => $income->id,
+                'logable_type' => 'income',
+                'action' => Action::Update
+            ]);
+
+            DB::commit();
+
+            session()->flash('success', 'Expense updated successfully');
+
+            return redirect(route('dashboard'));
+        } catch (\Exception $exception) {
+            DB::rollBack();
+
+            session()->flash('error', "Income not updated");
+
+            return back();
+        }
     }
 
+    public function delete(string $income)
+    {
+        //first tries to find data of that id if not found throws ModelNotFoundException which if not done in a try catch block creates a 404 response
+        $income = Income::findOrFail($income);
+
+        return view('income.delete', compact('income'));
+
+    }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Income $income)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $income = Income::findOrFail($income->id);
+
+            if ($income) {
+                $income->delete();
+
+                Log::create([
+                    'amount' => $income->amount,
+                    'user_id' => Auth::id(),
+                    'date' => Carbon::parse($income->date)->format('Y-m-d'),
+                    'logable_id' => $income->id,
+                    'logable_type' => 'income',
+                    'action' => Action::Delete
+                ]);
+
+                DB::commit();
+
+                session()->flash('success', 'Income deleted successfully');
+
+                return redirect(route('dashboard'));
+            } else {
+                return redirect(route('dashboard'));
+            }
+        } catch (\Exception $exception) {
+            DB::rollBack();
+
+            session()->flash('error', "Income not deleted");
+
+            dd($exception->getMessage());
+            return back();
+        }
+
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Middleware\CheckCategory;
 use App\Http\Middleware\CheckIncome;
 use App\Http\Middleware\CheckUserStatus;
 use App\Http\Middleware\CommonMiddleware;
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -23,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'income' => CheckIncome::class,
             'category' => CheckCategory::class,
             'status' => CheckUserStatus::class,
+            'chooseRole' => RoleMiddleware::class,
         ]);
 
 

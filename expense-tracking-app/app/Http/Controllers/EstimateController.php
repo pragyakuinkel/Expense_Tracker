@@ -6,7 +6,7 @@ use App\Enum\Action;
 use App\Http\Requests\EstimateRequest;
 use App\Models\Category;
 use App\Models\Estimate;
-use App\Models\Statement;
+use App\Models\Log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,18 +47,21 @@ class EstimateController extends Controller
             $month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
             foreach ($month as $m) {
+
+                $date = date_parse(Carbon::now()->year . " " . $m);;
+
                 $estimate_created = Estimate::create([
                     'amount' => $amount,
                     'user_id' => Auth::id(),
-                    'date' => Carbon::parse($m)->format('Y-m-d')
+                    'date' => $date['year'] . '-' . $date['month'] . '-' . $date['day'],
                 ]);
 
-                Statement::create([
+                Log::create([
                     'amount' => $amount,
                     'user_id' => Auth::id(),
-                    'date' => Carbon::parse($m)->format('Y-m-d'),
-                    'statementable_id' => $estimate_created->id,
-                    'statementable_type' => 'estimate',
+                    'date' => $date['year'] . '-' . $date['month'] . '-' . $date['day'],
+                    'logable_id' => $estimate_created->id,
+                    'logable_type' => 'estimate',
                     'action' => Action::Add
                 ]);
 
@@ -71,7 +74,10 @@ class EstimateController extends Controller
         } catch (\Exception $exception) {
             DB::rollBack();
 
-            session()->flash('error', 'Estimate failed to save.');
+            session()->flash('error',
+                $exception->getMessage()
+//                'Estimate failed to save.'
+        );
 
             return redirect()->back();
         }
@@ -88,12 +94,12 @@ class EstimateController extends Controller
                     'amount' => $request->amount
                 ]);
 
-                Statement::create([
+                Log::create([
                     'amount' => $request->amount,
                     'user_id' => Auth::id(),
                     'date' => Carbon::parse($estimate->date)->format('Y-m-d'),
-                    'statementable_id' => $estimate->id,
-                    'statementable_type' => 'expense',
+                    'logable_id' => $estimate->id,
+                    'logable_type' => 'expense',
                     'action' => Action::Update
                 ]);
 
@@ -125,6 +131,7 @@ class EstimateController extends Controller
 
     public function showLimit(Request $request)
     {
+        ;
         if ($request->categories == null && $request->new_categories == null) {
 
             session()->flash('error', 'Please select a category');
@@ -169,9 +176,9 @@ class EstimateController extends Controller
 
                 if ($category) {
                     foreach ($month as $m) {
-                        $date = Carbon::parse($m)->startOfMonth()->format('Y-m-d');
+                        $date = date_parse(Carbon::now()->year . " " . $m);
 
-                        if (Carbon::now()->format('F') === $m) {
+                        if (Carbon::now()->format('m') == $date['month']) {
                             $limit = $request->limits[$i];
                         } else {
                             $limit = 0;
@@ -179,7 +186,7 @@ class EstimateController extends Controller
 
                         $category->users()->attach(Auth::id(), [
                             'limit' => $limit,
-                            'date' => $date
+                            'date' => $date['year'] . '-' . $date['month'] . '-' . $date['day'],
                         ]);
                     }
                 }
@@ -190,9 +197,9 @@ class EstimateController extends Controller
 
                 if ($category) {
                     foreach ($month as $m) {
-                        $date = Carbon::parse($m)->startOfMonth()->format('Y-m-d');
+                        $date = date_parse(Carbon::now()->year . " " . $m);
 
-                        if (Carbon::now()->format('F') === $m) {
+                        if (Carbon::now()->format('m') === $date['month']) {
                             $limit = $request->new_limits[$i];
                         } else {
                             $limit = 0;
@@ -200,16 +207,16 @@ class EstimateController extends Controller
 
                         $category->users()->attach(Auth::id(), [
                             'limit' => $limit,
-                            'date' => $date
+                            'date' => $date['year'] . '-' . $date['month'] . '-' . $date['day'],
                         ]);
                     }
                 } else {
                     $newCategory = Category::create(['name' => $new_categories[$i], 'user_id' => Auth::id()]);
 
                     foreach ($month as $m) {
-                        $date = Carbon::parse($m)->startOfMonth()->format('Y-m-d');
+                        $date = date_parse(Carbon::now()->year . " " . $m);
 
-                        if (Carbon::now()->format('F') === $m) {
+                        if (Carbon::now()->format('m') === $date['month']) {
                             $limit = $request->new_limits[$i];
                         } else {
                             $limit = 0;
@@ -217,7 +224,7 @@ class EstimateController extends Controller
 
                         $newCategory->users()->attach(Auth::id(), [
                             'limit' => $limit,
-                            'date' => $date
+                            'date' => $date['year'] . '-' . $date['month'] . '-' . $date['day'],
                         ]);
                     }
                 }
@@ -229,9 +236,11 @@ class EstimateController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            session()->flash('error', 'Category failed to save.');
+            session()->flash('error',
+                'Category failed to save.'
+            );
 
-            return redirect()->route('selectCategory');
+            return redirect()->route('estimate.selectCategory');
         }
     }
 

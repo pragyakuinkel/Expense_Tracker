@@ -13,55 +13,48 @@ class ForecastController extends Controller
 {
     public function forecast($date = null)
     {
+        if($date == null){
+            $date = Carbon::now()->format('F');
+        }
+
+        $monthSelected =$date;
 
         $success = session()->get('success');
 
-        $date = Carbon::parse($date)->startOfMonth();
+        $date = date_parse(Carbon::now()->year . " " . $date);
 
         $forecasts = [];
 
-//        $categories =Category::leftJoin('category_user', 'categories.id', '=', 'category_user.category_id')
-//            ->leftJoin('users', 'category_user.user_id', '=', 'users.id')
-//            ->select('categories.id', DB::raw("CASE
-//                WHEN type = 'category_user.date' = '{$date->format('Y-m')}' AS 'current_month'
-//                WHEN type = 'category_user.date' = '{$date->copy()->subMonth()->format('Y-m')}' AS 'last_month'
-//                END"))
-//            ->withSum(['expenses' => function ($query) use ($date) {
-//                $query->where('user_id', Auth::id())
-//                    ->whereMonth('date', $date->month)
-//                    ->whereYear('date', $date->year);
-//            }], 'amount')->groupBy('categories.id', 'type')->get();
-
         $categories = Category::whereHas('users', function ($query) use ($date) {
             $query->where('user_id', Auth::id())
-                ->whereMonth('date', $date->month)
-                ->whereYear('date', $date->year);
+                ->whereMonth('date', $date['month'])
+                ->whereYear('date', $date['year']);
         })->with(['users' => function ($query) use ($date) {
-            $query->whereMonth('date', $date->month)
-                ->whereYear('date', $date->year);
+            $query->whereMonth('date', $date['month'])
+                ->whereYear('date', $date['year']);
         }])->withSum(['expenses' => function ($query) use ($date) {
             $query->where('user_id', Auth::id())
-                ->whereMonth('date', $date->month)
-                ->whereYear('date', $date->year);
+                ->whereMonth('date', $date['month'])
+                ->whereYear('date', $date['year']);
         }], 'amount')->get();
 
         $lastCategories = Category::whereHas('users', function ($query) use ($date) {
             $query->where('user_id', Auth::id())
-                ->whereMonth('date', $date->copy()->subMonth()->month)
-                ->whereYear('date', $date->copy()->subMonth()->year);
+                ->whereMonth('date', $date['month']-1)
+                ->whereYear('date', $date['year']);
         })->with(['users' => function ($query) use ($date) {
             $query->where('user_id', Auth::id())
-                ->whereMonth('date', $date->copy()->subMonth()->month)
-                ->whereYear('date', $date->copy()->subMonth()->year);
+                ->whereMonth('date', $date['month']-1)
+                ->whereYear('date', $date['year']);
         }])->withSum(['expenses' => function ($query) use ($date) {
             $query->where('user_id', Auth::id())
-                ->whereMonth('date', $date->copy()->subMonth()->month)
-                ->whereYear('date', $date->copy()->subMonth()->year);
+                ->whereMonth('date', $date['month']-1)
+                ->whereYear('date', $date['year']);
         }], 'amount')->get();
 
-        if ($date->month > Carbon::now()->month) {
-            $estimate = Estimate::where('user_id', Auth::id())->whereMonth('date', $date->copy()->subMonth())
-                ->whereYear('date', $date->copy()->subMonth()->year)->first();
+        if ($date['month'] > Carbon::now()->month) {
+            $estimate = Estimate::where('user_id', Auth::id())->whereMonth('date', $date['month']-1)
+                ->whereYear('date', $date['year'])->first();
 
             $categories = $lastCategories->filter(function ($category) use ($categories) {
                 return $categories->contains('id', $category->id);
@@ -76,8 +69,8 @@ class ForecastController extends Controller
 
                     $expense = Expense::where('user_id', Auth::id())
                         ->where('category_id', $category->id)
-                        ->whereMonth('date', $date->month)
-                        ->whereYear('date', $date->year)->sum('amount');
+                        ->whereMonth('date', $date['month'])
+                        ->whereYear('date', $date['year'])->sum('amount');
 
                     $expensePercent = round(floatVal($category->expenses_sum_amount) / floatVal($estimate->amount) * 100, 2);
 
@@ -87,8 +80,8 @@ class ForecastController extends Controller
 
                     $expensePercent = round(floatVal($expense) / floatVal($estimate->amount) * 100, 2);
 
-                    $estimate = Estimate::where('user_id', Auth::id())->whereMonth('date', $date->month)
-                        ->whereYear('date', $date->year)->first();
+                    $estimate = Estimate::where('user_id', Auth::id())->whereMonth('date', $date['month'])
+                        ->whereYear('date', $date['year'])->first();
 
                     $forecasts[] = ['category' => $category->name, 'limit' => $limit, 'estimate' => $estimateExpense, 'expense' => $expense, 'expensePercent' => $expensePercent];
                 }
@@ -107,8 +100,8 @@ class ForecastController extends Controller
                 }
             }
         } else {
-            $estimate = Estimate::where('user_id', Auth::id())->whereMonth('date', $date->month)
-                ->whereYear('date', $date->year)->first();
+            $estimate = Estimate::where('user_id', Auth::id())->whereMonth('date',  $date['month'])
+                ->whereYear('date', $date['year'])->first();
 
             foreach ($categories as $category) {
                 foreach ($category->users as $user) {
@@ -131,8 +124,6 @@ class ForecastController extends Controller
             $expectedExpense += $forecast['estimate'];
             $actualExpense += $forecast['expense'];
         }
-
-        $monthSelected = $date->format('F');
 
         return view('forecast.forecast', compact('forecasts', 'estimate', 'expectedExpense', 'actualExpense', 'monthSelected', 'success'));
     }

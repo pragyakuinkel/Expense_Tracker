@@ -17,12 +17,14 @@ class UserSeeder extends Seeder
         User::create([
             'name' => "admin",
             'email' => "admin@gmail.com",
+            'username' => "admin",
             'password' => bcrypt("admin"),
         ])->roles()->sync(Role::where('name', RoleName::ADMIN)->first());
 
         User::create([
             'name' => "pragya",
             'email' => "pragya@gmail.com",
+            'username' => "pragya",
             'password' => bcrypt("123456789"),
         ])->roles()->sync(Role::where('name', RoleName::User)->first());
 

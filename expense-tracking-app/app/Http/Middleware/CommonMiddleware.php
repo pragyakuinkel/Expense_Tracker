@@ -3,9 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Enum\RoleName;
+use App\Models\Role;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class CommonMiddleware
@@ -17,8 +17,7 @@ class CommonMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-
-        $role = Auth::user()->getRole();
+        $role = Role::find(session('role'));
 
         if ($role->name == RoleName::ADMIN->value) {
             return $next($request);

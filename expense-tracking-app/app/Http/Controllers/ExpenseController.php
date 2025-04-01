@@ -6,7 +6,7 @@ use App\Enum\Action;
 use App\Http\Requests\ExpenseRequest;
 use App\Models\Category;
 use App\Models\Expense;
-use App\Models\Statement;
+use App\Models\Log;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -51,12 +51,12 @@ class ExpenseController extends Controller
                 'date' => $request->date
             ]);
 
-            Statement::create([
+            Log::create([
                 'amount' => $request->amount,
                 'user_id' => Auth::id(),
                 'date' => Carbon::parse($request->date)->format('Y-m-d'),
-                'statementable_id' => $expense->id,
-                'statementable_type' => 'expense',
+                'logable_id' => $expense->id,
+                'logable_type' => 'expense',
                 'action' => Action::Add
             ]);
 
@@ -68,7 +68,8 @@ class ExpenseController extends Controller
         } catch (\Exception $exception) {
             DB::rollBack();
 
-            session()->flash('error', "Expense not added");
+            session()->flash('error',
+                "Expense not added");
 
             return back();
         }
@@ -119,12 +120,12 @@ class ExpenseController extends Controller
                 'date' => $request->date
             ]);
 
-            Statement::create([
+            Log::create([
                 'amount' => $request->amount,
                 'user_id' => Auth::id(),
                 'date' => Carbon::parse($request->date)->format('Y-m-d'),
-                'statementable_id' => $expense->id,
-                'statementable_type' => 'expense',
+                'logable_id' => $expense->id,
+                'logable_type' => 'expense',
                 'action' => Action::Add
             ]);
 
@@ -163,12 +164,12 @@ class ExpenseController extends Controller
         try {
             $expense = Expense::find($expense->id);
 
-            Statement::create([
+            Log::create([
                 'amount' => $expense->amount,
                 'user_id' => Auth::id(),
                 'date' => Carbon::parse($expense->date)->format('Y-m-d'),
-                'statementable_id' => $expense->id,
-                'statementable_type' => 'expense',
+                'logable_id' => $expense->id,
+                'logable_type' => 'expense',
                 'action' => Action::Delete
             ]);
 

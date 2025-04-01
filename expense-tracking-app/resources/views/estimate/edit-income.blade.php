@@ -7,7 +7,7 @@
 
 
         <div class="mt-6 w-full">
-            <form method="post" action="{{route('updateIncome',$estimate)}}">
+            <form method="post" action="{{route('estimate.updateIncome',$estimate)}}">
                 @csrf
                 @method('PUT')
 

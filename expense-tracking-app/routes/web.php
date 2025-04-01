@@ -15,6 +15,49 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/role/select', [RoleController::class, 'select'])->name('role.select');
+
+Route::post('/role/assignRoleSelect', [RoleController::class, 'assignRoleSelect'])->name('role.assignRoleSelect');
+
+Route::get('/income/delete/{income}', [IncomeController::class, 'delete'])->name('income.delete');
+
+
+Route::middleware([
+    'auth',
+    'verified',
+//    'chooseRole',
+//    'middle',
+    'income',
+    'category'
+])->group(function () {
+
+    Route::get('category_user/monthlyCategory/{month?}', [UserCategoryController::class, 'monthlyCategory'])->name('category_user.monthlyCategory');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resource('/category_user', UserCategoryController::class);
+
+    Route::get('category_user/delete/{category}', [UserCategoryController::class, 'delete'])->name('category_user.delete');
+
+    Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
+
+    Route::resource('expense', ExpenseController::class);
+
+    Route::get('/expense/delete/{expense}', [ExpenseController::class, 'delete'])->name('expense.delete');
+
+    Route::get('/forecast/forecast/{date?}', [ForecastController::class, 'forecast'])->name('forecast.forecast');
+
+    Route::get('/estimate/editIncome/{date}', [EstimateController::class, 'editIncome'])->name('estimate.editIncome');
+
+    Route::put('/estimate/updateIncome/{estimate}', [EstimateController::class, 'updateIncome'])->name('estimate.updateIncome');
+
+    Route::resource('income', IncomeController::class);
+});
+
 Route::middleware([
     'auth',
     'verified',
@@ -47,58 +90,37 @@ Route::middleware([
 Route::middleware([
     'auth',
     'verified',
+    'chooseRole',
     'middle'
 ])->group(function () {
     Route::get('/estimate/income', [EstimateController::class, 'income'])->name('estimate.income');
 
-    Route::post('/addIncome', [EstimateController::class, 'storeIncome'])->name('addIncome');
+    Route::post('/estimate/addIncome', [EstimateController::class, 'storeIncome'])->name('estimate.addIncome');
 });
 
 Route::middleware([
     'auth',
     'verified',
+    'chooseRole',
     'middle',
     'income'
 ])->group(function () {
 
-    Route::get('/selectCategory', [EstimateController::class, 'selectCategory'])->name('selectCategory');
+    Route::get('/estimate/selectCategory', [EstimateController::class, 'selectCategory'])->name('estimate.selectCategory');
 
-    Route::post('/addCategory', [EstimateController::class, 'showLimit'])->name('addCategory');
+    Route::post('/estimate/addCategory', [EstimateController::class, 'showLimit'])->name('estimate.addCategory');
 
-    Route::post('/addLimit', [EstimateController::class, 'storeLimit'])->name('addLimit');
+    Route::post('/estimate/addLimit', [EstimateController::class, 'storeLimit'])->name('estimate.addLimit');
 });
 
 Route::middleware([
     'auth',
     'verified',
-    'middle',
-    'income',
-    'category'
 ])->group(function () {
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    Route::resource('/category_user', UserCategoryController::class);
-
-    Route::get('category_user/delete/{category}', [UserCategoryController::class, 'delete'])->name('category_user.delete');
-
-    Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
-
-    Route::resource('expense', ExpenseController::class);
-
-    Route::get('/expense/delete/{expense}', [ExpenseController::class, 'delete'])->name('expense.delete');
-
-    Route::get('/forecast/forecast/{date?}', [ForecastController::class, 'forecast'])->name('forecast.forecast');
-
-    Route::get('/editIncome/{date}', [EstimateController::class, 'editIncome'])->name('editIncome');
-
-    Route::put('updateIncome/{estimate}', [EstimateController::class, 'updateIncome'])->name('updateIncome');
-
-    Route::resource('income', IncomeController::class);
+    Route::get('/role/select', [RoleController::class, 'select'])->name('role.select');
 });
+
+
 
 require __DIR__ . '/auth.php';

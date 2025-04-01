@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enum\RoleName;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
@@ -9,6 +10,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
@@ -30,24 +32,42 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        DB::beginTransaction();
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        try{
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+                'username' => ['required', 'string', 'max:255', 'unique:'.User::class],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
 
-        $user->roles()->attach(Role::ROLE_USER);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'username' => $request->username,
+                'password' => Hash::make($request->password),
+            ]);
 
-        event(new Registered($user));
+            $user->roles()->attach(Role::where('name',RoleName::User)->first()->id);
 
-        Auth::login($user);
+            DB::commit();
 
-        return redirect(route('dashboard', absolute: false));
+            return redirect('/login');
+
+        }catch(\Exception $e){
+            DB::rollBack();
+
+            session()->flash('error', "User Registration Failed");
+
+            return back();
+        }
+
+
+//        event(new Registered($user));
+//
+//        Auth::login($user);
+//
+//        return redirect(route('dashboard', absolute: false));
     }
 }

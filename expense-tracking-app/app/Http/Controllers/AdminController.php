@@ -46,12 +46,13 @@ class AdminController extends Controller
 
     public function category(User $user)
     {
-        $categories = $user
-            ->categories()
-            ->orderBy('created_at', 'desc')->get()->groupBy(function ($category) {
+        $categories = $user->categories()
+            ->withSum('expenses', 'amount')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->groupBy(function ($category) {
                 return Carbon::parse($category->pivot->date)->format('Y F');
             });
-
 
         return view('admin.category', compact('categories', 'user'));
     }
