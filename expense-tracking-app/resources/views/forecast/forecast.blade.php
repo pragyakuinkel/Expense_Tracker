@@ -1,25 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
-
-        <div class="flex row justify-between">
+        <div class="flex items-center justify-between px-6 py-5">
             <x-heading>
                 {{"Forecast"}}
             </x-heading>
-
-            <a
-                class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
-                style='background-color:#3268a8'
-                href="{{route('estimate.editIncome',$monthSelected)}}">Edit Estimate {{$monthSelected}}</a>
+{{--            <a--}}
+{{--                href="{{ route('estimate.editIncome', $date) }}"--}}
+{{--               class="inline-flex items-center px-6 py-2 bg-[#0ea5e9] hover:bg-[#0e95d9] transition-all duration-300 ease-in-out rounded-lg font-semibold text-white shadow-md hover:shadow-lg">--}}
+{{--                <i class="fas fa-edit mr-2"></i> Edit Estimate {{ $date->format('F') }}--}}
+{{--            </a>--}}
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <x-heading>
-                        {{$monthSelected}}
-                    </x-heading>
+    <div class="py-8">
+        <div class="mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl">
+                <div class="p-8 text-gray-900">
+{{--                    <x-heading>--}}
+{{--                        {{ $monthSelected }}--}}
+{{--                    </x-heading>--}}
 
                     @if(session('success'))
                         <x-success-message>
@@ -27,58 +26,77 @@
                         </x-success-message>
                     @endif
 
+{{--                    @php--}}
+{{--                        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];--}}
+{{--                    @endphp--}}
 
-                    @php
-                        $months=['January','February','March','April',
-                        'May','June','July','August','September','October',
-                        'November','December'];
-                    @endphp
+{{--                    <div class="flex flex-wrap gap-3 mt-6">--}}
+{{--                        @for($i = 0; $i < count($months); $i++)--}}
+{{--                            <a href="{{ route('forecast.forecast', $months[$i]) }}"--}}
+{{--                               class="px-4 py-2 bg-[#0ea5e9] text-white rounded-lg font-medium transition-all duration-200 ease-in-out shadow-sm hover:shadow-md hover:bg-[#0e95d9] {{ $months[$i] === $monthSelected ? 'font-bold bg-[#0e95d9]' : '' }}">--}}
+{{--                                {{ $months[$i] }}--}}
+{{--                            </a>--}}
+{{--                        @endfor--}}
+{{--                    </div>--}}
 
-                    <div class="flex gap-4 mt-3">
-                        @for($i=0; $i<count($months);$i++)
-                            <a href="{{route('forecast.forecast',$months[$i])}}"
-                               @if($months[$i] === $monthSelected)
-                                   style="font-weight: bolder;background-color: #2f4e73;color: white"
-                               @endif
-                               style="background-color: #3268a8;color: white"
-                               class="px-3 py-2 rounded mb-2"
-                            >{{$months[$i]}}</a>
-                        @endfor
+                    <div class="flex justify-between items-center">
+                        <x-heading>
+                            {{$date->format('F Y')}}
+                        </x-heading>
+
+                        <form action="" method="get"
+                              class=" flex flex-col sm:flex-row">
+                            <div class="flex-1 ml-4">
+                                <label for="date" class="block text-sm font-medium text-gray-700 ">Select Date</label>
+                                <input type="month" id="date" name="date"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0ea5e9] focus:border-[#0ea5e9] transition duration-150 ease-in-out"
+                                       required>
+                            </div>
+                            <div class="flex items-end ml-4">
+                                <button type="submit"
+                                        class="inline-flex items-center px-5 py-2.5 bg-[#0ea5e9] hover:bg-[#0d84bf] transition-all duration-200 ease-in-out rounded-md font-semibold text-white shadow-md hover:shadow-lg">
+                                    <i class="fas fa-filter mr-2"></i> Filter
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <hr class="my-6 border-gray-200">
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-auto border-collapse text-left">
+                            <thead>
+                            <tr class="bg-[#0ea5e9] text-white">
+                                <th class="px-6 py-3 font-semibold">Category</th>
+                                <th class="px-6 py-3 font-semibold">Predicted Expense %</th>
+                                <th class="px-6 py-3 font-semibold">Predicted Expense</th>
+                                <th class="px-6 py-3 font-semibold">Actual Expense %</th>
+                                <th class="px-6 py-3 font-semibold">Actual Expense</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($forecasts as $forecast)
+                                <tr class="border-b border-gray-200 hover:bg-gray-50 transition-all duration-200">
+                                    <td class="px-6 py-4">{{ $forecast['category'] }}</td>
+                                    <td class="px-6 py-4">{{ $forecast['limit'] }}%</td>
+                                    <td class="px-6 py-4">Rs. {{ number_format($forecast['estimate'], 2) }}</td>
+                                    <td class="px-6 py-4">{{ $forecast['expensePercent'] }}%</td>
+                                    <td class="px-6 py-4">Rs. {{ number_format($forecast['expense'], 2) }}</td>
+                                </tr>
+                            @endforeach
+                            <tr class="border-t border-gray-300 font-semibold text-gray-800">
+                                <td class="px-6 py-4"></td>
+                                <td class="px-6 py-4"></td>
+                                <td class="px-6 py-4">Rs. {{ number_format($expectedExpense, 2) }}</td>
+                                <td class="px-6 py-4"></td>
+                                <td class="px-6 py-4">Rs. {{ number_format($actualExpense, 2) }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <hr>
-
-                    <table class="table-auto border-collapse mt-3 w-full" style="width:100%">
-                        <thead>
-                        <tr style="background-color: #3268a8;color: white">
-                            <th class="px-4 py-2 border">Category</th>
-                            <th class="px-4 py-2 border">Predicted Expense %</th>
-                            <th class="px-4 py-2 border">Predicted Expense</th>
-                            <th class="px-4 py-2 border">Actual Expense %</th>
-                            <th class="px-4 py-2 border">Actual Expense</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($forecasts as $forecast)
-                            <tr>
-                                <td class="border px-4 py-2">{{$forecast['category']}}</td>
-                                <td class="border px-4 py-2">{{$forecast['limit']}}%</td>
-                                <td class="border px-4 py-2">Rs. {{number_format($forecast['estimate'],2)}}</td>
-                                <td class="border px-4 py-2">{{$forecast['expensePercent']}}%</td>
-                                <td class="border px-4 py-2">Rs.{{number_format($forecast['expense'],2)}}</td>
-                            </tr>
-                        @endforeach
-                        <tr class="border px-4 py-2">
-                            <td class="border px-4 py-2"></td>
-                            <td class="border px-4 py-2"></td>
-                            <td class="border px-4 py-2">Rs. {{number_format($expectedExpense,2)}}</td>
-                            <td class="border px-4 py-2"></td>
-                            <td class="border px-4 py-2">Rs.{{number_format($actualExpense,2)}}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <p class="font-bold text-xl mt-4">Estimated Income: Rs.{{number_format($estimate->amount,2)}}</p>
+                    <p class="mt-6 text-xl font-bold text-gray-800">
+                        Estimated Income: Rs. {{ number_format($estimate->amount ?? 0, 2)  }}
+                    </p>
                 </div>
             </div>
         </div>

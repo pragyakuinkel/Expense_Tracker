@@ -7,6 +7,7 @@ use App\Http\Requests\ExpenseRequest;
 use App\Models\Category;
 use App\Models\Expense;
 use App\Models\Log;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,11 +17,50 @@ class ExpenseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
 
-    }
+        $search = $request->input('search');
 
+        $start_date = $request->input('start_date') ?? Carbon::now()->startOfMonth();
+
+        $end_date = $request->input('end_date') ?? Carbon::now()->endOfMonth();
+
+        $date = Carbon::parse($start_date)->format('d M Y') .' - '.Carbon::parse($end_date)->format('d M Y') ;
+
+        $expenses = Expense::where('user_id', Auth::id())
+                ->whereBetween('date', [$start_date, $end_date])
+                ->where(function ($query) use ($request) {
+                    $query->where('description','like',"%{$request->search}%")
+                        ->orWhere('date','like',"%{$request->search}%")
+                        ->orWhere('amount','like',"%{$request->search}%")->OrWhereHas('category', function ($query) use ($request) {
+                            $query->where('name','like',"%{$request->search}%");
+                        });
+                })
+                ->orderBy('date', 'desc')
+                ->paginate(10);
+
+        $expenses->appends(['search' => $search,'start_date' => $request->input('start_date'),'end_date' => $request->input('start_date')]);
+
+        return view('expense.index', compact('expenses', 'date','search'));
+    }
+    public function search(Request $request){
+
+
+        $date = ' / '.$request->search;
+
+        $expenses = Expense::where('user_id', Auth::id())
+            ->where('description','like',"%{$request->search}%")
+            ->orWhere('date','like',"%{$request->search}%")
+            ->orWhere('amount','like',"%{$request->search}%")
+            ->OrWhereHas('category', function ($query) use ($request) {
+                $query->where('name','like',"%{$request->search}%");
+            })
+            ->paginate(10);
+
+        return view('expense.index', compact('expenses', 'date'));
+
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -56,7 +96,7 @@ class ExpenseController extends Controller
                 'user_id' => Auth::id(),
                 'date' => Carbon::parse($request->date)->format('Y-m-d'),
                 'logable_id' => $expense->id,
-                'logable_type' => 'expense',
+                'logable_type' => Expense::class,
                 'action' => Action::Add
             ]);
 
@@ -64,7 +104,7 @@ class ExpenseController extends Controller
 
             session()->flash('success', 'Expense added successfully');
 
-            return redirect(route('dashboard'));
+            return redirect(route('expense.index'));
         } catch (\Exception $exception) {
             DB::rollBack();
 
@@ -89,18 +129,21 @@ class ExpenseController extends Controller
      */
     public function edit(Expense $expense)
     {
-        $expense = Expense::find($expense->id);
 
         if ($expense->user_id !== Auth::id()) {
             abort(401);
         }
+
+        $user_selected_category = $expense->category;
 
         $categories = Category::whereHas('users', function ($q) {
             $q->where('user_id', auth()->id())
                 ->whereMonth('date', '=', Carbon::now());
         })->get();
 
-        return view('expense.edit', compact('expense', 'categories'));
+        $categories = $categories->merge(collect([$user_selected_category]))->unique('id');
+
+        return view('expense.edit', compact('expense', 'categories','user_selected_category'));
     }
 
     /**
@@ -111,7 +154,6 @@ class ExpenseController extends Controller
         DB::beginTransaction();
 
         try {
-            $expense = Expense::find($expense->id);
 
             $expense->update([
                 'description' => $request->description,
@@ -123,7 +165,7 @@ class ExpenseController extends Controller
             Log::create([
                 'amount' => $request->amount,
                 'user_id' => Auth::id(),
-                'date' => Carbon::parse($request->date)->format('Y-m-d'),
+                'date' => Carbon::now()->format('Y-m-d'),
                 'logable_id' => $expense->id,
                 'logable_type' => 'expense',
                 'action' => Action::Add
@@ -133,7 +175,7 @@ class ExpenseController extends Controller
 
             session()->flash('success', 'Expense updated successfully');
 
-            return redirect(route('dashboard'));
+            return redirect(route('expense.index'));
         } catch (\Exception $exception) {
             DB::rollBack();
 
@@ -162,28 +204,23 @@ class ExpenseController extends Controller
         DB::beginTransaction();
 
         try {
-            $expense = Expense::find($expense->id);
+
+            $expense->delete();
 
             Log::create([
                 'amount' => $expense->amount,
                 'user_id' => Auth::id(),
-                'date' => Carbon::parse($expense->date)->format('Y-m-d'),
+                'date' => Carbon::now()->format('Y-m-d'),
                 'logable_id' => $expense->id,
                 'logable_type' => 'expense',
                 'action' => Action::Delete
             ]);
 
-            if ($expense) {
-                $expense->delete();
+            DB::commit();
 
-                DB::commit();
+            session()->flash('success', 'Expense deleted successfully');
 
-                session()->flash('success', 'Expense deleted successfully');
-
-                return redirect(route('dashboard'));
-            } else {
-                return redirect(route('dashboard'));
-            }
+            return redirect(route('expense.index'));
         } catch (\Exception $exception) {
             DB::rollBack();
 

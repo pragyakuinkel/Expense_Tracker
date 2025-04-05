@@ -1,5 +1,5 @@
 <div>
-    <h2 {{ $attributes->merge(['style' => 'color:#3268a8; font-size: 1.4rem; font-weight: bold;']) }}>
+    <h2 {{ $attributes->merge(['style' => 'color:#0ea5e9; font-size: 2rem; font-weight: bold;']) }}>
         {{ $slot }}
     </h2>
 </div>

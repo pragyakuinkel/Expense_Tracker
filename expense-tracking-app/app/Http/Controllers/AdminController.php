@@ -35,25 +35,49 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('user_count', 'category_count', 'max_spent', 'avg_income', 'max_spent_categories'));
     }
 
-    public function users()
+    public function users(Request $request)
     {
-        $users = User::whereHas('roles', function ($q) {
-            $q->where('name', 'user');
-        })->orderBy('updated_at', 'desc')->paginate(10);
+        $search = $request->input('search');
 
-        return view('admin.user', compact('users'));
+        $start_date = $request->input('start_date') ?? Carbon::now()->startOfMonth();
+
+        $end_date = $request->input('end_date') ?? Carbon::now()->endOfMonth();
+
+        $date = Carbon::parse($start_date)->format('d M Y') .' - '.Carbon::parse($end_date)->format('d M Y') ;
+
+        $users = User::whereBetween('created_at', [$start_date, $end_date])
+                ->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('email','like',"%{$search}%")
+                ->orWhere('username','like',"%{$search}%");
+            })
+            ->orderBy('updated_at', 'desc')
+            ->whereHas('roles', function ($q) use ($search) {
+                $q->where('name', '!=', RoleName::ADMIN)->where('name', 'like', '%' . $search . '%');
+            })
+            ->paginate(10);
+
+        $users->appends(['search' => $search]);
+
+        return view('admin.user', compact('users','search','date'));
     }
 
-    public function category(User $user)
+    public function category(User $user,Request $request)
     {
-        $categories = $user->categories()
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->groupBy(function ($category) {
-                return Carbon::parse($category->pivot->date)->format('Y F');
-            });
+        $date = Carbon::parse($request->input('date'));
 
-        return view('admin.category', compact('categories', 'user'));
+        $search = $request->input('search');
+
+        $categories = $user->categories()
+            ->whereMonth('date', $date->month)
+            ->whereYear('date', $date->year)
+            ->where('name', 'like', '%' . $search . '%')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $categories->appends(['date'=>$date,'search' => $search]);
+
+        return view('admin.category', compact('categories', 'user','date'));
     }
 
     public function permissions(string $roleId = null)

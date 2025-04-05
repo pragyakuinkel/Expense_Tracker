@@ -14,7 +14,7 @@
                             {{ $category }}
                         </x-input-label>
                         <x-text-input type="hidden" step="any" name="categories[]" value="{{$category}}"/>
-                        <x-text-input type="number" step="any" name="limits[]" required class="block mt-1 w-full"
+                        <x-text-input type="number" min="0" max="100" step="any" name="limits[]" required class="block mt-1 w-full"
                                       style="width:100%"/>
                     </div>
                 @endforeach
@@ -29,6 +29,8 @@
                                       style="width:100%"/>
                     </div>
                 @endforeach
+
+                <x-input-error :messages="session()->get('error')" class="mt-2"/>
 
                 <x-primary-button type="submit" class="mt-4">Add</x-primary-button>
             </form>

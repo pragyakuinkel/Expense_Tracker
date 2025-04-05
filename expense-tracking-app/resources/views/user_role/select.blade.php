@@ -6,7 +6,7 @@
         </x-heading>
 
         <div>
-            <form action="{{route('role.assignRoleSelect')}}" method="post">
+            <form action="{{route('user_role.assignRoleSelect')}}" method="post">
                 @csrf
 
                 <div>

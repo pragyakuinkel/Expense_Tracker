@@ -26,19 +26,28 @@ class PermissionSeeder extends Seeder
             })
             ->groupBy('folder');
 
+        $actionLabels = [
+            'index' => 'View All',
+            'create' => 'Create',
+            'store' => 'Store',
+            'edit' => 'Edit',
+            'update' => 'Update',
+            'destroy' => 'Delete',
+            'show' => 'View',
+        ];
+
         foreach ($routes as $folder => $folderRoute) {
             foreach ($folderRoute as $route) {
-                if ($route['uri'] == 'login' || $route['uri'] == 'forgot-password' || $route['uri'] == 'reset-password' || $route['uri'] == 'verify-email' || $route['uri'] == 'verify-email/{id}/{hash}' || $route['uri'] == 'storage/{path}' || $route['uri'] == 'up' || $route['uri'] == '/' || $route['uri'] == 'register' || $route['uri'] == 'reset-password/{token}
-                ' || $route['uri'] == 'confirm-password' || $route['uri'] == 'reset-password/{token}
-                ') {
-                    break;
+                if($route['folder'] == 'admin' || $route['folder'] == 'category' || $route['folder'] == 'role'){
+
+                    $label = $actionLabels[Str::of($route['name'])->explode('.')->last()] ?? Str::headline(Str::of($route['name'])->explode('.')->last());
+                    Permission::firstOrCreate([
+                        'name' => $route['name'],
+                        'uri' => $route['uri'],
+                        'group' => $folder,
+                        'slug' => $label,
+                    ]);
                 }
-                Permission::firstOrCreate([
-                    'name' => $route['name'],
-                    'uri' => $route['uri'],
-                    'group' => $folder,
-                    'slug' => Str::slug(str_replace('.', ' ', $route['name'])),
-                ]);
             }
         }
     }

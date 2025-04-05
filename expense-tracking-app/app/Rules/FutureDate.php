@@ -16,7 +16,7 @@ class FutureDate implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (Carbon::parse($value)->format('Y-m-d') > Carbon::now()->format('Y-m-d')) {
-            $fail('The :attribute must be before Future date.');
+            $fail('The :attribute must be before future date.');
         }
     }
 }

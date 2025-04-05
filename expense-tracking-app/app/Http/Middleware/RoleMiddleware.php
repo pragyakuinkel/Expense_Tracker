@@ -18,7 +18,7 @@ class RoleMiddleware
         if(session()->has('role')){
             return $next($request);
         }else{
-            return redirect()->route('role.select');
+            return redirect()->route('user_role.select');
         }
     }
 }

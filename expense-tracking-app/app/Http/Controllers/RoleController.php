@@ -14,11 +14,13 @@ class   RoleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $roles =  Role::where('name', '!=', RoleName::ADMIN)->get();
+        $search = $request->input('search');
 
-        return view('role.index', compact('roles'));
+        $roles =  Role::where('name', '!=', RoleName::ADMIN)->where('name','like','%'.$search.'%')->get();
+
+        return view('role.index', compact('roles', 'search'));
     }
 
     /**
@@ -43,10 +45,11 @@ class   RoleController extends Controller
         return redirect()->route('role.index');
     }
 
-    public function assignRole(Role $role)
+    public function assignRole(Role $role, Request $request)
     {
-        $users = User::where('id', '!=', Auth::id())->get();
-        return view('role.assignRole', compact('role', 'users'));
+        $search = $request->input('search');
+        $users = User::where('id', '!=', Auth::id())->where('name', 'like', '%'.$search.'%')->get();
+        return view('role.assignRole', compact('role', 'users', 'search'));
     }
 
     public function removeRole(Role $role, User $user)
@@ -68,27 +71,7 @@ class   RoleController extends Controller
         return back();
     }
 
-    public function select(){
 
-        $roles = Role::whereHas('users',function($query){
-            $query->where('id',Auth::id());
-        })->get();
-
-        if($roles->count() <= 1){
-            foreach($roles as $role){
-                session(['role' => $role->id]);
-                return redirect()->route('dashboard');
-            }
-        }
-        return view('role.select', compact('roles'));
-    }
-
-    public function assignRoleSelect(Request $request){
-
-        session(['role' => $request->role]);
-
-        return redirect()->route('dashboard');
-    }
 
     /**
      * Display the specified resource.

@@ -18,7 +18,7 @@ class CheckCategory
     public function handle(Request $request, Closure $next): Response
     {
         $categories = Category::whereHas('users', function ($query) {
-            $query->where('user_id', auth()->id())->whereMonth('date', Carbon::now())->whereYear('date', Carbon::now());
+            $query->where('user_id', auth()->id());
         })->exists();
 
         if ($categories) {

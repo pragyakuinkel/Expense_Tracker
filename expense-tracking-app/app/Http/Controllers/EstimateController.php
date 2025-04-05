@@ -19,21 +19,18 @@ class EstimateController extends Controller
         return view('estimate.income');
     }
 
-    public function editIncome($month)
-    {
-
-        $date = Carbon::parse($month);
-
-        $estimate = Estimate::where('user_id', Auth::id())->whereMonth('date', $date->month)
-            ->whereYear('date', $date->year)->first();
-
-        return view('estimate.edit-income', compact('estimate', 'month'));
-    }
+//    public function editIncome($date)
+//    {
+//        $date = Carbon::parse($date);
+//
+//        $estimate = Estimate::where('user_id', Auth::id())->whereMonth('date', $date->month)
+//            ->whereYear('date', $date->year)->first();
+//
+//        return view('estimate.edit-income', compact('estimate', 'date'));
+//    }
 
     public function storeIncome(Request $request)
     {
-
-
         DB::beginTransaction();
 
         try {
@@ -61,7 +58,7 @@ class EstimateController extends Controller
                     'user_id' => Auth::id(),
                     'date' => $date['year'] . '-' . $date['month'] . '-' . $date['day'],
                     'logable_id' => $estimate_created->id,
-                    'logable_type' => 'estimate',
+                    'logable_type' => '',
                     'action' => Action::Add
                 ]);
 
@@ -75,50 +72,49 @@ class EstimateController extends Controller
             DB::rollBack();
 
             session()->flash('error',
-                $exception->getMessage()
-//                'Estimate failed to save.'
+                'Estimate failed to save.'
         );
 
             return redirect()->back();
         }
     }
 
-    public function updateIncome(EstimateRequest $request, Estimate $estimate)
-    {
-
-        if ($estimate) {
-            DB::beginTransaction();
-
-            try {
-                $estimate->update([
-                    'amount' => $request->amount
-                ]);
-
-                Log::create([
-                    'amount' => $request->amount,
-                    'user_id' => Auth::id(),
-                    'date' => Carbon::parse($estimate->date)->format('Y-m-d'),
-                    'logable_id' => $estimate->id,
-                    'logable_type' => 'expense',
-                    'action' => Action::Update
-                ]);
-
-                DB::commit();
-
-                session()->flash('success', 'Estimate updated successfully');
-
-                return redirect()->route('forecast.forecast');
-            } catch (\Exception $exception) {
-                DB::rollBack();
-
-                session()->flash('error', 'Estimate failed to update.');
-
-                return redirect()->back();
-            }
-        } else {
-            return back();
-        }
-    }
+//    public function updateIncome(EstimateRequest $request, Estimate $estimate)
+//    {
+//
+//        if ($estimate) {
+//            DB::beginTransaction();
+//
+//            try {
+//                $estimate->update([
+//                    'amount' => $request->amount
+//                ]);
+//
+//                Log::create([
+//                    'amount' => $request->amount,
+//                    'user_id' => Auth::id(),
+//                    'date' => Carbon::parse($estimate->date)->format('Y-m-d'),
+//                    'logable_id' => $estimate->id,
+//                    'logable_type' => 'expense',
+//                    'action' => Action::Update
+//                ]);
+//
+//                DB::commit();
+//
+//                session()->flash('success', 'Estimate updated successfully');
+//
+//                return redirect()->route('forecast.forecast');
+//            } catch (\Exception $exception) {
+//                DB::rollBack();
+//
+//                session()->flash('error', 'Estimate failed to update.');
+//
+//                return redirect()->back();
+//            }
+//        } else {
+//            return back();
+//        }
+//    }
 
     public function selectCategory()
     {
@@ -131,7 +127,6 @@ class EstimateController extends Controller
 
     public function showLimit(Request $request)
     {
-        ;
         if ($request->categories == null && $request->new_categories == null) {
 
             session()->flash('error', 'Please select a category');
@@ -157,6 +152,9 @@ class EstimateController extends Controller
         DB::beginTransaction();
 
         try {
+
+            $totalLimit = 0;
+
             $month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
             if ($request->categories == null) {
@@ -180,6 +178,7 @@ class EstimateController extends Controller
 
                         if (Carbon::now()->format('m') == $date['month']) {
                             $limit = $request->limits[$i];
+                            $totalLimit += $limit;
                         } else {
                             $limit = 0;
                         }
@@ -201,6 +200,7 @@ class EstimateController extends Controller
 
                         if (Carbon::now()->format('m') === $date['month']) {
                             $limit = $request->new_limits[$i];
+                            $totalLimit += $limit;
                         } else {
                             $limit = 0;
                         }
@@ -218,6 +218,7 @@ class EstimateController extends Controller
 
                         if (Carbon::now()->format('m') === $date['month']) {
                             $limit = $request->new_limits[$i];
+                            $totalLimit += $limit;
                         } else {
                             $limit = 0;
                         }
@@ -228,6 +229,15 @@ class EstimateController extends Controller
                         ]);
                     }
                 }
+            }
+
+            if($totalLimit > 100){
+
+                session()->flash('error',
+                    'Expense limit exceeded.'
+                );
+
+                return view('estimate.addLimit', compact('categories', 'new_categories'));
             }
 
             DB::commit();

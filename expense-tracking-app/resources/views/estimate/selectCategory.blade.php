@@ -13,7 +13,7 @@
                     @foreach($categories as $category)
                         <label class="flex items-center space-x-2">
                             <input type="checkbox" name="categories[]" value="{{ $category->name }}"
-                                   class="rounded border-gray-300 text-[#3268a8] focus:ring-[#3268a8]">
+                                   class="rounded border-gray-300 text-[#0ea5e9] focus:ring-[#0ea5e9]">
                             <span class="ms-2">{{ $category->name }}</span>
                         </label>
 

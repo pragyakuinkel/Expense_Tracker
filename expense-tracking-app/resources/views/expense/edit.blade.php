@@ -1,24 +1,23 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Expense') }}
-        </h2>
-    </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-8">
+        <div class="mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+                    <x-heading>
+                        {{ __('Edit Expense') }}
+                    </x-heading>
+
                     <form action="{{route('expense.update',$expense)}}" method="post">
                         @csrf
                         @method('PUT')
-                        <div>
+                        <div class="mt-4">
                             <x-input-label for="name" :value="__('Category')"/>
                             <select name="category" required
-                                    class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#3268a8] focus:border-[#3268a8]" style="width: 100%">
+                                    class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0ea5e9] focus:border-[#0ea5e9]" style="width: 100%">
                                 @foreach($categories as $category)
                                     <option value="{{$category->id}}"
-                                            @if($expense->category_id == $category->id)
+                                        @if($expense->category_id == $category->id)
                                                 selected
                                         @endif>
                                         {{$category->name}}
@@ -45,7 +44,7 @@
                         <div class="mt-4">
                             <x-input-label for="date" :value="__('Date')"/>
                             <input type="date" name="date" id="date" value="{{$expense->date}}"
-                                   class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#3268a8] focus:border-[#3268a8]" style="width: 100%">
+                                   class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0ea5e9] focus:border-[#0ea5e9]" style="width: 100%">
                             <x-input-error :messages="$errors->get('date')" class="mt-2"/>
                         </div>
 

@@ -1,17 +1,8 @@
 <div>
-    <div {{ $attributes->merge([
-        'style' => 'border: 2px solid #28a745;
-                    background-color: #d4edda;
-                    color: #155724;
-                    padding: 12px;
-                    border-radius: 12px;
-                    font-weight: bold;
-                    font-family: Arial, sans-serif;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                    transition: transform 0.3s ease;
-                    margin-bottom: 16px;
-                    ']) }}>
-        {{ $slot }}
+    <div {{ $attributes->merge(['class' => 'border-2 border-green-500 bg-green-100 text-green-800 px-5 py-4 rounded-xl font-semibold font-sans shadow-md hover:shadow-lg transform transition-all duration-300 ease-in-out mb-6']) }}>
+        <div class="flex items-center">
+            <i class="fas fa-check-circle mr-3 text-green-600"></i>
+            {{ $slot }}
+        </div>
     </div>
 </div>
-

@@ -15,6 +15,7 @@
                    href="{{ route('dashboard') }}" type="submit">Cancel</a>
                 @csrf
                 @method('DELETE')
+
                 <button
                     class="inline-flex items-center px-3 py-1 border border-transparent rounded-md font-semibold text-white"
                     style='background-color:#b50e0b'

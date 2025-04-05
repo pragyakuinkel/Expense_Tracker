@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckCategoryUserDateRequest;
 use App\Models\Category;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,16 +17,7 @@ class UserCategoryController extends Controller
      */
     public function index()
     {
-        $categories = Auth::user()
-            ->categories()
-            ->orderBy('created_at', 'desc')->get()->groupBy(function ($category) {
-                return Carbon::parse($category->pivot->date)->format('Y F');
-            });
 
-
-        $success = session()->get('success');
-
-        return view('category_user.index', compact('categories', 'success'));
     }
 
 
@@ -34,9 +26,11 @@ class UserCategoryController extends Controller
      */
     public function create()
     {
+        $left = 100 - User::where('id', Auth::id())->first()->categories()->sum('limit');
+
         $error = session()->get('error');
 
-        return view('category_user.create', compact('error'));
+        return view('category_user.create', compact('error', 'left'));
     }
 
     /**
@@ -44,26 +38,41 @@ class UserCategoryController extends Controller
      */
     public function store(CheckCategoryUserDateRequest $request)
     {
+        $left = 100 - User::where('id', Auth::id())->first()->categories()->sum('limit');
+
+        if($request->limit > $left){
+
+            if($left == 0){
+                session()->flash('error', "You have no limit left.");
+            }else{
+                session()->flash('error', "Limit will go over 100%, please put limit below $left");
+            }
+
+            return back()->withInput();
+        }
+
         DB::beginTransaction();
 
         try {
             $category = Category::withTrashed()->where('name', $request->name)->first();
 
             if ($category) {
+
                 $category->restore();
 
                 $category->users()->attach(Auth::id(), [
                     'limit' => $request->limit,
-                    'date' => Carbon::now()->format('Y-m-d'),
+                    'date' => Carbon::now()->startOfMonth()->format('Y-m-d'),
                 ]);
             } else {
+
                 $category = Category::where('name', $request->name)->first();
 
 
                 if ($category) {
                     $category->users()->attach(Auth::id(), [
                         'limit' => $request->limit,
-                        'date' => Carbon::now()->format('Y-m-d'),
+                        'date' => Carbon::now()->startOfMonth()->format('Y-m-d'),
                     ]);
                 } else {
                     $category = Category::create([
@@ -73,7 +82,7 @@ class UserCategoryController extends Controller
 
                     $category->users()->attach(Auth::id(), [
                         'limit' => $request->limit,
-                        'date' => Carbon::now()->format('Y-m-d'),
+                        'date' => Carbon::now()->startOfMonth()->format('Y-m-d'),
                     ]);
                 }
             }
@@ -98,28 +107,24 @@ class UserCategoryController extends Controller
      */
     public function show(string $month)
     {
+        
     }
 
-    public function monthlyCategory($month = null){
+    public function monthlyCategory(Request $request){
 
+        $monthSelected = $request->input('date');
 
-        if($month == null){
-            $month = Carbon::now()->format('F');
-        }
+        $date = Carbon::parse($request->input('date'));
 
-        $monthSelected = $month;
-
-        $success = session()->get('success');
-
-        $date = date_parse(Carbon::now()->year . " " . $month);
+        $success = session()->get('success');;
 
         $categories = Auth::user()
             ->categories()
-            ->whereMonth('date', $date['month'])
-            ->whereYear('date', $date['year'])
+            ->whereMonth('date', $date->month)
+            ->whereYear('date', $date->year)
             ->orderBy('created_at', 'desc')->get();
 
-        return view('category_user.monthlyCategory', compact('categories', 'success','monthSelected'));
+        return view('category_user.monthlyCategory', compact('categories', 'success','monthSelected','date'));
     }
 
     /**
@@ -131,11 +136,12 @@ class UserCategoryController extends Controller
 
         $category = Category::find($id);
 
-        if ($category) {
-            return view('category_user.edit', compact('category', 'error'));
-        } else {
-            return redirect()->route('category_user.index');
+        foreach($category->users as $user){
+            $limit = $user->pivot->limit;
         }
+
+        return view('category_user.edit', compact('category', 'error','limit'));
+
     }
 
     /**
@@ -143,68 +149,77 @@ class UserCategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-//        DB::beginTransaction();
-//
-//        try{
-//            $category = Category::where('name', $request->name)->first();
-//
-//            if ($category) {
-//                $category->users()
-//                    ->where('user_id', Auth::id())
-//                    ->wherePivot('date', '>=', Carbon::now()->startOfMonth())
-//                    ->wherePivot('date', '<=', Carbon::now()->endOfMonth())
-//                    ->update(['limit' => $request->limit]);
-//            }else{
-//                $category=Category::create([
-//                    'name'=>$request->name,
-//                    'role_id'=>2,
-//                ]);
+        $left = 100 - User::where('id', Auth::id())->first()->categories()->sum('limit');
 
-//                $category->users()
-//                    ->where('user_id', Auth::id())
-//                    ->wherePivot('date', '>=', Carbon::now()->startOfMonth())
-//                    ->wherePivot('date', '<=', Carbon::now()->endOfMonth())
-//                    ->update(['limit' => $request->limit]);
+        if($request->limit > $left){
+            session()->flash('error', "Limit will go over 100%, please put limit below $left");
 
-//                $category->users()->attach(Auth::id(), ['limit'=>$request->limit,'date'=>Carbon::now()->format('Y-m-d')]);
-//            }
-//            DB::commit();
-//
-//            session()->flash('success', 'Category added successfully');
-//
-//            return redirect()->route('category_user.index');
-//
-//        }catch (\Exception $exception){
-//            DB::rollBack();
-//
-//            session()->flash('error', $exception->getMessage());
-//
-//            return redirect()->back();
-//        }
+            return back()->withInput();
+        }
+
+        DB::beginTransaction();
+
+        try{
+            $category = Category::where('name', $request->name)->first();
+
+            if ($category) {
+                $category->users()
+                    ->where('user_id', Auth::id())
+                    ->wherePivot('date', '>=', Carbon::now()->startOfMonth())
+                    ->wherePivot('date', '<=', Carbon::now()->endOfMonth())
+                    ->update(['limit' => $request->limit]);
+            }else{
+                $category=Category::create([
+                    'name'=>$request->name,
+                    'role_id'=>2,
+                ]);
+
+                $category->users()
+                    ->where('user_id', Auth::id())
+                    ->wherePivot('date', '>=', Carbon::now()->startOfMonth())
+                    ->wherePivot('date', '<=', Carbon::now()->endOfMonth())
+                    ->update(['limit' => $request->limit]);
+
+                $category->users()->attach(Auth::id(), ['limit'=>$request->limit,'date'=>Carbon::now()->format('Y-m-d')]);
+            }
+
+            DB::commit();
+
+            session()->flash('success', 'Category added successfully');
+
+            return redirect()->route('category_user.monthlyCategory');
+
+        }catch (\Exception $exception){
+            DB::rollBack();
+
+            session()->flash('error', $exception->getMessage());
+
+            return redirect()->back();
+        }
     }
 
-    public function delete(Category $category)
+    public function delete(Category $category, string $date = null)
     {
-        return view('category_user.delete', compact('category'));
+        return view('category_user.delete', compact('category','date'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $category = Category::find($id);
+        $category = Category::findOrFail($id);
 
         try {
             $category->users()
                 ->where('user_id', Auth::id())
-                ->wherePivot('date', '>=', Carbon::now()->startOfMonth())
-                ->wherePivot('date', '<=', Carbon::now()->endOfMonth())
+                ->wherePivot('date', '>=', Carbon::parse($request->date)->startOfMonth())
+                ->wherePivot('date', '<=', Carbon::parse($request->date)->endOfMonth())
                 ->detach();
 
             session()->flash('success', 'Category deleted successfully');
 
-            return redirect()->route('category_user.index');
+            return redirect()->route('category_user.monthlyCategory', ['date' => $request->date]);
         } catch (\Exception $exception) {
 
             session()->flash('error', "Category not deleted");

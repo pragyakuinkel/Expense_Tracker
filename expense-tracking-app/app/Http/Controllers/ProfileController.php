@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Expense;
 use App\Models\Income;
+use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -61,16 +63,39 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function dashboard()
+    public function dashboard(Request $request)
     {
 
-        $success = session()->get('success');
+        $start_date = $request->input('start_date') ?? Carbon::now()->startOfYear();
 
-        $income = Income::where('user_id', Auth::id())->get();
+        $end_date = $request->input('end_date') ?? Carbon::now()->endOfYear();
 
-        $expense = Expense::where('user_id', Auth::id())->get();
+        $date = Carbon::parse($start_date)->format('d M Y') .' - '.Carbon::parse($end_date)->format('d M Y') ?? "";
 
-        $months = collect($expense)->merge($income)->groupBy(function ($income) {
+        $income = Income::where('user_id', Auth::id())
+            ->whereBetween('date', [$start_date, $end_date])
+            ->where(function ($query) use ($request) {
+                $query->where('description','like',"%{$request->search}%")
+                    ->orWhere('date','like',"%{$request->search}%")
+                    ->orWhere('amount','like',"%{$request->search}%");
+            })
+            ->get();
+
+        $expense = Expense::where('user_id', Auth::id())
+            ->whereBetween('date', [$start_date, $end_date])
+            ->where(function ($query) use ($request) {
+                $query->where('description','like',"%{$request->search}%")
+                    ->orWhere('date','like',"%{$request->search}%")
+                    ->orWhere('amount','like',"%{$request->search}%")
+                    ->OrWhereHas('category', function ($query) use ($request) {
+                        $query->where('name','like',"%{$request->search}%");
+                    });
+            })
+            ->get();
+
+        $months = collect($expense)->merge($income)
+            ->sortByDesc('date')
+            ->groupBy(function ($income) {
             return Carbon::parse($income->date)->format('Y F');
         });
 
@@ -80,9 +105,33 @@ class ProfileController extends Controller
         $expense = Expense::where('user_id', Auth::id())
             ->whereMonth('date', Carbon::now())->whereYear('date', Carbon::now())->sum('amount');
 
+        $search = $request->input('search');
+
         $transaction[] = ['income' => $income, 'expense' => $expense, 'left' => floatval($income) - floatval($expense)];
 
-        return view('dashboard', compact('success', 'months', 'transaction'));
+        return view('dashboard', compact('months', 'transaction', 'search','date'));
 
+    }
+
+    public function select(){
+
+        $roles = Role::whereHas('users',function($query){
+            $query->where('id',Auth::id());
+        })->get();
+
+        if($roles->count() <= 1){
+            foreach($roles as $role){
+                session(['role' => $role->id]);
+                return redirect()->route('dashboard');
+            }
+        }
+        return view('user_role.select', compact('roles'));
+    }
+
+    public function assignRoleSelect(Request $request){
+
+        session(['role' => $request->role]);
+
+        return redirect()->route('dashboard');
     }
 }

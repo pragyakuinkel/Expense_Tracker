@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Enum\Action;
 use App\Http\Requests\IncomeRequest;
+use App\Models\Expense;
 use App\Models\Income;
 use App\Models\Log;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,9 +17,51 @@ class IncomeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $start_date = $request->input('start_date') ?? Carbon::now()->startOfMonth();
+
+        $end_date = $request->input('end_date') ?? Carbon::now()->endOfMonth();
+
+        $date = Carbon::parse($start_date)->format('d M Y') .' - '.Carbon::parse($end_date)->format('d M Y') ;
+
+        $incomes = Income::where('user_id', Auth::id())
+            ->whereBetween('date', [$start_date, $end_date])
+            ->where(function ($query) use ($request) {
+                $query->where('description','like',"%{$request->search}%")
+                    ->orWhere('date','like',"%{$request->search}%");
+            })
+            ->orderBy('date', 'desc')
+            ->paginate(10);
+
+        $search = $request->input('search') ?? "";
+
+        return view('income.index', compact('incomes', 'date','search'));
+    }
+
+//    public function filter(Request $request)
+//    {
+//        $date = ' / '.  Carbon::parse($request->start_date)->format('d M Y') .' - '.Carbon::parse($request->end_date)->format('d M Y') ;
+//        $incomes = Income::where('user_id', Auth::id())
+//            ->whereBetween('date', [$request->start_date, $request->end_date])
+//            ->orderBy('date', 'desc')->paginate(10);
+//
+//        return view('income.index', compact('incomes', 'date'));
+//    }
+
+    public function search(Request $request){
+
+
+        $date = ' / '.$request->search;
+
+        $incomes = Income::where('user_id', Auth::id())
+            ->where('description','like',"%{$request->search}%")
+            ->orWhere('date','like',"%{$request->search}%")
+            ->orWhere('amount','like',"%{$request->search}%")
+            ->paginate(10);
+
+        return view('income.index', compact('incomes', 'date'));
+
     }
 
     /**
@@ -47,7 +91,7 @@ class IncomeController extends Controller
             Log::create([
                 'amount' => $income->amount,
                 'user_id' => Auth::id(),
-                'date' => Carbon::parse($income->date)->format('Y-m-d'),
+                'date' => Carbon::now()->format('Y-m-d'),
                 'logable_id' => $income->id,
                 'logable_type' => 'income',
                 'action' => Action::Add
@@ -104,7 +148,7 @@ class IncomeController extends Controller
             Log::create([
                 'amount' => $request->amount,
                 'user_id' => Auth::id(),
-                'date' => Carbon::parse($request->date)->format('Y-m-d'),
+                'date' => Carbon::now()->format('Y-m-d'),
                 'logable_id' => $income->id,
                 'logable_type' => 'income',
                 'action' => Action::Update
@@ -148,7 +192,7 @@ class IncomeController extends Controller
                 Log::create([
                     'amount' => $income->amount,
                     'user_id' => Auth::id(),
-                    'date' => Carbon::parse($income->date)->format('Y-m-d'),
+                    'date' => Carbon::now()->format('Y-m-d'),
                     'logable_id' => $income->id,
                     'logable_type' => 'income',
                     'action' => Action::Delete

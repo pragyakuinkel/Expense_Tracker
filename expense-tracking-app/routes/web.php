@@ -15,19 +15,23 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('category_user/monthlyCategory/{month?}', [UserCategoryController::class, 'monthlyCategory'])->name('category_user.monthlyCategory');
 
-Route::get('/role/select', [RoleController::class, 'select'])->name('role.select');
+Route::middleware([
+    'auth',
+])->group(function () {
+    Route::get('/user_role/select', [ProfileController::class, 'select'])->name('user_role.select');
 
-Route::post('/role/assignRoleSelect', [RoleController::class, 'assignRoleSelect'])->name('role.assignRoleSelect');
+    Route::post('/user_role/assignRoleSelect', [ProfileController::class, 'assignRoleSelect'])->name('user_role.assignRoleSelect');
+});
 
 Route::middleware([
     'auth',
     'chooseRole',
-    'middle',
     'income',
     'category'
 ])->group(function () {
+
+    Route::get('category_user/monthlyCategory', [UserCategoryController::class, 'monthlyCategory'])->name('category_user.monthlyCategory');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 
@@ -37,7 +41,7 @@ Route::middleware([
 
     Route::resource('/category_user', UserCategoryController::class);
 
-    Route::get('category_user/delete/{category}', [UserCategoryController::class, 'delete'])->name('category_user.delete');
+    Route::get('category_user/delete/{category}/{date?}', [UserCategoryController::class, 'delete'])->name('category_user.delete');
 
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
 
@@ -45,11 +49,11 @@ Route::middleware([
 
     Route::get('/expense/delete/{expense}', [ExpenseController::class, 'delete'])->name('expense.delete');
 
-    Route::get('/forecast/forecast/{date?}', [ForecastController::class, 'forecast'])->name('forecast.forecast');
+    Route::get('/forecast/forecast', [ForecastController::class, 'forecast'])->name('forecast.forecast');
 
-    Route::get('/estimate/editIncome/{date}', [EstimateController::class, 'editIncome'])->name('estimate.editIncome');
-
-    Route::put('/estimate/updateIncome/{estimate}', [EstimateController::class, 'updateIncome'])->name('estimate.updateIncome');
+//    Route::get('/estimate/editIncome/{date}', [EstimateController::class, 'editIncome'])->name('estimate.editIncome');
+//
+//    Route::put('/estimate/updateIncome/{estimate}', [EstimateController::class, 'updateIncome'])->name('estimate.updateIncome');
 
     Route::resource('income', IncomeController::class);
 
@@ -64,9 +68,9 @@ Route::middleware([
 
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-    Route::resource('/category', CategoryController::class);
+    Route::resource('/category', CategoryController::class)->except(['show']);
 
-    Route::resource('/role', RoleController::class);
+    Route::resource('/role', RoleController::class)->only(['index', 'create','store']);
 
     Route::get('/role/assignRole/{role}', [RoleController::class, 'assignRole'])->name('role.assignRole');
 
@@ -74,13 +78,17 @@ Route::middleware([
 
     Route::get('/role/addRole/{role}/{user}', [RoleController::class, 'addRole'])->name('role.addRole');
 
-    Route::get('/category/delete/{category}', [CategoryController::class, 'delete'])->name('category.delete');
+    Route::get('/category/delete/{category}', [CategoryController::class, 'delete'])->name('category.deleteConfirmation');
 
-    Route::get('admin/user', [AdminController::class, 'users'])->name('admin.user');
+    Route::get('/category/confirmation/{category}', [CategoryController::class, 'confirmation'])->name('category.editCategoryConfirmation');
 
-    Route::get('admin/category/{user}', [AdminController::class, 'category'])->name('admin.category');
+    Route::get('/category/confirm/{category}', [CategoryController::class, 'confirm'])->name('category.editCategoryConfirm');
 
-    Route::get('admin/permission/{roleId?}', [AdminController::class, 'permissions'])->name('admin.permission');
+    Route::get('admin/user', [AdminController::class, 'users'])->name('admin.manageUser');
+
+    Route::get('admin/category/{user}', [AdminController::class, 'category'])->name('admin.manageUserCategory');
+
+    Route::get('admin/permission/{roleId?}', [AdminController::class, 'permissions'])->name('admin.managePermission');
 
     Route::put('admin/addPermission', [AdminController::class, 'addPermission'])->name('admin.addPermission');
 });
@@ -97,7 +105,6 @@ Route::middleware([
 Route::middleware([
     'auth',
     'chooseRole',
-    'middle',
     'income'
 ])->group(function () {
 
