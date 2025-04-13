@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use App\Traits\CreateLog;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Income extends Model
 {
-    use CreateLog;
     protected $fillable = [
         'user_id',
         'description',
@@ -20,4 +19,8 @@ class Income extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function logs(): MorphMany
+    {
+        return $this->morphMany(Log::class, 'logable');
+    }
 }

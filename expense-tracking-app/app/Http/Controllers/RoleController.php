@@ -48,7 +48,10 @@ class   RoleController extends Controller
     public function assignRole(Role $role, Request $request)
     {
         $search = $request->input('search');
+
         $users = User::where('id', '!=', Auth::id())->where('name', 'like', '%'.$search.'%')->get();
+
+
         return view('role.assignRole', compact('role', 'users', 'search'));
     }
 

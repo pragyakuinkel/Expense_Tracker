@@ -1,5 +1,4 @@
 <x-guest-layout>
-{{--    <div class="p-8 bg-gray-50 min-h-screen flex items-center justify-center">--}}
         <div class="max-w-lg w-full rounded-xl p-8">
             <x-heading>
                 {{ __('Are you sure you want to delete this category?') }}
@@ -30,5 +29,4 @@
                 </form>
             </div>
         </div>
-{{--    </div>--}}
 </x-guest-layout>

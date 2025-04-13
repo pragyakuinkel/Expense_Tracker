@@ -32,6 +32,7 @@
                     </x-heading>
 
                     <form action="" method="get" class="w-full mb-8 flex flex-col sm:flex-row">
+                        <input type="hidden" name="search" value="{{request('search')}}">
                         <div class="flex-1">
                             <label for="start-date" class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
                             <input type="date" id="start-date" name="start_date" value="{{request('start_date')}}"

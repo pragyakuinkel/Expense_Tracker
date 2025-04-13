@@ -11,6 +11,8 @@
                         @method('PUT')
                         @csrf
 
+                        <input type="hidden" name="date" value="{{$date}}">
+
                         <div class="mt-4">
                             <x-input-label for="name" :value="__('Name')"/>
                             <x-text-input id="name" class="block mt-1 w-full" type="text" name="name"
@@ -23,7 +25,7 @@
                                 Limit
                             </x-input-label>
                             <x-text-input type="number" step="any" name="limit" required class="block mt-1 w-full"
-                                          :value="old('limit',$limit)"/>
+                                          :value="old('limit',$category->pivot->limit)"/>
                         </div>
 
                         <div style="color: red">{{$error}}</div>

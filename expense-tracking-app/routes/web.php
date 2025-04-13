@@ -51,10 +51,6 @@ Route::middleware([
 
     Route::get('/forecast/forecast', [ForecastController::class, 'forecast'])->name('forecast.forecast');
 
-//    Route::get('/estimate/editIncome/{date}', [EstimateController::class, 'editIncome'])->name('estimate.editIncome');
-//
-//    Route::put('/estimate/updateIncome/{estimate}', [EstimateController::class, 'updateIncome'])->name('estimate.updateIncome');
-
     Route::resource('income', IncomeController::class);
 
     Route::get('/income/delete/{income}', [IncomeController::class, 'delete'])->name('income.delete');
@@ -95,7 +91,7 @@ Route::middleware([
 
 Route::middleware([
     'auth',
-    'chooseRole',
+    'chooseRole'
 ])->group(function () {
     Route::get('/estimate/income', [EstimateController::class, 'income'])->name('estimate.income');
 

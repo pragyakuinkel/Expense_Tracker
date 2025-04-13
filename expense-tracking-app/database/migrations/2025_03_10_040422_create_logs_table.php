@@ -1,5 +1,6 @@
 <?php
 
+use App\Enum\Action;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +18,7 @@ return new class extends Migration
             $table->morphs('logable');
             $table->foreignId('user_id')->constrained('users');
             $table->date('date');
-            $table->string('action');
+            $table->enum('action', [Action::Add->value, Action::Delete->value, Action::Update->value]);
             $table->timestamps();
         });
     }

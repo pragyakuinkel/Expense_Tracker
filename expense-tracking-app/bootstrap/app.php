@@ -32,7 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
 
     })->withSchedule(function (Schedule $schedule) {
-        $schedule->call(ForecastUpdate::class)->lastDayOfMonth();
+        $schedule->call(ForecastUpdate::class)->everyFiveSeconds();
     })
 
     ->create();

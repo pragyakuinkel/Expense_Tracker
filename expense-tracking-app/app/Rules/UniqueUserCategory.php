@@ -17,8 +17,10 @@ class UniqueUserCategory implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+
+//        dd( request('date'));
         $category = Category::where('name', $value)->whereHas('users', function ($query) {
-            $query->where('id',Auth::id())->whereMonth('date', Carbon::now()->month)->whereYear('date', Carbon::now()->year);
+            $query->where('id',Auth::id())->whereMonth('date', Carbon::parse(request('date'))->month)->whereYear('date', Carbon::parse(request('date'))->year);
         })->exists();
 
         if ($category) {

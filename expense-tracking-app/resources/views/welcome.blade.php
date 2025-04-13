@@ -12,75 +12,59 @@
     <!-- Tailwind CSS via Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="flex items-center justify-center min-h-screen p-6 bg-gradient-to-br from-gray-100 to-blue-100">
-<div class="w-full max-w-4xl bg-white rounded-xl shadow-lg overflow-hidden">
-    <header class="bg-gray-800 text-white p-4 flex justify-between items-center">
+<body class="min-h-screen">
+<header class="bg-[#0ea5e9] text-white p-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+        <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="25" y="25" width="50" height="50" rx="10" fill="white" fill-opacity="0.2"/>
+            <path d="M50 20V30M50 70V80" stroke="white" stroke-width="4" stroke-linecap="round"/>
+            <path d="M40 40L60 60M60 40L40 60" stroke="white" stroke-width="4" stroke-linecap="round"/>
+        </svg>
         <h1 class="text-xl">Expense Tracker</h1>
-        @if (Route::has('login'))
-            <nav class="flex gap-2">
-                @auth
-                    <a href="{{ url('/dashboard') }}"
-                       class="text-white px-3 py-1 rounded" style="background-color:#0ea5e9">
-                        Dashboard
-                    </a>
-                @else
-                    <a href="{{ route('login') }}"
-                       class="bg-transparent border border-green-400 text-green-400 px-3 py-1 rounded">
-                        Log In
-                    </a>
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}"
-                           class=" text-white px-3 py-1 rounded" style="background-color:#0ea5e9">
-                            Register
-                        </a>
-                    @endif
-                @endauth
-            </nav>
-        @endif
-    </header>
-
-    <main class="p-6 flex flex-col lg:flex-row gap-6">
-        <div class="flex-1">
-            <h2 class="text-3xl font-semibold text-gray-800 mb-4">Track Your Expenses with Ease</h2>
-            <p class="text-gray-600 mb-6">Take control of your finances with our intuitive expense tracking system.</p>
-
-            <ul class="text-gray-700 space-y-3">
-                <li class="flex items-center gap-2">
-                    <span class="text-green-500">✓</span> Record daily expenses effortlessly
-                </li>
-                <li class="flex items-center gap-2">
-                    <span class="text-green-500">✓</span> Categorize spending with custom tags
-                </li>
-                <li class="flex items-center gap-2">
-                    <span class="text-green-500">✓</span> Generate insightful reports
-                </li>
-                <li class="flex items-center gap-2">
-                    <span class="text-green-500">✓</span> Set budget goals and alerts
-                </li>
-            </ul>
-
+    </div>
+    @if (Route::has('login'))
+        <nav class="flex gap-2">
             @auth
                 <a href="{{ url('/dashboard') }}"
-                   class="inline-block mt-6 text-white px-6 py-3 rounded-lg  transition-all duration-300 transform hover:scale-105" style="background-color:#0ea5e9">
-                    Go to Dashboard
+                   class="text-white px-3 py-1 rounded" style="background-color:#0ea5e9">
+                    Dashboard
                 </a>
             @else
-                <a href="{{ route('register') }}"
-                   class="inline-block mt-6  text-white px-6 py-3 rounded-lg  transition-all duration-300 transform hover:scale-105" style="background-color:#0ea5e9">
-                    Get Started Now
+                <a href="{{ route('login') }}"
+                   class="bg-transparent border border-white text-white px-3 py-1 rounded">
+                    Log In
                 </a>
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}"
+                       class="text-[#0ea5e9] px-3 py-1 rounded bg-white">
+                        Register
+                    </a>
+                @endif
             @endauth
-        </div>
+        </nav>
+    @endif
+</header>
 
-        <div class="lg:w-1/2 flex items-center justify-center">
-            <div class="bg-gray-100 rounded-lg p-6 w-full h-full flex items-center justify-center">
-                <svg class="w-32 h-32 " fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:#0ea5e9">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </div>
-        </div>
-    </main>
-</div>
+<main class="flex flex-col lg:flex-row min-h-[calc(100vh-72px)]">
+    <div class="lg:w-1/2 p-8 lg:p-16 flex flex-col justify-center bg-white">
+        <h2 class="text-4xl font-semibold text-gray-800 mb-6">Track Your Expenses with Ease</h2>
+        <p class="text-gray-600 mb-8 text-lg">Take control of your finances with our intuitive expense tracking system.</p>
+        @auth
+            <a href="{{ url('/dashboard') }}"
+               class="inline-block text-white px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 text-lg" style="background-color:#0ea5e9">
+                Go to Dashboard
+            </a>
+        @else
+            <a href="{{ route('register') }}"
+               class="text-center inline-block text-white px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 text-lg" style="background-color:#0ea5e9">
+                Get Started Now
+            </a>
+        @endauth
+    </div>
+
+    <div class="lg:w-1/2 flex items-center justify-center">
+        <img src="{{ asset('image/icon.png') }}" alt="Expense Tracker Illustration" class="max-w-full max-h-[500px] object-contain p-8">
+    </div>
+</main>
 </body>
 </html>

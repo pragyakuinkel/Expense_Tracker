@@ -1,11 +1,16 @@
-<nav x-data="{ open: false }" class="border-b bg-white">
+
+<nav x-data="{ open: false }" class="border-b bg-[#0ea5e9] text-white">
     <div class="mx-auto px-2 sm:px-4 lg:px-6">
         <div class="flex items-center justify-between h-16">
-            <!-- App Logo -->
             <div class="flex items-center">
-{{--                <a href="{{ route('dashboard') }}" class="flex items-center group">--}}
-{{--                    <i class="fas fa-coins text-3xl text-[#0ea5e9] mr-3 transition-transform duration-200 group-hover:scale-110"></i>--}}
-{{--                </a>--}}
+                <div class="flex items-center gap-3">
+                    <svg class="w-8 h-8" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="25" y="25" width="50" height="50" rx="10" fill="white" fill-opacity="0.2"/>
+                        <path d="M50 20V30M50 70V80" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M40 40L60 60M60 40L40 60" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+                    <h1 class="text-xl">Expense Tracker</h1>
+                </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden sm:flex sm:items-center space-x-6 sm:ms-6">
@@ -63,14 +68,13 @@
                 </div>
             </div>
 
-            <!-- User Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-150 ease-in-out">
+                        <button class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-150 ease-in-out text-white">
                             <div>{{ Auth::user()->name }}</div>
                             <div class="ms-2">
-                                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
                             </div>
@@ -78,11 +82,9 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        @if(Auth::user()->hasPermission('profile.edit', Auth::user()->getRole()->id))
-                            <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Profile') }}
-                            </x-dropdown-link>
-                        @endif
+                        <x-dropdown-link :href="route('profile.edit')">
+                            {{ __('Profile') }}
+                        </x-dropdown-link>
 
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -94,10 +96,9 @@
                 </x-dropdown>
             </div>
 
-            <!-- Hamburger -->
             <div class="flex items-center sm:hidden -me-2">
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                    <svg class="h-6 w-6" stroke="white" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': !open}" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': !open, 'inline-flex': open}" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -106,23 +107,63 @@
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': !open}" class="sm:hidden">
+    <div :class="{'block': open, 'hidden': !open}" class="sm:hidden border-t">
         <div class="pt-2 pb-3 space-y-2">
-            <!-- Mobile App Logo -->
-            <div class="px-2 pb-2">
-                <a href="{{ route('dashboard') }}" class="flex items-center group">
-                    <i class="fas fa-coins text-2xl text-[#0ea5e9] mr-3 transition-transform duration-200 group-hover:scale-110"></i>
-                </a>
-            </div>
 
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+            <x-responsive-nav-link :href="route('profile.edit')">
+                {{ __('Profile') }}
             </x-responsive-nav-link>
-            @if(Auth::user()->hasPermission('expense.index', Auth::user()->getRole()->id))
-                <x-responsive-nav-link :href="route('expense.index')" :active="request()->routeIs('expense.index')">
+
+            @if(Auth::user()->roles()->first()->name === 'superAdmin' || Auth::user()->hasPermission('admin.dashboard', Auth::user()->getRole()->id))
+                <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                    {{ __('Dashboard') }}
+                </x-nav-link>
+            @endif
+
+            @if(Auth::user()->roles()->first()->name === 'superAdmin' || Auth::user()->hasPermission('category.index', Auth::user()->getRole()->id))
+                <x-responsive-nav-link  :href="route('category.index')">
+                    {{ __('Manage Category') }}
+                </x-responsive-nav-link >
+            @endif
+
+            @if(Auth::user()->roles()->first()->name === 'superAdmin' || Auth::user()->hasPermission('admin.user', Auth::user()->getRole()->id))
+                <x-responsive-nav-link  :href="route('admin.manageUser')">
+                    {{ __('Manage User') }}
+                </x-responsive-nav-link >
+            @endif
+
+            @if(Auth::user()->roles()->first()->name === 'superAdmin' || Auth::user()->hasPermission('admin.permission', Auth::user()->getRole()->id))
+                <x-responsive-nav-link  :href="route('admin.managePermission')">
+                    {{ __('Permissions') }}
+                </x-responsive-nav-link >
+            @endif
+
+            @if(Auth::user()->roles()->first()->name === 'superAdmin' || Auth::user()->hasPermission('role', Auth::user()->getRole()->id))
+                <x-responsive-nav-link  :href="route('role.index')">
+                    {{ __('Roles') }}
+                </x-responsive-nav-link >
+            @endif
+
+            @if(Auth::user()->roles()->first()->name != 'superAdmin')
+                <x-responsive-nav-link :href="route('dashboard')">
+                    {{ __('Home') }}
+                </x-responsive-nav-link >
+
+                <x-responsive-nav-link  :href="route('expense.index')">
                     {{ __('Expenses') }}
+                </x-responsive-nav-link >
+
+                <x-responsive-nav-link :href="route('income.index')">
+                    {{ __('Incomes') }}
                 </x-responsive-nav-link>
+
+                <x-responsive-nav-link  :href="route('category_user.monthlyCategory')">
+                    {{ __('Categories') }}
+                </x-responsive-nav-link >
+
+                <x-responsive-nav-link  :href="route('forecast.forecast')">
+                    {{ __('Forecast') }}
+                </x-responsive-nav-link >
             @endif
         </div>
 
@@ -133,9 +174,6 @@
             </div>
 
             <div class="mt-3 space-y-2 px-2">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

@@ -15,8 +15,6 @@
     </x-slot>
 
     <form action="" method="GET" class="my-4 mx-8">
-        <input type="hidden" name="start_date" value="{{request('start_date')}}">
-        <input type="hidden" name="end_date" value="{{request('end_date')}}">
         <div class="flex items-center space-x-4">
             <input type="text" name="search" placeholder="Search..." value="{{request('search')}}"
                    class="w-full px-5 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] transition-all duration-200 ease-in-out bg-white text-gray-700" required>

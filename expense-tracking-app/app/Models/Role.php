@@ -11,6 +11,10 @@ class Role extends Model
         'name',
     ];
 
+    protected $casts = [
+        'value' => RoleName::class,
+    ];
+
     public function users()
     {
         return $this->belongsToMany(User::class);

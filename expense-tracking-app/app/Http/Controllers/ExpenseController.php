@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enum\Action;
+use App\Http\Requests\CategoryRequest;
 use App\Http\Requests\ExpenseRequest;
 use App\Models\Category;
 use App\Models\Expense;
-use App\Models\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +19,6 @@ class ExpenseController extends Controller
      */
     public function index(Request $request)
     {
-
         $search = $request->input('search');
 
         $start_date = $request->input('start_date') ?? Carbon::now()->startOfMonth();
@@ -40,7 +39,7 @@ class ExpenseController extends Controller
                 ->orderBy('date', 'desc')
                 ->paginate(10);
 
-        $expenses->appends(['search' => $search,'start_date' => $request->input('start_date'),'end_date' => $request->input('start_date')]);
+        $expenses->appends(['search' => $search,'start_date' => $request->input('start_date'),'end_date' => $request->input('end_date')]);
 
         return view('expense.index', compact('expenses', 'date','search'));
     }
@@ -68,7 +67,8 @@ class ExpenseController extends Controller
     {
         $categories = Category::whereHas('users', function ($q) {
             $q->where('user_id', auth()->id())
-                ->whereMonth('date', '=', Carbon::now());
+                ->whereMonth('date', '=', Carbon::now())
+                ->whereYear('date', '=', Carbon::now());
         })->get();
 
         $current = Carbon::now()->format('Y-m-d');
@@ -91,12 +91,10 @@ class ExpenseController extends Controller
                 'date' => $request->date
             ]);
 
-            Log::create([
+            $expense->logs()->create([
                 'amount' => $request->amount,
                 'user_id' => Auth::id(),
-                'date' => Carbon::parse($request->date)->format('Y-m-d'),
-                'logable_id' => $expense->id,
-                'logable_type' => Expense::class,
+                'date' => Carbon::now()->format('Y-m-d'),
                 'action' => Action::Add
             ]);
 
@@ -136,9 +134,10 @@ class ExpenseController extends Controller
 
         $user_selected_category = $expense->category;
 
-        $categories = Category::whereHas('users', function ($q) {
+        $categories = Category::whereHas('users', function ($q) use ($expense) {
             $q->where('user_id', auth()->id())
-                ->whereMonth('date', '=', Carbon::now());
+                ->whereMonth('date', '=',  Carbon::parse($expense->date))
+                ->whereYear('date', '=', Carbon::parse($expense->date));
         })->get();
 
         $categories = $categories->merge(collect([$user_selected_category]))->unique('id');
@@ -162,13 +161,11 @@ class ExpenseController extends Controller
                 'date' => $request->date
             ]);
 
-            Log::create([
+            $expense->logs()->create([
                 'amount' => $request->amount,
                 'user_id' => Auth::id(),
                 'date' => Carbon::now()->format('Y-m-d'),
-                'logable_id' => $expense->id,
-                'logable_type' => 'expense',
-                'action' => Action::Add
+                'action' => Action::Update
             ]);
 
             DB::commit();
@@ -189,8 +186,11 @@ class ExpenseController extends Controller
 
     public function delete(string $expense)
     {
-        //first tries to find data of that id if not found throws ModelNotFoundException which if not done in a try catch block creates a 404 response
         $expense = Expense::findOrFail($expense);
+
+        if ($expense->user_id !== Auth::id()) {
+            abort(401);
+        }
 
         return view('expense.delete', compact('expense'));
 
@@ -207,12 +207,10 @@ class ExpenseController extends Controller
 
             $expense->delete();
 
-            Log::create([
+            $expense->logs()->create([
                 'amount' => $expense->amount,
                 'user_id' => Auth::id(),
                 'date' => Carbon::now()->format('Y-m-d'),
-                'logable_id' => $expense->id,
-                'logable_type' => 'expense',
                 'action' => Action::Delete
             ]);
 

@@ -4,11 +4,10 @@ namespace App\Models;
 
 use App\Traits\CreateLog;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Expense extends Model
 {
-    use CreateLog;
-
     protected $fillable = [
         'user_id',
         'description',
@@ -25,5 +24,10 @@ class Expense extends Model
     public function category()
     {
         return $this->belongsTo(Category::class)->withTrashed();
+    }
+
+    public function logs(): MorphMany
+    {
+        return $this->morphMany(Log::class, 'logable');
     }
 }

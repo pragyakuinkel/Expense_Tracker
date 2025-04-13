@@ -3,8 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\Category;
-use App\Models\Estimate;
-use App\Models\Expense;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -35,48 +33,74 @@ class ForecastUpdate extends Command
 
         $date = Carbon::now()->startOfMonth();
 
+        $newMonth = $date->copy()->addMonth();
+
         foreach ($users as $user) {
 
             $categories = Category::whereHas('users', function ($query) use ($user, $date) {
                 $query->where('user_id', $user->id)
                     ->whereMonth('date', $date->month)
                     ->whereYear('date', $date->year);
-            })->with(['users' => function ($query) use ($user, $date) {
+            })->with(['users' => function ($query) use ($date) {
+                $query->whereMonth('date', $date->month)
+                    ->whereYear('date', $date->year);
+            }])->withSum(['expenses as current_expense' => function ($query) use ($user, $date) {
                 $query->where('user_id', $user->id)
                     ->whereMonth('date', $date->month)
                     ->whereYear('date', $date->year);
-            }])
-                ->get();
+            }], 'amount')->get();
 
-            $lastCategories = Category::whereHas('users', function ($query) use ($user, $date) {
-                $query->where('user_id', $user->id)
-                    ->whereMonth('date', $date->copy()->subMonth()->month)
-                    ->whereYear('date', $date->copy()->subMonth()->year);
-            })->with(['users' => function ($query) use ($user, $date) {
-                $query->where('user_id', $user->id)
-                    ->whereMonth('date', $date->copy()->subMonth()->month)
-                    ->whereYear('date', $date->copy()->subMonth()->year);
-            }])->get();
+            $income = DB::table('incomes')
+                ->selectRaw("
+                SUM(CASE
+                    WHEN MONTH(date) = ? AND YEAR(date) = ? THEN amount
+                    ELSE 0
+                END) as current_income,
+                SUM(CASE
+                    WHEN MONTH(date) = ? AND YEAR(date) = ? THEN amount
+                    ELSE 0
+                END) as new_income
+            ", [
+                    $date->month, $date->year,
+                    $newMonth->month, $newMonth->year
+                ])
+                ->where('user_id', $user->id)
+                ->first();
 
-            $estimate = Estimate::where('user_id', $user->id)->whereMonth('date', $date->copy()->subMonth())
-                ->whereYear('date', $date->copy()->subMonth()->year)->first();
 
-            $newCategories = $lastCategories->filter(function ($category) use ($categories) {
-                return $categories->contains('id', $category->id);
-            });//in both month
+            $estimate = DB::table('estimates')->selectRaw("
+                SUM(CASE
+                    WHEN MONTH(date) = ? AND YEAR(date) = ? THEN amount
+                    ELSE 0
+                END) as current_estimate,
+                SUM(CASE
+                    WHEN MONTH(date) = ? AND YEAR(date) = ? THEN amount
+                    ELSE 0
+                END) as new_estimate
+            ", [
+                $date->month, $date->year,
+                $newMonth->month, $newMonth->year
+            ])
+                ->where('user_id', $user->id)
+                ->first();
 
-            foreach ($newCategories as $category) {
+            if ($income->new_income <= 0) {
+                $estimate = $estimate->new_estimate;
+            } else {
+                $estimate = $income->new_income;
+            }
+
+            foreach ($categories as $category) {
                 foreach ($category->users as $userInfo) {
-                    $LastExpense = Expense::where('user_id', $user->id)
+
+                    $expensePercent = round(floatVal($category->current_expense) / floatVal($estimate) * 100, 2);
+
+                    $limit = (floatval($userInfo->pivot->limit) + $expensePercent) / 2;
+
+                    DB::table('category_user')->where('user_id', $userInfo->id)
                         ->where('category_id', $category->id)
-                        ->whereMonth('date', $date->copy()->subMonth())
-                        ->whereYear('date', $date->copy()->subMonth()->year)->sum('amount');
-
-                    $expensePercent = round(floatVal($LastExpense) / floatVal($estimate->amount) * 100, 2);
-
-                    $limit = round((floatval($userInfo->pivot->limit) + $expensePercent) / 2, 2);
-
-                    DB::table('category_user')->where('user_id', $userInfo->id)->where('category_id', $category->id)->whereMonth('date', Carbon::now()->addMonth())->whereYear('date', Carbon::now()->addMonth())
+                        ->whereMonth('date', $newMonth)
+                        ->whereYear('date', $newMonth)
                         ->update(['limit' => $limit]);
                 }
             }

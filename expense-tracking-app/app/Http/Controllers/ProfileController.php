@@ -109,6 +109,8 @@ class ProfileController extends Controller
 
         $transaction[] = ['income' => $income, 'expense' => $expense, 'left' => floatval($income) - floatval($expense)];
 
+//        $months->appends(['search' => $search,'start_date' => $request->input('start_date'),'end_date' => $request->input('end_date')]);
+
         return view('dashboard', compact('months', 'transaction', 'search','date'));
 
     }

@@ -2,13 +2,8 @@
     <x-slot name="header">
         <div class="flex items-center justify-between px-6 py-5">
             <x-heading>
-                {{"Forecast"}}
+                Forecast
             </x-heading>
-{{--            <a--}}
-{{--                href="{{ route('estimate.editIncome', $date) }}"--}}
-{{--               class="inline-flex items-center px-6 py-2 bg-[#0ea5e9] hover:bg-[#0e95d9] transition-all duration-300 ease-in-out rounded-lg font-semibold text-white shadow-md hover:shadow-lg">--}}
-{{--                <i class="fas fa-edit mr-2"></i> Edit Estimate {{ $date->format('F') }}--}}
-{{--            </a>--}}
         </div>
     </x-slot>
 
@@ -16,28 +11,12 @@
         <div class="mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl">
                 <div class="p-8 text-gray-900">
-{{--                    <x-heading>--}}
-{{--                        {{ $monthSelected }}--}}
-{{--                    </x-heading>--}}
 
                     @if(session('success'))
                         <x-success-message>
                             {{ session('success') }}
                         </x-success-message>
                     @endif
-
-{{--                    @php--}}
-{{--                        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];--}}
-{{--                    @endphp--}}
-
-{{--                    <div class="flex flex-wrap gap-3 mt-6">--}}
-{{--                        @for($i = 0; $i < count($months); $i++)--}}
-{{--                            <a href="{{ route('forecast.forecast', $months[$i]) }}"--}}
-{{--                               class="px-4 py-2 bg-[#0ea5e9] text-white rounded-lg font-medium transition-all duration-200 ease-in-out shadow-sm hover:shadow-md hover:bg-[#0e95d9] {{ $months[$i] === $monthSelected ? 'font-bold bg-[#0e95d9]' : '' }}">--}}
-{{--                                {{ $months[$i] }}--}}
-{{--                            </a>--}}
-{{--                        @endfor--}}
-{{--                    </div>--}}
 
                     <div class="flex justify-between items-center">
                         <x-heading>
@@ -95,7 +74,7 @@
                     </div>
 
                     <p class="mt-6 text-xl font-bold text-gray-800">
-                        Estimated Income: Rs. {{ number_format($estimate->amount ?? 0, 2)  }}
+                        Income: Rs. {{ number_format($estimate ?? 0, 2)  }}
                     </p>
                 </div>
             </div>

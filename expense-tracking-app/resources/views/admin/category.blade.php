@@ -7,11 +7,11 @@
         </div>
     </x-slot>
 
-    <form action="{{ route('admin.category',$user) }}" method="GET" class="my-4 mx-8">
+    <form action="" method="GET" class="my-4 mx-4">
         <div class="flex items-center space-x-4">
             <input type="hidden" name="date" value="{{ request('date') }}">
             <input type="text" name="search" placeholder="Search..."
-                   class="w-full px-5 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] transition-all duration-200 ease-in-out bg-white text-gray-700" required>
+                   class=" w-[89%] px-5 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-[#0ea5e9] focus:border-[#0ea5e9] transition-all duration-200 ease-in-out bg-white text-gray-700" required>
             <button type="submit"
                     class="inline-flex items-center px-5 py-2.5 bg-[#0ea5e9] hover:bg-[#0d84bf] transition-all duration-200 ease-in-out rounded-lg font-semibold text-white shadow-md hover:shadow-lg">
                 <i class="fas fa-search mr-2"></i> Search
@@ -28,7 +28,7 @@
                             {{ $user->name }}
                         </x-heading>
 
-                        <form action="{{ route('admin.category', $user) }}" method="get"
+                        <form action="" method="get"
                               class=" flex flex-col sm:flex-row">
                             <input type="hidden" name="search" value="{{ request('search') }}">
                             <div class="flex-1 ml-4">

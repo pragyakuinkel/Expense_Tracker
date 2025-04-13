@@ -10,7 +10,6 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 
 class AdminController extends Controller
@@ -57,7 +56,7 @@ class AdminController extends Controller
             })
             ->paginate(10);
 
-        $users->appends(['search' => $search]);
+        $users->appends(['search' => $search, 'start_date' => $request->input('start_date'), 'end_date' => $request->input('end_date')]);
 
         return view('admin.user', compact('users','search','date'));
     }

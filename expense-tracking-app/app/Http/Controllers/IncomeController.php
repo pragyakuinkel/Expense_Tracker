@@ -36,19 +36,10 @@ class IncomeController extends Controller
 
         $search = $request->input('search') ?? "";
 
+        $incomes->appends(['search' => $search,'start_date' => $request->input('start_date'),'end_date' => $request->input('end_date')]);
+
         return view('income.index', compact('incomes', 'date','search'));
     }
-
-//    public function filter(Request $request)
-//    {
-//        $date = ' / '.  Carbon::parse($request->start_date)->format('d M Y') .' - '.Carbon::parse($request->end_date)->format('d M Y') ;
-//        $incomes = Income::where('user_id', Auth::id())
-//            ->whereBetween('date', [$request->start_date, $request->end_date])
-//            ->orderBy('date', 'desc')->paginate(10);
-//
-//        return view('income.index', compact('incomes', 'date'));
-//    }
-
     public function search(Request $request){
 
 
@@ -88,12 +79,10 @@ class IncomeController extends Controller
                 'date' => $request->date
             ]);
 
-            Log::create([
-                'amount' => $income->amount,
+            $income->logs()->create([
+                'amount' => $request->amount,
                 'user_id' => Auth::id(),
                 'date' => Carbon::now()->format('Y-m-d'),
-                'logable_id' => $income->id,
-                'logable_type' => 'income',
                 'action' => Action::Add
             ]);
 
@@ -126,7 +115,9 @@ class IncomeController extends Controller
      */
     public function edit(Income $income)
     {
-        $income = Income::findOrFail($income->id);
+        if ($income->user_id !== Auth::id()) {
+            abort(401);
+        }
 
         return view('income.edit', compact('income'));
     }
@@ -143,14 +134,13 @@ class IncomeController extends Controller
             $income->update([
                 'description' => $request->description,
                 'amount' => $request->amount,
+                'date' => $request->date
             ]);
 
-            Log::create([
+            $income->logs()->create([
                 'amount' => $request->amount,
                 'user_id' => Auth::id(),
                 'date' => Carbon::now()->format('Y-m-d'),
-                'logable_id' => $income->id,
-                'logable_type' => 'income',
                 'action' => Action::Update
             ]);
 
@@ -170,8 +160,11 @@ class IncomeController extends Controller
 
     public function delete(string $income)
     {
-        //first tries to find data of that id if not found throws ModelNotFoundException which if not done in a try catch block creates a 404 response
         $income = Income::findOrFail($income);
+
+        if ($income->user_id !== Auth::id()) {
+            abort(401);
+        }
 
         return view('income.delete', compact('income'));
 
@@ -189,12 +182,10 @@ class IncomeController extends Controller
             if ($income) {
                 $income->delete();
 
-                Log::create([
+                $income->logs()->create([
                     'amount' => $income->amount,
                     'user_id' => Auth::id(),
                     'date' => Carbon::now()->format('Y-m-d'),
-                    'logable_id' => $income->id,
-                    'logable_type' => 'income',
                     'action' => Action::Delete
                 ]);
 
@@ -202,16 +193,15 @@ class IncomeController extends Controller
 
                 session()->flash('success', 'Income deleted successfully');
 
-                return redirect(route('dashboard'));
+                return redirect(route('income.index'));
             } else {
-                return redirect(route('dashboard'));
+                return redirect(route('income.index'));
             }
         } catch (\Exception $exception) {
             DB::rollBack();
 
             session()->flash('error', "Income not deleted");
 
-            dd($exception->getMessage());
             return back();
         }
 

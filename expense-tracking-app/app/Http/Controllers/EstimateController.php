@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Enum\Action;
-use App\Http\Requests\EstimateRequest;
+use App\Enum\RoleName;
 use App\Models\Category;
 use App\Models\Estimate;
-use App\Models\Log;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,21 +15,23 @@ class EstimateController extends Controller
 {
     public function income()
     {
+        $estimate = Estimate::where('user_id', Auth::id())
+            ->first();
+
+        if ($estimate) {
+            return abort(401);
+        }
+
         return view('estimate.income');
     }
 
-//    public function editIncome($date)
-//    {
-//        $date = Carbon::parse($date);
-//
-//        $estimate = Estimate::where('user_id', Auth::id())->whereMonth('date', $date->month)
-//            ->whereYear('date', $date->year)->first();
-//
-//        return view('estimate.edit-income', compact('estimate', 'date'));
-//    }
-
     public function storeIncome(Request $request)
     {
+        $request->validate([
+            'amount' => ['required', 'numeric', 'min:1'],
+        ]);
+
+
         DB::beginTransaction();
 
         try {
@@ -53,12 +54,10 @@ class EstimateController extends Controller
                     'date' => $date['year'] . '-' . $date['month'] . '-' . $date['day'],
                 ]);
 
-                Log::create([
+                $estimate_created->logs()->create([
                     'amount' => $amount,
                     'user_id' => Auth::id(),
-                    'date' => $date['year'] . '-' . $date['month'] . '-' . $date['day'],
-                    'logable_id' => $estimate_created->id,
-                    'logable_type' => '',
+                    'date' => Carbon::now()->format('Y-m-d'),
                     'action' => Action::Add
                 ]);
 
@@ -79,48 +78,26 @@ class EstimateController extends Controller
         }
     }
 
-//    public function updateIncome(EstimateRequest $request, Estimate $estimate)
-//    {
-//
-//        if ($estimate) {
-//            DB::beginTransaction();
-//
-//            try {
-//                $estimate->update([
-//                    'amount' => $request->amount
-//                ]);
-//
-//                Log::create([
-//                    'amount' => $request->amount,
-//                    'user_id' => Auth::id(),
-//                    'date' => Carbon::parse($estimate->date)->format('Y-m-d'),
-//                    'logable_id' => $estimate->id,
-//                    'logable_type' => 'expense',
-//                    'action' => Action::Update
-//                ]);
-//
-//                DB::commit();
-//
-//                session()->flash('success', 'Estimate updated successfully');
-//
-//                return redirect()->route('forecast.forecast');
-//            } catch (\Exception $exception) {
-//                DB::rollBack();
-//
-//                session()->flash('error', 'Estimate failed to update.');
-//
-//                return redirect()->back();
-//            }
-//        } else {
-//            return back();
-//        }
-//    }
-
     public function selectCategory()
     {
+
+        $categories = Category::whereHas('users', function ($query) {
+            $query->where('user_id', auth()->id());
+        })->exists();
+
+        if ($categories) {
+            return abort(401);
+        }
+
         $error = session()->get('error');
 
-        $categories = Category::where('user_id', 1)->get();
+        $categories = Category::whereHas('user', function ($q) {
+            $q->whereHas('roles', function ($q) {
+                $q->where('name', RoleName::ADMIN);
+            });
+        })->get();
+
+
 
         return view('estimate.selectCategory', compact('categories', 'error'));
     }

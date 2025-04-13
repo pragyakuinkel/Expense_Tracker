@@ -20,9 +20,9 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
 
-        $start_date = $request->input('start_date');
+        $start_date = $request->input('start_date') ?? Carbon::now()->startOfMonth();
 
-        $end_date = $request->input('end_date');
+        $end_date = $request->input('end_date') ?? Carbon::now()->endOfMonth();
 
         $date = Carbon::parse($start_date)->format('d M Y') .' - '.Carbon::parse($end_date)->format('d M Y') ?? "";
 
@@ -33,16 +33,21 @@ class CategoryController extends Controller
         $categories = Category::with('user')
             ->leftJoin('category_user', 'categories.id', '=', 'category_user.category_id')
             ->leftJoin('users', 'category_user.user_id', '=', 'users.id')
-            ->orWhereHas('user', function ($query) use ($search) {
-                $query->where('name','like',"%{$search}%")
-                    ->orWhere('username','like',"%{$search}%");
+
+            ->whereBetween('categories.created_at', [$start_date, $end_date])
+            ->where(function ($query) use ($search, $request) {
+                $query->where('categories.name','like',"%{$search}%")
+                ->orWhereHas('user', function ($query) use ($search) {
+                    $query->where('name','like',"%{$search}%")
+                        ->orWhere('username','like',"%{$search}%");
+                });
             })
             ->select('categories.id as id', 'categories.name','categories.updated_at','categories.user_id', 'users.name as username', DB::raw('COUNT(DISTINCT category_user.user_id) as users_count'))
             ->groupBy('categories.id','categories.name','categories.updated_at', 'categories.user_id', 'users.name')
             ->orderBy('categories.updated_at', 'desc')
             ->paginate(10);
 
-        $categories->appends(['start_date' => $request->input('start_date'),'end_date' => $request->input('start_date'),'search' => $search]);
+        $categories->appends(['start_date' => $request->input('start_date'),'end_date' => $request->input('end_date'),'search' => $search]);
 
         return view('category.index', compact('categories', 'success','search','date'));
     }

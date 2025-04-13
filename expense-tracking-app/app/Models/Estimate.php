@@ -4,11 +4,10 @@ namespace App\Models;
 
 use App\Traits\CreateLog;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Estimate extends Model
 {
-    use CreateLog;
-
     protected $fillable = [
         'user_id',
         'amount',
@@ -18,5 +17,10 @@ class Estimate extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function logs(): MorphMany
+    {
+        return $this->morphMany(Log::class, 'logable');
     }
 }

@@ -24,9 +24,14 @@ class UserCategoryController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        $left = 100 - User::where('id', Auth::id())->first()->categories()->sum('limit');
+        $left = 100 - User::where('id', Auth::id())
+                ->first()
+                ->categories()
+                ->wherePivot('date', '>=', Carbon::parse($request->input('date'))->startOfMonth())
+                ->wherePivot('date', '<=', Carbon::parse($request->input('date'))->endOfMonth())
+                ->sum('limit');
 
         $error = session()->get('error');
 
@@ -38,7 +43,12 @@ class UserCategoryController extends Controller
      */
     public function store(CheckCategoryUserDateRequest $request)
     {
-        $left = 100 - User::where('id', Auth::id())->first()->categories()->sum('limit');
+        $left = 100 - User::where('id', Auth::id())
+                ->first()
+                ->categories()
+                ->wherePivot('date', '>=', Carbon::parse($request->input('date'))->startOfMonth())
+                ->wherePivot('date', '<=', Carbon::parse($request->input('date'))->endOfMonth())
+                ->sum('limit');
 
         if($request->limit > $left){
 
@@ -62,7 +72,7 @@ class UserCategoryController extends Controller
 
                 $category->users()->attach(Auth::id(), [
                     'limit' => $request->limit,
-                    'date' => Carbon::now()->startOfMonth()->format('Y-m-d'),
+                    'date' => Carbon::parse($request->input('date'))->startOfMonth()->format('Y-m-d'),
                 ]);
             } else {
 
@@ -72,7 +82,7 @@ class UserCategoryController extends Controller
                 if ($category) {
                     $category->users()->attach(Auth::id(), [
                         'limit' => $request->limit,
-                        'date' => Carbon::now()->startOfMonth()->format('Y-m-d'),
+                        'date' => Carbon::parse($request->input('date'))->startOfMonth()->format('Y-m-d'),
                     ]);
                 } else {
                     $category = Category::create([
@@ -82,7 +92,7 @@ class UserCategoryController extends Controller
 
                     $category->users()->attach(Auth::id(), [
                         'limit' => $request->limit,
-                        'date' => Carbon::now()->startOfMonth()->format('Y-m-d'),
+                        'date' => Carbon::parse($request->input('date'))->startOfMonth()->format('Y-m-d'),
                     ]);
                 }
             }
@@ -91,7 +101,7 @@ class UserCategoryController extends Controller
 
             session()->flash('message', 'Category added successfully');
 
-            return redirect()->route('category_user.monthlyCategory');
+            return redirect()->route('category_user.monthlyCategory',['date'=>$request->input('date')]);
 
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -107,7 +117,7 @@ class UserCategoryController extends Controller
      */
     public function show(string $month)
     {
-        
+
     }
 
     public function monthlyCategory(Request $request){
@@ -116,31 +126,43 @@ class UserCategoryController extends Controller
 
         $date = Carbon::parse($request->input('date'));
 
+        $search = $request->input('search');
+
         $success = session()->get('success');;
 
         $categories = Auth::user()
             ->categories()
             ->whereMonth('date', $date->month)
             ->whereYear('date', $date->year)
-            ->orderBy('created_at', 'desc')->get();
+            ->where('name', 'LIKE', "%{$search}%")
+            ->orderBy('created_at', 'desc')->paginate(10);
 
-        return view('category_user.monthlyCategory', compact('categories', 'success','monthSelected','date'));
+        $categories->appends(['date' => $request->input('date'),'search' => $search]);
+
+        return view('category_user.monthlyCategory', compact('categories', 'success','monthSelected','date','search'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
         $error = session()->get('error');
 
-        $category = Category::find($id);
+        $date = $request->date;
 
-        foreach($category->users as $user){
-            $limit = $user->pivot->limit;
+        $category = User::where('id', Auth::id())
+        ->first()
+        ->categories()
+        ->wherePivot('category_id', $id)
+        ->wherePivot('date', '>=', Carbon::parse($request->date)->startOfMonth())
+        ->wherePivot('date', '<=', Carbon::parse($request->date)->endOfMonth())->first();
+
+        if($category == null){
+            abort(404);
         }
 
-        return view('category_user.edit', compact('category', 'error','limit'));
+        return view('category_user.edit', compact('category', 'error','date'));
 
     }
 
@@ -149,7 +171,13 @@ class UserCategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $left = 100 - User::where('id', Auth::id())->first()->categories()->sum('limit');
+        $left = 100 - User::where('id', Auth::id())
+                ->first()
+                ->categories()
+                ->wherePivot('category_id', '!=', $id)
+                ->wherePivot('date', '>=', Carbon::parse($request->date)->startOfMonth())
+                ->wherePivot('date', '<=', Carbon::parse($request->date)->endOfMonth())
+                ->sum('limit');
 
         if($request->limit > $left){
             session()->flash('error', "Limit will go over 100%, please put limit below $left");
@@ -160,27 +188,55 @@ class UserCategoryController extends Controller
         DB::beginTransaction();
 
         try{
+            $oldCategory = Category::where('id', $id)->first();
+
+            $oldCategory->users()
+                ->where('user_id', Auth::id())
+                ->wherePivot('date', '>=', Carbon::parse($request->date)->startOfMonth())
+                ->wherePivot('date', '<=', Carbon::parse($request->date)->endOfMonth())
+                ->detach();
+
             $category = Category::where('name', $request->name)->first();
 
             if ($category) {
-                $category->users()
-                    ->where('user_id', Auth::id())
-                    ->wherePivot('date', '>=', Carbon::now()->startOfMonth())
-                    ->wherePivot('date', '<=', Carbon::now()->endOfMonth())
-                    ->update(['limit' => $request->limit]);
-            }else{
-                $category=Category::create([
-                    'name'=>$request->name,
-                    'role_id'=>2,
+                $category->users()->attach(Auth::id(), [
+                    'limit' => $request->limit,
+                    'date' => Carbon::parse($request->date)->startOfMonth(),
                 ]);
+            }else {
 
-                $category->users()
-                    ->where('user_id', Auth::id())
-                    ->wherePivot('date', '>=', Carbon::now()->startOfMonth())
-                    ->wherePivot('date', '<=', Carbon::now()->endOfMonth())
-                    ->update(['limit' => $request->limit]);
+                $category = Category::withTrashed()->where('name', $request->name)->first();
 
-                $category->users()->attach(Auth::id(), ['limit'=>$request->limit,'date'=>Carbon::now()->format('Y-m-d')]);
+                if ($category) {
+
+                    $category->restore();
+
+                    $category->users()->attach(Auth::id(), [
+                        'limit' => $request->limit,
+                        'date' => Carbon::parse($request->date)->startOfMonth(),
+                    ]);
+
+                } else {
+
+                    $category = Category::where('name', $request->name)->first();
+
+                    if ($category) {
+                        $category->users()->attach(Auth::id(), [
+                            'limit' => $request->limit,
+                            'date' => Carbon::parse($request->date)->startOfMonth()
+                        ]);
+                    } else {
+                        $category = Category::create([
+                            'name' => $request->name,
+                            'user_id' => Auth::id(),
+                        ]);
+
+                        $category->users()->attach(Auth::id(), [
+                            'limit' => $request->limit,
+                            'date' => Carbon::parse($request->date)->startOfMonth(),
+                        ]);
+                    }
+                }
             }
 
             DB::commit();

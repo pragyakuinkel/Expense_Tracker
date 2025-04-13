@@ -42,7 +42,7 @@
                             <input type="date" name="date" id="date" value="{{$current}}"
                                    class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0ea5e9] focus:border-[#0ea5e9]"
                                    style="width:100%">
-                            <x-input-error :messages="$errors->get('date')" class="mt-2" />
+                            <x-input-error :messages="$errors->get('date')" class="mt-2"/>
                         </div>
 
                         <x-input-error :messages="session()->get('error')" class="mt-2"/>
