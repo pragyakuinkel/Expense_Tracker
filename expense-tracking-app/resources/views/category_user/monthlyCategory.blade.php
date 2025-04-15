@@ -70,14 +70,14 @@
                                 </div>
                                 <div class="flex space-x-4">
 
-                                    <form action="{{ route('category_user.edit', $category->id) }}" method="get">
-                                        <input type="hidden" name="date" value="{{$date->format('Y-m-d')}}">
+{{--                                    <form action="{{ route('category_user.edit', $category->id) }}" method="get">--}}
+{{--                                        <input type="hidden" name="date" value="{{$date->format('Y-m-d')}}">--}}
 
-                                        <button type="submit"
-                                                class="inline-flex items-center px-5 py-2 bg-[#0ea5e9] hover:bg-[#0d84bf] transition-all duration-300 ease-in-out rounded-lg font-medium text-white shadow-md hover:shadow-lg">
-                                            <i class="fas fa-edit mr-2"></i> Edit
-                                        </button>
-                                    </form>
+{{--                                        <button type="submit"--}}
+{{--                                                class="inline-flex items-center px-5 py-2 bg-[#0ea5e9] hover:bg-[#0d84bf] transition-all duration-300 ease-in-out rounded-lg font-medium text-white shadow-md hover:shadow-lg">--}}
+{{--                                            <i class="fas fa-edit mr-2"></i> Edit--}}
+{{--                                        </button>--}}
+{{--                                    </form>--}}
 
                                     <a href="{{ route('category_user.delete',[$category, $date] ) }}"
                                        class="inline-flex items-center px-5 py-2 bg-red-600 hover:bg-red-700 transition-all duration-300 ease-in-out rounded-lg font-medium text-white shadow-md hover:shadow-lg">
