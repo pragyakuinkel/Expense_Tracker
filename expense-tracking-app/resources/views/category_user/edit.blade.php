@@ -26,6 +26,7 @@
                             </x-input-label>
                             <x-text-input type="number" step="any" name="limit" required class="block mt-1 w-full"
                                           :value="old('limit',$category->pivot->limit)"/>
+                            <x-input-error :messages="$errors->get('limit')" class="mt-2"/>
                         </div>
 
                         <div style="color: red">{{$error}}</div>

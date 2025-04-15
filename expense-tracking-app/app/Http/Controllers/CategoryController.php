@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CategoryRequest;
+use App\Http\Requests\FilterRequest;
 use App\Http\Requests\UpdateRequest;
 use App\Models\Category;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +19,7 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(FilterRequest $request)
     {
 
         $start_date = $request->input('start_date') ?? Carbon::now()->startOfMonth();
@@ -113,16 +115,54 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRequest $request, Category $category)
+    public function update(UpdateRequest $request, String $oldcategory)
     {
+        $oldcategory = Category::findOrFail($oldcategory);
 
-        $category->update([
-            'name' => $request->name
-        ]);
+        $category = Category::withTrashed()
+            ->where('deleted_at','!=',null)
+            ->where('name', $request->name)
+            ->first();
 
-        session()->flash('success', 'Category updated successfully');
+        DB::beginTransaction();
 
-        return redirect()->route('category.index');
+        try{
+            if ($category != null) {
+                $category->restore();
+
+                foreach ($oldcategory->expenses as $expense){
+                    $expense->update(['category_id' => $category->id]);
+                }
+
+                $users = User::all();
+
+                foreach ($users as $user){
+                    $user->categories()->where('category_id',$oldcategory->id)->updateExistingPivot($oldcategory->id, [
+                        'category_id' => $category->id
+                    ]);
+                }
+
+                $oldcategory->delete();
+
+            } else {
+                $oldcategory->update([
+                    'name' => $request->name
+                ]);
+            }
+            if($oldcategory){
+                DB::commit();
+
+                session()->flash('success', 'Category updated successfully');
+
+                return redirect()->route('category.index');
+
+            }else{
+                dd('no category found');
+            }
+        }catch (\Exception $exception){
+            DB::rollBack();
+            dd($exception->getMessage());
+        }
 
     }
 
@@ -141,11 +181,27 @@ class CategoryController extends Controller
         $category = Category::find($category->id);
 
         if ($category) {
-            $category->delete();
 
-            session()->flash('success', 'Category deleted successfully');
+            DB::beginTransaction();
 
-            return redirect()->route('category.index');
+            try{
+                $category->delete();
+
+                $users = User::all();
+
+                foreach ($users as $user){
+                    $user->categories()->detach($category->id);
+                }
+
+                DB::commit();
+
+                session()->flash('success', 'Category deleted successfully');
+
+                return redirect()->route('category.index');
+            }catch (\Exception $exception){
+                DB::rollBack();
+                dd($exception->getMessage());
+            }
         } else {
             return redirect()->route('category.index');
         }

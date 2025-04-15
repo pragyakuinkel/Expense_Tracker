@@ -18,6 +18,7 @@ class CheckIncome
     public function handle(Request $request, Closure $next): Response
     {
         $estimate = Estimate::where('user_id', $request->user()->id)
+            ->whereYear('date', Carbon::now()->year)
             ->first();
 
         if ($estimate) {

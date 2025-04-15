@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enum\RoleName;
+use App\Http\Requests\FilterRequest;
 use App\Models\Category;
 use App\Models\Income;
 use App\Models\Permission;
@@ -34,7 +35,7 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('user_count', 'category_count', 'max_spent', 'avg_income', 'max_spent_categories'));
     }
 
-    public function users(Request $request)
+    public function users(FilterRequest $request)
     {
         $search = $request->input('search');
 

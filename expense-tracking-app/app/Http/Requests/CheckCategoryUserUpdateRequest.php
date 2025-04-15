@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Category;
+use App\Rules\UniqueUserCategory;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UpdateRequest extends FormRequest
+class CheckCategoryUserUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,10 +24,9 @@ class UpdateRequest extends FormRequest
     {
         return [
             'name' => ['required','string',
-                Rule::unique('categories')
-                    ->ignore($this->route('category'))
-                    ->where('deleted_at', null),
-            ]
+//                new UniqueUserCategory
+            ],
+            'limit' => 'numeric|min:1',
         ];
     }
 }

@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UpdateRequest extends FormRequest
+class FilterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,11 +22,8 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required','string',
-                Rule::unique('categories')
-                    ->ignore($this->route('category'))
-                    ->where('deleted_at', null),
-            ]
+            'start_date' => 'before_or_equal:end_date',
+            'end_date' => 'after_or_equal:start_date',
         ];
     }
 }

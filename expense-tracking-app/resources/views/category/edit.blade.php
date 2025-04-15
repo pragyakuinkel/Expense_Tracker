@@ -6,7 +6,7 @@
                     <x-heading>
                         {{ __('Edit Category') }}
                     </x-heading>
-                    <form action="{{route('category.update',$category)}}" method="post">
+                    <form action="{{route('category.update',$category->id)}}" method="post">
                         @csrf
                         @method('PUT')
 

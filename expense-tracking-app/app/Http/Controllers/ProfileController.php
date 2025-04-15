@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FilterRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Expense;
 use App\Models\Income;
@@ -63,7 +64,7 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function dashboard(Request $request)
+    public function dashboard(FilterRequest $request)
     {
 
         $start_date = $request->input('start_date') ?? Carbon::now()->startOfYear();

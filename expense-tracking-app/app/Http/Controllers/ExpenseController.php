@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enum\Action;
-use App\Http\Requests\CategoryRequest;
 use App\Http\Requests\ExpenseRequest;
+use App\Http\Requests\FilterRequest;
 use App\Models\Category;
 use App\Models\Expense;
 use Illuminate\Http\Request;
@@ -17,7 +17,7 @@ class ExpenseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(FilterRequest $request)
     {
         $search = $request->input('search');
 
@@ -107,7 +107,8 @@ class ExpenseController extends Controller
             DB::rollBack();
 
             session()->flash('error',
-                "Expense not added");
+                "Expense not added"
+            );
 
             return back();
         }

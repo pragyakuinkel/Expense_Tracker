@@ -46,24 +46,30 @@
                                 {{$date}}
                             </x-heading>
 
-                            <form action="" method="get" class="w-full mb-8 flex flex-col sm:flex-row">
+                            <form action="" method="get" class="mb-8">
                                 <input type="hidden" name="search" value="{{request('search')}}">
-                                <div class="flex-1">
-                                    <label for="start-date" class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
-                                    <input type="date" id="start-date" name="start_date" value="{{request('start_date')}}"
-                                           class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0ea5e9] focus:border-[#0ea5e9] transition duration-150 ease-in-out" required>
+
+                                <div class="w-full flex flex-col sm:flex-row">
+                                    <div class="flex-1">
+                                        <label for="start-date" class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                                        <input type="date" id="start-date" name="start_date" value="{{request('start_date')}}"
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0ea5e9] focus:border-[#0ea5e9] transition duration-150 ease-in-out" required>
+                                    </div>
+                                    <div class="flex-1 ml-4">
+                                        <label for="end-date" class="block text-sm font-medium text-gray-700 mb-2" >End Date</label>
+                                        <input type="date" id="end-date" name="end_date" value="{{request('end_date')}}"
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0ea5e9] focus:border-[#0ea5e9] transition duration-150 ease-in-out" required>
+                                    </div>
+                                    <div class="flex items-end ml-4">
+                                        <button type="submit"
+                                                class="inline-flex items-center px-5 py-2.5 bg-[#0ea5e9] hover:bg-[#0d84bf] transition-all duration-200 ease-in-out rounded-md font-semibold text-white shadow-md hover:shadow-lg">
+                                            <i class="fas fa-filter mr-2"></i> Filter
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="flex-1 ml-4">
-                                    <label for="end-date" class="block text-sm font-medium text-gray-700 mb-2" >End Date</label>
-                                    <input type="date" id="end-date" name="end_date" value="{{request('end_date')}}"
-                                           class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0ea5e9] focus:border-[#0ea5e9] transition duration-150 ease-in-out" required>
-                                </div>
-                                <div class="flex items-end ml-4">
-                                    <button type="submit"
-                                            class="inline-flex items-center px-5 py-2.5 bg-[#0ea5e9] hover:bg-[#0d84bf] transition-all duration-200 ease-in-out rounded-md font-semibold text-white shadow-md hover:shadow-lg">
-                                        <i class="fas fa-filter mr-2"></i> Filter
-                                    </button>
-                                </div>
+
+                                <x-input-error :messages="$errors->get('start_date')" class="mt-2"/>
+                                <x-input-error :messages="$errors->get('end_date')" class="mt-2"/>
                             </form>
 
                             <div class="space-y-8">

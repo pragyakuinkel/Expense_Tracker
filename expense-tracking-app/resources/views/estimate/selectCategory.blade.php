@@ -52,20 +52,23 @@
         for (let i = 0; i < predefinedInputs.length; i++) {
             predefined.push(predefinedInputs[i].value);
         }
-        nh65gtvfrec4dw
+
+        let preDefinedLowercase = predefined.map(name => name.toLowerCase());
 
         function addCategory() {
             let category = document.getElementById('category').value;
 
+            console.log(category.toLowerCase())
+
             if (category === '') {
                 return document.getElementById('error').innerHTML = "Category Cant be empty"
             } else {
-                if (catArr.includes(category)) {
+                if (catArr.includes(category.toLowerCase())) {
                     document.getElementById('category').value = '';
                     return document.getElementById('error').innerHTML = "Category Already Added";
                 }
 
-                if (predefined.includes(category)) {
+                if (preDefinedLowercase.includes(category.toLowerCase())) {
                     document.getElementById('category').value = '';
                     return document.getElementById('error').innerHTML = "Check in the Category Checkbox";
                 }

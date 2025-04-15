@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckCategoryUserDateRequest;
+use App\Http\Requests\CheckCategoryUserUpdateRequest;
 use App\Models\Category;
 use App\Models\User;
 use Carbon\Carbon;
@@ -169,7 +170,7 @@ class UserCategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CheckCategoryUserUpdateRequest $request, string $id)
     {
         $left = 100 - User::where('id', Auth::id())
                 ->first()

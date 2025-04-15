@@ -16,10 +16,11 @@ class EstimateController extends Controller
     public function income()
     {
         $estimate = Estimate::where('user_id', Auth::id())
+            ->whereYear('date', Carbon::now()->year)
             ->first();
 
         if ($estimate) {
-            return abort(401);
+            return abort(404);
         }
 
         return view('estimate.income');
@@ -82,11 +83,11 @@ class EstimateController extends Controller
     {
 
         $categories = Category::whereHas('users', function ($query) {
-            $query->where('user_id', auth()->id());
+            $query->where('user_id', auth()->id())->whereYear('date',Carbon::now()->year);
         })->exists();
 
         if ($categories) {
-            return abort(401);
+            return abort(404);
         }
 
         $error = session()->get('error');
@@ -104,6 +105,14 @@ class EstimateController extends Controller
 
     public function showLimit(Request $request)
     {
+        $categories = Category::whereHas('users', function ($query) {
+            $query->where('user_id', auth()->id())->whereYear('date',Carbon::now()->year);
+        })->exists();
+
+        if ($categories) {
+            return abort(404);
+        }
+
         if ($request->categories == null && $request->new_categories == null) {
 
             session()->flash('error', 'Please select a category');
@@ -126,6 +135,14 @@ class EstimateController extends Controller
 
     public function storeLimit(Request $request)
     {
+        $categories = Category::whereHas('users', function ($query) {
+            $query->where('user_id', auth()->id())->whereYear('date',Carbon::now()->year);
+        })->exists();
+
+        if ($categories) {
+            return abort(404);
+        }
+
         DB::beginTransaction();
 
         try {
@@ -160,6 +177,15 @@ class EstimateController extends Controller
                             $limit = 0;
                         }
 
+                        if($limit < 0){
+
+                            session()->flash('error',
+                                'Limit less than 0.'
+                            );
+
+                            return view('estimate.addLimit', compact('categories', 'new_categories'));
+                        }
+
                         $category->users()->attach(Auth::id(), [
                             'limit' => $limit,
                             'date' => $date['year'] . '-' . $date['month'] . '-' . $date['day'],
@@ -182,6 +208,16 @@ class EstimateController extends Controller
                             $limit = 0;
                         }
 
+                        if($limit < 0){
+
+                            session()->flash('error',
+                                'Limit less than 0.'
+                            );
+
+                            return view('estimate.addLimit', compact('categories', 'new_categories'));
+                        }
+
+
                         $category->users()->attach(Auth::id(), [
                             'limit' => $limit,
                             'date' => $date['year'] . '-' . $date['month'] . '-' . $date['day'],
@@ -198,6 +234,15 @@ class EstimateController extends Controller
                             $totalLimit += $limit;
                         } else {
                             $limit = 0;
+                        }
+
+                        if($limit < 0){
+
+                            session()->flash('error',
+                                'Limit less than 0.'
+                            );
+
+                            return view('estimate.addLimit', compact('categories', 'new_categories'));
                         }
 
                         $newCategory->users()->attach(Auth::id(), [

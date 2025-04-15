@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enum\Action;
+use App\Http\Requests\FilterRequest;
 use App\Http\Requests\IncomeRequest;
 use App\Models\Expense;
 use App\Models\Income;
@@ -17,7 +18,7 @@ class IncomeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(FilterRequest $request)
     {
         $start_date = $request->input('start_date') ?? Carbon::now()->startOfMonth();
 
@@ -90,13 +91,16 @@ class IncomeController extends Controller
 
             session()->flash('success', 'Income added successfully');
 
-            return redirect(route('dashboard'));
+            return redirect(route('income.index'));
         } catch (\Exception $exception) {
             DB::rollBack();
 
-            session()->flash('error', "Income not added");
+            session()->flash('error',
+$exception->getMessage()
+//                "Income not added"
+            );
 
-            return back();
+            return back()->withInput();
         }
 
 
