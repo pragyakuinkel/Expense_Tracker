@@ -78,7 +78,7 @@
                                                 {{ $expense->category->name }}
                                             </p>
                                             <p class="text-gray-600 font-semibold text-xl tracking-tight">
-                                                Rs. {{ number_format($expense->amount, 2) }}
+                                                Rs. {{ number_format($expense->amount, 4) }}
                                             </p>
                                             <p class="text-gray-600 text-sm font-medium">
                                                 <i class="fas fa-calendar-alt mr-2 text-[#0ea5e9]"></i>

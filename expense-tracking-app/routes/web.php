@@ -106,7 +106,7 @@ Route::middleware([
 
     Route::get('/estimate/selectCategory', [EstimateController::class, 'selectCategory'])->name('estimate.selectCategory');
 
-    Route::post('/estimate/addCategory', [EstimateController::class, 'showLimit'])->name('estimate.addCategory');
+    Route::get('/estimate/addCategory', [EstimateController::class, 'showLimit'])->name('estimate.addCategory');
 
     Route::post('/estimate/addLimit', [EstimateController::class, 'storeLimit'])->name('estimate.addLimit');
 });

@@ -27,7 +27,6 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-//        $request->authenticate();
 
         if(User::where('username',$request->name)->exists()){
             $userType = 'username';
@@ -39,12 +38,15 @@ class AuthenticatedSessionController extends Controller
             return redirect('/login');
         }
 
-        if(Auth::attempt(
+        if(
+            Auth::attempt(
             [
                 $userType => $request->name,
                 'password' => $request->password,
             ]
-        )){
+        )
+        ){
+
             $request->session()->regenerate();
 
             if (Auth::user()->roles()->first() == null) {
@@ -71,6 +73,7 @@ class AuthenticatedSessionController extends Controller
 
             return redirect('/login');
         }
+        dd(session()->all());
     }
 
     /**

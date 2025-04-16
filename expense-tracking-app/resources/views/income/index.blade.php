@@ -77,7 +77,7 @@
                                     <div class="flex items-center justify-between pb-6 border-b border-gray-200 transition-all duration-200 hover:bg-gray-50 px-2 rounded-md">
                                         <div class="space-y-2">
                                             <p class="text-gray-600 font-semibold text-xl tracking-tight">
-                                                Rs. {{ number_format($income->amount, 2) }}
+                                                Rs. {{ number_format($income->amount, 4) }}
                                             </p>
                                             <p class="text-gray-600 text-sm font-medium">
                                                 <i class="fas fa-calendar-alt mr-2 text-[#0ea5e9]"></i>

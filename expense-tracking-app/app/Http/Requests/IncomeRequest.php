@@ -24,7 +24,7 @@ class IncomeRequest extends FormRequest
     {
         return [
             'amount' => 'required|numeric|min:0',
-            'date' => ['required','date',new FutureDate],
+            'date' => ['required','date'],
             'description' => 'nullable|string',
         ];
     }

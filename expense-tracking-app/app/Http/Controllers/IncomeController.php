@@ -41,20 +41,6 @@ class IncomeController extends Controller
 
         return view('income.index', compact('incomes', 'date','search'));
     }
-    public function search(Request $request){
-
-
-        $date = ' / '.$request->search;
-
-        $incomes = Income::where('user_id', Auth::id())
-            ->where('description','like',"%{$request->search}%")
-            ->orWhere('date','like',"%{$request->search}%")
-            ->orWhere('amount','like',"%{$request->search}%")
-            ->paginate(10);
-
-        return view('income.index', compact('incomes', 'date'));
-
-    }
 
     /**
      * Show the form for creating a new resource.
@@ -96,8 +82,7 @@ class IncomeController extends Controller
             DB::rollBack();
 
             session()->flash('error',
-$exception->getMessage()
-//                "Income not added"
+                "Income not added"
             );
 
             return back()->withInput();

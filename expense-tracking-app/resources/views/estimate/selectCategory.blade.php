@@ -6,8 +6,8 @@
         </x-heading>
 
         <div class="mt-6 ">
-            <form action="{{route('estimate.addCategory')}}" method="post">
-                @csrf
+            <form action="{{route('estimate.addCategory')}}" method="get">
+{{--                @csrf--}}
 
                 <div class="grid grid-cols-2 gap-4">
                     @foreach($categories as $category)

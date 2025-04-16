@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enum\Action;
 use App\Enum\RoleName;
+use App\Http\Requests\LimitRequest;
 use App\Models\Category;
 use App\Models\Estimate;
 use Carbon\Carbon;
@@ -98,13 +99,12 @@ class EstimateController extends Controller
             });
         })->get();
 
-
-
         return view('estimate.selectCategory', compact('categories', 'error'));
     }
 
     public function showLimit(Request $request)
     {
+
         $categories = Category::whereHas('users', function ($query) {
             $query->where('user_id', auth()->id())->whereYear('date',Carbon::now()->year);
         })->exists();
@@ -133,7 +133,7 @@ class EstimateController extends Controller
         return view('estimate.addLimit', compact('categories', 'new_categories'));
     }
 
-    public function storeLimit(Request $request)
+    public function storeLimit(LimitRequest $request)
     {
         $categories = Category::whereHas('users', function ($query) {
             $query->where('user_id', auth()->id())->whereYear('date',Carbon::now()->year);
@@ -177,14 +177,14 @@ class EstimateController extends Controller
                             $limit = 0;
                         }
 
-                        if($limit < 0){
-
-                            session()->flash('error',
-                                'Limit less than 0.'
-                            );
-
-                            return view('estimate.addLimit', compact('categories', 'new_categories'));
-                        }
+//                        if($limit < 0){
+//
+//                            session()->flash('error',
+//                                'Limit less than 0.'
+//                            );
+//
+//                            return back()->withInput();
+//                        }
 
                         $category->users()->attach(Auth::id(), [
                             'limit' => $limit,
@@ -208,14 +208,14 @@ class EstimateController extends Controller
                             $limit = 0;
                         }
 
-                        if($limit < 0){
-
-                            session()->flash('error',
-                                'Limit less than 0.'
-                            );
-
-                            return view('estimate.addLimit', compact('categories', 'new_categories'));
-                        }
+//                        if($limit < 0){
+//
+//                            session()->flash('error',
+//                                'Limit less than 0.'
+//                            );
+//
+//                            return back()->withInput();
+//                        }
 
 
                         $category->users()->attach(Auth::id(), [
@@ -236,14 +236,14 @@ class EstimateController extends Controller
                             $limit = 0;
                         }
 
-                        if($limit < 0){
-
-                            session()->flash('error',
-                                'Limit less than 0.'
-                            );
-
-                            return view('estimate.addLimit', compact('categories', 'new_categories'));
-                        }
+//                        if($limit < 0){
+//
+//                            session()->flash('error',
+//                                'Limit less than 0.'
+//                            );
+//
+//                            return back()->withInput();
+//                        }
 
                         $newCategory->users()->attach(Auth::id(), [
                             'limit' => $limit,
@@ -259,7 +259,7 @@ class EstimateController extends Controller
                     'Expense limit exceeded.'
                 );
 
-                return view('estimate.addLimit', compact('categories', 'new_categories'));
+                return back()->withInput();
             }
 
             DB::commit();
@@ -272,7 +272,7 @@ class EstimateController extends Controller
                 'Category failed to save.'
             );
 
-            return redirect()->route('estimate.selectCategory');
+            return back()->withInput();
         }
     }
 

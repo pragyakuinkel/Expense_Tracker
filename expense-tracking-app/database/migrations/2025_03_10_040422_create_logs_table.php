@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
-            $table->decimal('amount',15,2);
+            $table->decimal('amount',17,4);
             $table->morphs('logable');
             $table->foreignId('user_id')->constrained('users');
             $table->date('date');

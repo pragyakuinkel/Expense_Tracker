@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class FilterRequest extends FormRequest
+class MonthRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,7 @@ class FilterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'start_date' => 'nullable|required_with:end_date|date',
-            'end_date' => 'nullable|required_with:start_date|date',
+            'date' => 'nullable|date_format:Y-m',
         ];
     }
 }

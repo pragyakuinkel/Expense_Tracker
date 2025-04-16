@@ -39,6 +39,9 @@
                             </div>
                         </form>
                     </div>
+
+                    <x-input-error :messages="$errors->get('date')" class="mt-2"/>
+
                     <hr class="my-6 border-gray-200">
 
                     <div class="overflow-x-auto">
@@ -57,24 +60,24 @@
                                 <tr class="border-b border-gray-200 hover:bg-gray-50 transition-all duration-200">
                                     <td class="px-6 py-4">{{ $forecast['category'] }}</td>
                                     <td class="px-6 py-4">{{ $forecast['limit'] }}%</td>
-                                    <td class="px-6 py-4">Rs. {{ number_format($forecast['estimate'], 2) }}</td>
+                                    <td class="px-6 py-4">Rs. {{ number_format($forecast['estimate'], 4) }}</td>
                                     <td class="px-6 py-4">{{ $forecast['expensePercent'] }}%</td>
-                                    <td class="px-6 py-4">Rs. {{ number_format($forecast['expense'], 2) }}</td>
+                                    <td class="px-6 py-4">Rs. {{ number_format($forecast['expense'], 4) }}</td>
                                 </tr>
                             @endforeach
                             <tr class="border-t border-gray-300 font-semibold text-gray-800">
                                 <td class="px-6 py-4"></td>
                                 <td class="px-6 py-4"></td>
-                                <td class="px-6 py-4">Rs. {{ number_format($expectedExpense, 2) }}</td>
+                                <td class="px-6 py-4">Rs. {{ number_format($expectedExpense, 4) }}</td>
                                 <td class="px-6 py-4"></td>
-                                <td class="px-6 py-4">Rs. {{ number_format($actualExpense, 2) }}</td>
+                                <td class="px-6 py-4">Rs. {{ number_format($actualExpense, 4) }}</td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
 
                     <p class="mt-6 text-xl font-bold text-gray-800">
-                        Income: Rs. {{ number_format($estimate ?? 0, 2)  }}
+                        Income: Rs. {{ number_format($estimate ?? 0, 4)  }}
                     </p>
                 </div>
             </div>

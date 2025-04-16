@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckCategoryUserDateRequest;
 use App\Http\Requests\CheckCategoryUserUpdateRequest;
+use App\Http\Requests\FilterRequest;
+use App\Http\Requests\MonthRequest;
 use App\Models\Category;
 use App\Models\User;
 use Carbon\Carbon;
@@ -25,7 +27,7 @@ class UserCategoryController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create(FilterRequest $request)
     {
         $left = 100 - User::where('id', Auth::id())
                 ->first()
@@ -121,7 +123,7 @@ class UserCategoryController extends Controller
 
     }
 
-    public function monthlyCategory(Request $request){
+    public function monthlyCategory(MonthRequest $request){
 
         $monthSelected = $request->input('date');
 
@@ -146,7 +148,7 @@ class UserCategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Request $request,$id)
+    public function edit(FilterRequest $request,$id)
     {
         $error = session()->get('error');
 
@@ -249,7 +251,7 @@ class UserCategoryController extends Controller
         }catch (\Exception $exception){
             DB::rollBack();
 
-            session()->flash('error', $exception->getMessage());
+            session()->flash('error', 'Category not added');
 
             return redirect()->back();
         }

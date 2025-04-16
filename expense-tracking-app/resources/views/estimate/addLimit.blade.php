@@ -5,7 +5,7 @@
         </x-heading>
 
         <div class="mt-4 w-full">
-            <form action="{{route('estimate.addLimit')}}" method="post">
+            <form action="{{ route('estimate.addLimit') }}" method="post">
                 @csrf
 
                 @foreach($categories as $category)
@@ -13,9 +13,22 @@
                         <x-input-label class="block w-full">
                             {{ $category }}
                         </x-input-label>
-                        <x-text-input type="hidden" step="any" name="categories[]" value="{{$category}}"/>
-                        <x-text-input type="number" min="0" max="100" step="any" name="limits[]" required class="block mt-1 w-full"
-                                      style="width:100%"/>
+
+                        <x-text-input type="hidden" name="categories[]" value="{{ $category }}"/>
+
+                        <x-text-input
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="any"
+                            name="limits[]"
+                            required
+                            class="block mt-1 w-full"
+                            style="width:100%"
+                            value="{{ old('limits.' . $loop->index) }}"
+                        />
+
+                        <x-input-error :messages="$errors->get('limits.' . $loop->index)" class="mt-2" />
                     </div>
                 @endforeach
 
@@ -24,13 +37,27 @@
                         <x-input-label class="block w-full">
                             {{ $category }}
                         </x-input-label>
-                        <x-text-input type="hidden" step="any" name="new_categories[]" value="{{$category}}"/>
-                        <x-text-input type="number" step="any" name="new_limits[]" class="block mt-1 w-full" required
-                                      style="width:100%"/>
+
+                        <x-text-input type="hidden" name="new_categories[]" value="{{ $category }}"/>
+
+                        <x-text-input
+                            type="number"
+                            step="any"
+                            name="new_limits[]"
+                            class="block mt-1 w-full"
+                            required
+                            style="width:100%"
+                            value="{{ old('new_limits.' . $loop->index) }}"
+                        />
+
+                        <x-input-error :messages="$errors->get('new_limits.' . $loop->index)" class="mt-2" />
                     </div>
                 @endforeach
 
-                <x-input-error :messages="session()->get('error')" class="mt-2"/>
+
+                <div class="text-red-600 text-sm mt-2">
+                    {{ session()->get('error') }}
+                </div>
 
                 <x-primary-button type="submit" class="mt-4">Add</x-primary-button>
             </form>

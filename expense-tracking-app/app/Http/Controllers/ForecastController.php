@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MonthRequest;
 use App\Models\Category;
 use App\Models\Estimate;
 use App\Models\Expense;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class ForecastController extends Controller
 {
-    public function forecast(Request $request){
+    public function forecast(MonthRequest $request){
 
         $success=session()->get('success');
 

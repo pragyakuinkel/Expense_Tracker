@@ -78,9 +78,9 @@
                                                 </p>
                                                 <p class="text-gray-700 font-bold text-xl tracking-tight">
                                                     @if($transaction->category)
-                                                        - Rs. {{ number_format($transaction->amount, 2) }}
+                                                        - Rs. {{ number_format($transaction->amount, 4) }}
                                                     @else
-                                                        + Rs. {{ number_format($transaction->amount, 2) }}
+                                                        + Rs. {{ number_format($transaction->amount, 4) }}
                                                     @endif
                                                 </p>
                                                 <p class="text-gray-500 text-sm italic leading-relaxed">

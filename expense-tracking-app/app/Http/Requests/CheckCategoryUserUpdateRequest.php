@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Rules\UniqueUserCategory;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CheckCategoryUserUpdateRequest extends FormRequest
 {
@@ -23,9 +24,7 @@ class CheckCategoryUserUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required','string',
-//                new UniqueUserCategory
-            ],
+            'name' => ['required','string'],
             'limit' => 'numeric|min:1',
         ];
     }

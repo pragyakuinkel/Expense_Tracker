@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('incomes', function (Blueprint $table) {
             $table->id();
             $table->string('description')->nullable();
-            $table->decimal('amount',15,2);
+            $table->decimal('amount',17,4);
             $table->foreignId('user_id')->constrained();
             $table->date('date');
             $table->timestamps();
