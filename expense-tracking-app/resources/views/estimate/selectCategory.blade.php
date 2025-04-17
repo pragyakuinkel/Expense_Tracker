@@ -2,13 +2,11 @@
     <div class="p-6">
 
         <x-heading>
-            {{ __('Select Recurring Categories') }}
+            Select Recurring Categories
         </x-heading>
 
         <div class="mt-6 ">
             <form action="{{route('estimate.addCategory')}}" method="get">
-{{--                @csrf--}}
-
                 <div class="grid grid-cols-2 gap-4">
                     @foreach($categories as $category)
                         <label class="flex items-center space-x-2">
@@ -58,17 +56,17 @@
         function addCategory() {
             let category = document.getElementById('category').value;
 
-            console.log(category.toLowerCase())
+            let lowerCat = document.getElementById('category').value.toLowerCase()
 
             if (category === '') {
                 return document.getElementById('error').innerHTML = "Category Cant be empty"
             } else {
-                if (catArr.includes(category.toLowerCase())) {
+                if (catArr.includes(lowerCat)) {
                     document.getElementById('category').value = '';
                     return document.getElementById('error').innerHTML = "Category Already Added";
                 }
 
-                if (preDefinedLowercase.includes(category.toLowerCase())) {
+                if (preDefinedLowercase.includes(lowerCat)) {
                     document.getElementById('category').value = '';
                     return document.getElementById('error').innerHTML = "Check in the Category Checkbox";
                 }
@@ -79,13 +77,6 @@
 
                 li.textContent = category;
 
-                let remove = document.createElement('button');
-                remove.textContent = 'X';
-                remove.onclick = function () {
-                    removeCategory(li, category);
-                };
-
-                li.append(remove);
 
                 document.getElementById('categoryInfo').appendChild(li);
 
@@ -97,12 +88,6 @@
                 document.getElementById('new_categories[]').append(hiddenInput)
                 document.getElementById('category').value = '';
             }
-        }
-
-        function removeCategory(listItem, category) {
-            catArr = catArr.filter(item => item !== category);
-
-            document.getElementById('categoryInfo').removeChild(listItem);
         }
     </script>
 </x-guest-layout>

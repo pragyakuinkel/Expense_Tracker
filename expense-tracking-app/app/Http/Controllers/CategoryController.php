@@ -36,7 +36,8 @@ class CategoryController extends Controller
             ->leftJoin('category_user', 'categories.id', '=', 'category_user.category_id')
             ->leftJoin('users', 'category_user.user_id', '=', 'users.id')
 
-            ->whereBetween('categories.created_at', [$start_date, $end_date])
+            ->whereDate('categories.created_at', '>=', $start_date)
+            ->whereDate('categories.created_at', '<=', $end_date)
             ->where(function ($query) use ($search, $request) {
                 $query->where('categories.name','like',"%{$search}%")
                 ->orWhereHas('user', function ($query) use ($search) {

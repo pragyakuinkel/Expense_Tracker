@@ -22,8 +22,8 @@ class FilterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'start_date' => 'nullable|required_with:end_date|date',
-            'end_date' => 'nullable|required_with:start_date|date',
+            'start_date' => 'nullable|required_with:end_date|date|before_or_equal:end_date',
+            'end_date' => 'nullable|required_with:start_date|date|after_or_equal:start_date',
         ];
     }
 }

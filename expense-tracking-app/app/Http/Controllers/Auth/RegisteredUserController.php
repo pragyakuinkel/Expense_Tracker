@@ -7,10 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
@@ -52,16 +49,11 @@ class RegisteredUserController extends Controller
         }catch(\Exception $e){
             DB::rollBack();
 
-            session()->flash('error', "User Registration Failed");
+            session()->flash('error',
+                "User Registration Failed"
+            );
 
             return back();
         }
-
-
-//        event(new Registered($user));
-//
-//        Auth::login($user);
-//
-//        return redirect(route('dashboard', absolute: false));
     }
 }

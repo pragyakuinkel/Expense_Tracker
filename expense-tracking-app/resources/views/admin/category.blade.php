@@ -19,6 +19,7 @@
         </div>
     </form>
 
+
     <div>
         <div class="mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl">
@@ -45,6 +46,8 @@
                             </div>
                         </form>
                     </div>
+
+                    <x-input-error :messages="$errors->get('date')" class="mt-2"/>
 
                     <div class="mt-6">
                         <h3 class="text-xl font-bold text-gray-800">{{ $date->format('F Y')}}</h3>

@@ -96,11 +96,11 @@ class ForecastController extends Controller
             foreach($categories as $category){
                 foreach($category->users as $user){
 
-                    $limit=round(((floatVal($category->previous_expense)+(floatVal($estimate->previous_estimate ?? $income->previous_income)*floatVal($user->pivot->limit)/100))/2)/$estimate * 100,2);
+                    $limit=round(((floatVal($category->previous_expense)+(floatVal($estimate->previous_estimate ?? $income->previous_income)*floatVal($user->pivot->limit)/100))/2)/$estimate * 100,4);
 
-                    $estimateExpense=round((floatVal($category->previous_expense)+(floatVal($estimate->previous_estimate ?? $income->previous_income)*floatVal($user->pivot->limit)/100))/2,2);
+                    $estimateExpense=round((floatVal($category->previous_expense)+(floatVal($estimate->previous_estimate ?? $income->previous_income)*floatVal($user->pivot->limit)/100))/2,4);
 
-                    $expensePercent=round(floatVal($category->current_expense)/floatVal($estimate)*100,2);
+                    $expensePercent=round(floatVal($category->current_expense)/floatVal($estimate)*100,4);
 
                     $forecasts[]=[
                         'category'=>$category->name,
@@ -116,9 +116,9 @@ class ForecastController extends Controller
             foreach($categories as $category){
                 foreach($category->users as $user){
 
-                    $estimateExpense=round(floatVal($estimate)*floatVal($user->pivot->limit)/100,2);
+                    $estimateExpense=round(floatVal($estimate)*floatVal($user->pivot->limit)/100,4);
 
-                    $expensePercent=round(floatVal($category->current_expense)/floatVal($estimate)*100,2);
+                    $expensePercent=round(floatVal($category->current_expense)/floatVal($estimate)*100,4);
 
                     $limit=$user->pivot->limit;
 

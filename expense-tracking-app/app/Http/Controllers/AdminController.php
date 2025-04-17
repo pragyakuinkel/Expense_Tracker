@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enum\RoleName;
 use App\Http\Requests\FilterRequest;
+use App\Http\Requests\MonthRequest;
 use App\Models\Category;
 use App\Models\Income;
 use App\Models\Permission;
@@ -45,7 +46,8 @@ class AdminController extends Controller
 
         $date = Carbon::parse($start_date)->format('d M Y') .' - '.Carbon::parse($end_date)->format('d M Y') ;
 
-        $users = User::whereBetween('created_at', [$start_date, $end_date])
+        $users = User::whereDate('created_at', '>=', $start_date)
+            ->whereDate('created_at', '<=', $end_date)
                 ->where(function ($query) use ($search) {
                 $query->where('name', 'like', '%' . $search . '%')
                 ->orWhere('email','like',"%{$search}%")
@@ -62,7 +64,7 @@ class AdminController extends Controller
         return view('admin.user', compact('users','search','date'));
     }
 
-    public function category(User $user,Request $request)
+    public function category(User $user,MonthRequest $request)
     {
         $date = Carbon::parse($request->input('date'));
 

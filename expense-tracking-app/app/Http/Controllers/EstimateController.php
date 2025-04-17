@@ -177,15 +177,6 @@ class EstimateController extends Controller
                             $limit = 0;
                         }
 
-//                        if($limit < 0){
-//
-//                            session()->flash('error',
-//                                'Limit less than 0.'
-//                            );
-//
-//                            return back()->withInput();
-//                        }
-
                         $category->users()->attach(Auth::id(), [
                             'limit' => $limit,
                             'date' => $date['year'] . '-' . $date['month'] . '-' . $date['day'],
@@ -201,22 +192,12 @@ class EstimateController extends Controller
                     foreach ($month as $m) {
                         $date = date_parse(Carbon::now()->year . " " . $m);
 
-                        if (Carbon::now()->format('m') === $date['month']) {
+                        if (Carbon::now()->format('m') == $date['month']) {
                             $limit = $request->new_limits[$i];
                             $totalLimit += $limit;
                         } else {
                             $limit = 0;
                         }
-
-//                        if($limit < 0){
-//
-//                            session()->flash('error',
-//                                'Limit less than 0.'
-//                            );
-//
-//                            return back()->withInput();
-//                        }
-
 
                         $category->users()->attach(Auth::id(), [
                             'limit' => $limit,
@@ -235,15 +216,6 @@ class EstimateController extends Controller
                         } else {
                             $limit = 0;
                         }
-
-//                        if($limit < 0){
-//
-//                            session()->flash('error',
-//                                'Limit less than 0.'
-//                            );
-//
-//                            return back()->withInput();
-//                        }
 
                         $newCategory->users()->attach(Auth::id(), [
                             'limit' => $limit,

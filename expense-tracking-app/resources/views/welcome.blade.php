@@ -25,7 +25,13 @@
     @if (Route::has('login'))
         <nav class="flex gap-2">
             @auth
-                <a href="{{ url('/dashboard') }}"
+                <a href="
+                    @if(Auth::user()->hasRole(1))
+                    {{ url('/admin/dashboard') }}
+                    @else
+                    {{ url('/dashboard') }}
+                    @endif
+                "
                    class="text-white px-3 py-1 rounded" style="background-color:#0ea5e9">
                     Dashboard
                 </a>
@@ -50,7 +56,13 @@
         <h2 class="text-4xl font-semibold text-gray-800 mb-6">Track Your Expenses with Ease</h2>
         <p class="text-gray-600 mb-8 text-lg">Take control of your finances with our intuitive expense tracking system.</p>
         @auth
-            <a href="{{ url('/dashboard') }}"
+            <a href="
+                @if(Auth::user()->hasRole(1))
+                {{ url('/admin/dashboard') }}
+                @else
+                {{ url('/dashboard') }}
+                @endif
+            "
                class="inline-block text-white px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 text-lg" style="background-color:#0ea5e9">
                 Go to Dashboard
             </a>
