@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckCategoryUserDateRequest;
 use App\Http\Requests\CheckCategoryUserUpdateRequest;
+use App\Http\Requests\DateRequest;
 use App\Http\Requests\FilterRequest;
 use App\Http\Requests\MonthRequest;
 use App\Models\Category;
@@ -148,7 +149,7 @@ class UserCategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(FilterRequest $request,$id)
+    public function edit(DateRequest $request,$id)
     {
         $error = session()->get('error');
 

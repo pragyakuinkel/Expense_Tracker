@@ -24,7 +24,7 @@ class CheckCategoryUserDateRequest extends FormRequest
     {
         return [
             'name' => ['required','string',new UniqueUserCategory],
-            'limit' => 'numeric|min:1',
+            'limit' => 'numeric|min:0',
         ];
     }
 }

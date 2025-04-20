@@ -30,6 +30,9 @@
                         </div>
 
                         <div style="color: red">{{$error}}</div>
+
+                        <x-input-error :messages="$errors->get('date')" class="mt-2"/>
+
                         <x-primary-button class="mt-4">Edit</x-primary-button>
                     </form>
                 </div>

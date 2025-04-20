@@ -69,14 +69,7 @@ class User extends Authenticatable
     public function statement()
     {
         $this->hasMany(Log::class);
-    }
-
-    public function getRole()
-    {
-        return $this->roles()->where('id', session('role'))->first();
-    }
-
-    public function hasRole(string $id): bool
+    }    public function hasRole(string $id): bool
     {
         return $this->roles()->where('id', $id)->exists();
     }

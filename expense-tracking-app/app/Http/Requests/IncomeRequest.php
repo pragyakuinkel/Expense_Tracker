@@ -24,7 +24,7 @@ class IncomeRequest extends FormRequest
     {
         return [
             'amount' => 'required|numeric|min:0|regex:/^\d{1,13}(\.\d{1,4})?$/',
-            'date' => ['required','date'],
+            'date' => 'required|date',
             'description' => 'nullable|string',
         ];
     }

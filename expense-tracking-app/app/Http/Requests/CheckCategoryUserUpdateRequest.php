@@ -25,7 +25,7 @@ class CheckCategoryUserUpdateRequest extends FormRequest
     {
         return [
             'name' => ['required','string'],
-            'limit' => 'numeric|min:1',
+            'limit' => 'numeric|min:0',
         ];
     }
 }

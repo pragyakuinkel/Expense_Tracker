@@ -62,7 +62,7 @@
                     </div>
 
                     <x-input-error :messages="$errors->get('date')" class="mt-2"/>
-
+                         
                     <div class="mt-4 space-y-6">
                         @forelse ($categories as $category)
                             <div

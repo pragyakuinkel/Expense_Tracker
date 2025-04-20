@@ -25,7 +25,7 @@ class ExpenseRequest extends FormRequest
         return [
             'category' => 'required',
             'amount' => 'required|numeric|min:1|regex:/^\d{1,13}(\.\d{1,4})?$/',
-            'date' => ['required','date','before_or_equal:today'],
+            'date' => 'required|date|before_or_equal:today',
             'description' => 'nullable|string',
         ];
     }
