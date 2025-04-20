@@ -81,7 +81,7 @@
                                         </button>
                                     </form>
 
-                                    <a href="{{ route('category_user.delete',[$category, $date] ) }}"
+                                    <a href="{{ route('category_user.delete',[$category, $date->format('Y-m-d')] ) }}"
                                        class="inline-flex items-center px-5 py-2 bg-red-600 hover:bg-red-700 transition-all duration-300 ease-in-out rounded-lg font-medium text-white shadow-md hover:shadow-lg">
                                         <i class="fas fa-trash mr-2"></i> Delete
                                     </a>

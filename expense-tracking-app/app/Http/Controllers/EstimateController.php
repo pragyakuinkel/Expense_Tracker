@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enum\Action;
 use App\Enum\RoleName;
+use App\Http\Requests\EstimateRequest;
 use App\Http\Requests\LimitRequest;
 use App\Models\Category;
 use App\Models\Estimate;
@@ -27,12 +28,8 @@ class EstimateController extends Controller
         return view('estimate.income');
     }
 
-    public function storeIncome(Request $request)
+    public function storeIncome(EstimateRequest $request)
     {
-        $request->validate([
-            'amount' => ['required', 'numeric', 'min:1'],
-        ]);
-
 
         DB::beginTransaction();
 

@@ -268,8 +268,6 @@ class UserCategoryController extends Controller
     public function destroy(Request $request, $id)
     {
         $category = Category::findOrFail($id);
-
-        try {
             $category->users()
                 ->where('user_id', Auth::id())
                 ->wherePivot('date', '>=', Carbon::parse($request->date)->startOfMonth())
@@ -278,12 +276,7 @@ class UserCategoryController extends Controller
 
             session()->flash('success', 'Category deleted successfully');
 
-            return redirect()->route('category_user.monthlyCategory', ['date' => $request->date]);
-        } catch (\Exception $exception) {
+            return redirect()->route('category_user.monthlyCategory', ['date' => Carbon::parse($request->date)->format('Y-m')]);
 
-            session()->flash('error', "Category not deleted");
-
-            return back();
-        }
     }
 }
