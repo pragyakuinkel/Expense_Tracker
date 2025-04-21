@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class ExpenseController extends Controller
 {
@@ -129,8 +130,8 @@ class ExpenseController extends Controller
     public function edit(Expense $expense)
     {
 
-        if ($expense->user_id !== Auth::id()) {
-            abort(401);
+        if (! Gate::allows('update-expense', $expense)) {
+            abort(403);
         }
 
         $user_selected_category = $expense->category;

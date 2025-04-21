@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class IncomeController extends Controller
 {
@@ -104,8 +105,12 @@ class IncomeController extends Controller
      */
     public function edit(Income $income)
     {
-        if ($income->user_id !== Auth::id()) {
-            abort(401);
+//        if ($income->user_id !== Auth::id()) {
+//            abort(401);
+//        }
+
+        if (! Gate::allows('update-income', $income)) {
+            abort(403);
         }
 
         return view('income.edit', compact('income'));

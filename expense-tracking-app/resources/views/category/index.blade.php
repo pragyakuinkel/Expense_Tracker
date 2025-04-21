@@ -84,7 +84,7 @@
                                     <td class="px-6 py-4">{{ $category->name }}</td>
                                     <td class="px-6 py-4">{{ $category->user->name }}</td>
                                     <td class="px-6 py-4">{{ $category->users_count ?? 0 }}</td>
-                                    <td class="px-6 py-4">{{ $category->updated_at->format('d M, Y') }}</td>
+                                    <td class="px-6 py-4">{{ $category->created_at->format('d M, Y') }}</td>
                                     <td class="px-6 py-4 flex justify-center items-center space-x-3">
                                         <a href="{{ route('category.edit', $category->id) }}"
                                            class="inline-flex items-center px-4 py-2 bg-[#0ea5e9] hover:bg-[#0e95d9] transition-all duration-300 ease-in-out rounded-md font-semibold text-white shadow-md hover:shadow-lg">

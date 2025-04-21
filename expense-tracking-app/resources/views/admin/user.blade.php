@@ -77,7 +77,7 @@
                                             {{$role->name}}<br>
                                         @endforeach
                                     </td>
-                                    <td class="px-6 py-4">{{ $user->updated_at }}</td>
+                                    <td class="px-6 py-4">{{ $user->created_at->format('d M, Y') }}</td>
                                     <td class="px-6 py-4 flex justify-center items-center">
                                         <a href="{{ route('admin.manageUserCategory', $user) }}"
                                            class="inline-flex items-center px-4 py-2 text-green-600 hover:text-green-700 font-semibold transition-all duration-200 ease-in-out">

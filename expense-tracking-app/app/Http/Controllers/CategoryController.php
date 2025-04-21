@@ -45,8 +45,8 @@ class CategoryController extends Controller
                         ->orWhere('username','like',"%{$search}%");
                 });
             })
-            ->select('categories.id as id', 'categories.name','categories.updated_at','categories.user_id', 'users.name as username', DB::raw('COUNT(DISTINCT category_user.user_id) as users_count'))
-            ->groupBy('categories.id','categories.name','categories.updated_at', 'categories.user_id', 'users.name')
+            ->select('categories.id as id', 'categories.name','categories.created_at','categories.user_id', 'users.name as username', DB::raw('COUNT(DISTINCT category_user.user_id) as users_count'))
+            ->groupBy('categories.id','categories.name','categories.created_at', 'categories.user_id', 'users.name')
             ->orderBy('categories.updated_at', 'desc')
             ->paginate(10);
 

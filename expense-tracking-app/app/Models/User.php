@@ -66,6 +66,11 @@ class User extends Authenticatable
         return $this->hasMany(Expense::class);
     }
 
+    public function getRole()
+    {
+        return $this->roles()->where('id', session('role'))->first();
+    }
+
     public function statement()
     {
         $this->hasMany(Log::class);
